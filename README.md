@@ -29,6 +29,10 @@ restriction (this type of API key is required by Places API).
 
 # Misc
 
+## Documentation links
+- [Get started w/ the Android API](https://developers.google.com/places/android-sdk/start)
+- [Get Places API key](https://developers.google.com/places/android-sdk/signup)
+
 ## Android UI layouts
 - [Eg of LinearLayout w/ scrollview](http://tinyurl.com/yaht7rrm)
 - [Eg of RelativeLayout options](http://tinyurl.com/y7rer3ch)

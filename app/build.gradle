@@ -48,4 +48,7 @@ dependencies {
 
     // Add Google Places API
     implementation "com.google.android.gms:play-services-places:$places_api_version"
+
+    // Add Anko (logging, UI)
+    implementation "org.jetbrains.anko:anko:$anko_version"
 }

@@ -26,3 +26,9 @@ restriction (this type of API key is required by Places API).
 
 - Debug Cert on dev machine (rmbp13) SHA1 key
     - `21:9D:AC:80:E1:AB:3B:B7:2E:27:96:B0:2A:E5:21:D1:23:A7:D1:09`
+
+# Misc
+
+## Android UI layouts
+- [Eg of LinearLayout w/ scrollview](http://tinyurl.com/yaht7rrm)
+- [Eg of RelativeLayout options](http://tinyurl.com/y7rer3ch)

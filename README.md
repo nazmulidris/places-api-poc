@@ -1,6 +1,8 @@
 # Introduction
 
-This project shows how to exercise the Google Places API surface.
+This project shows how to exercise the Google Places API surface. This project
+contains sensitive information about API keys and Android debug certificates,
+so this is a private repo.
 
 # API keys and such
 

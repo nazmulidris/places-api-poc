@@ -20,22 +20,30 @@ import android.arch.lifecycle.Lifecycle
 import android.arch.lifecycle.LifecycleObserver
 import android.arch.lifecycle.OnLifecycleEvent
 import android.content.Context
+import com.google.android.gms.location.places.GeoDataClient
+import com.google.android.gms.location.places.PlaceDetectionClient
+import com.google.android.gms.location.places.Places
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 import org.jetbrains.anko.toast
 
-class PlacesAPIClients(val context: Context) : LifecycleObserver, AnkoLogger {
+class PlacesAPIClients(val appContext: Context) : LifecycleObserver, AnkoLogger {
+    lateinit var geoDataClient: GeoDataClient
+    lateinit var placeDetectionClient: PlaceDetectionClient
+
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     fun connect() {
-        context.toast("connect()")
         info {
             "PlacesAPIClients.connect()"
         }
+        geoDataClient = Places.getGeoDataClient(appContext)
+        placeDetectionClient = Places.getPlaceDetectionClient(appContext)
+        appContext.toast("connect() - got GetoDataClient and PlaceDetectionClient")
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun cleanup() {
-        context.toast("cleanup()")
+        appContext.toast("cleanup()")
         info {
             "PlacesAPIClients.cleanup()"
         }

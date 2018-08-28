@@ -29,9 +29,13 @@ restriction (this type of API key is required by Places API).
 
 # Misc
 
-## Documentation links
+## Places API Documentation links
 - [Get started w/ the Android API](https://developers.google.com/places/android-sdk/start)
 - [Get Places API key](https://developers.google.com/places/android-sdk/signup)
+
+## Android API Documentation links
+- [Lifecycle awareness](https://developer.android.com/topic/libraries/architecture/lifecycle)
+- [Use Anko](https://www.kotlindevelopment.com/why-should-use-anko/)
 
 ## Android UI layouts
 - [Eg of LinearLayout w/ scrollview](http://tinyurl.com/yaht7rrm)

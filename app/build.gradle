@@ -1,0 +1,37 @@
+apply plugin: 'com.android.application'
+
+apply plugin: 'kotlin-android'
+
+apply plugin: 'kotlin-android-extensions'
+
+ext {
+    // Something in Google Play Services (using Places API version 15.0.1.
+    // was importing dependencies for SDK level 26.
+    // This is why the app_compat_version and sdk_version are set to 26 (Oreo) and
+    // not 28 (Pie).
+    places_api_version = '15.0.1'
+    app_compat_version = '26.1.0'
+    sdk_version = 26
+}
+
+// compile, target, and AppCompat versions are Oreo (26)
+android {
+    compileSdkVersion "$sdk_version".toInteger()
+    defaultConfig {
+        applicationId "com.google.api.places.places_api_poc"
+        minSdkVersion 16
+        targetSdkVersion "$sdk_version".toInteger()
+        versionCode 1
+        versionName "1.0"
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "com.android.support:appcompat-v7:$app_compat_version"
+    implementation 'com.android.support.constraint:constraint-layout:1.1.2'
+
+    // Add Google Places API
+    implementation "com.google.android.gms:play-services-places:$places_api_version"
+}

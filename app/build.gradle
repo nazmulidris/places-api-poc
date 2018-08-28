@@ -5,10 +5,10 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 ext {
-    // Something in Google Play Services (using Places API version 15.0.1.
+    // Something in Google Play Services (using Places API version `15.0.1`)
     // was importing dependencies for SDK level 26.
-    // This is why the app_compat_version and sdk_version are set to 26 (Oreo) and
-    // not 28 (Pie).
+    // This is why the `app_compat_version` and `sdk_version` are set to 26
+    // (Oreo) and not 28 (Pie).
     places_api_version = '15.0.1'
     app_compat_version = '26.1.0'
     sdk_version = 26

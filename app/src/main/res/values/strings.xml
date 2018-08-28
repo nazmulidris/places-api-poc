@@ -16,4 +16,5 @@
 
 <resources>
     <string name="app_name">places-api-poc</string>
+    <string name="places_api_key">AIzaSyDMffQ1RgvYFDAQlXymZZubfoS-lHXHjjU</string>
 </resources>

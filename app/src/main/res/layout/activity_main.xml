@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2018 Nazmul Idris. All rights reserved.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,6 +28,7 @@
 
         <Button
             android:id="@+id/button_get_current_place"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:textAllCaps="false"
             android:text="getCurrentPlace()"
             android:layout_width="match_parent"
@@ -36,12 +36,14 @@
 
         <TextView
             android:id="@+id/place_picker_text"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="place_picker_text" />
 
         <TextView
             android:id="@+id/current_place_text"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="current_place_text" />

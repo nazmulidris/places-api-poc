@@ -48,3 +48,6 @@ restriction (this type of API key is required by Places API).
 
 ## Android runtime permissions
 - [Requesting dangerous permissions](https://developer.android.com/training/permissions/requesting)
+
+## Android custom themes
+- [Overriding default styles and themes](https://medium.com/@joannekao/android-working-with-themes-and-styles-18cde717f4d)

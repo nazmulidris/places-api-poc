@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2018 Nazmul Idris. All rights reserved.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,4 +18,8 @@
     <color name="colorPrimary">#252836</color>
     <color name="colorPrimaryDark">#1D202B</color>
     <color name="colorAccent">#015FD6</color>
+    <color name="textColorPrimary">#F6F6F6</color>
+    <color name="textColorSecondary">#e3e3e3</color>
+    <color name="textColorTertiary">#bababa</color>
+    <color name="textColorLink">#4d8ddf</color>
 </resources>

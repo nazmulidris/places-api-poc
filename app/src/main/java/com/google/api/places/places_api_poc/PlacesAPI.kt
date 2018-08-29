@@ -16,10 +16,8 @@
 
 package com.google.api.places.places_api_poc
 
-import android.arch.lifecycle.Lifecycle
-import android.arch.lifecycle.LifecycleObserver
-import android.arch.lifecycle.OnLifecycleEvent
-import android.content.Context
+import android.app.Application
+import android.arch.lifecycle.*
 import com.google.android.gms.location.places.GeoDataClient
 import com.google.android.gms.location.places.PlaceDetectionClient
 import com.google.android.gms.location.places.Places
@@ -27,23 +25,31 @@ import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 import org.jetbrains.anko.toast
 
-class PlacesAPI(val appContext: Context) : LifecycleObserver, AnkoLogger {
+class PlacesAPI(val context: Application) : AndroidViewModel(context),
+        LifecycleObserver, AnkoLogger {
+    // Client for geo data
     lateinit var geoDataClient: GeoDataClient
+    // Client for place detection
     lateinit var placeDetectionClient: PlaceDetectionClient
+    // LiveData for place picker API responses
+    val placePickerData = MutableLiveData<String>()
+    // LiveData for current place API responses
+    val currentPlaceData = MutableLiveData<String>()
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     fun connect() {
         info {
             "PlacesAPIClients.connect()"
         }
-        geoDataClient = Places.getGeoDataClient(appContext)
-        placeDetectionClient = Places.getPlaceDetectionClient(appContext)
-        appContext.toast("connect() - got GetoDataClient and PlaceDetectionClient")
+        geoDataClient = Places.getGeoDataClient(context)
+        placeDetectionClient = Places.getPlaceDetectionClient(context)
+        placePickerData.value = "connect!"
+        context.toast("connect() - got GetDataClient and PlaceDetectionClient")
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun cleanup() {
-        appContext.toast("cleanup()")
+        context.toast("cleanup()")
         info {
             "PlacesAPIClients.cleanup()"
         }

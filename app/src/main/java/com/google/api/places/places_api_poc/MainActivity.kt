@@ -16,14 +16,28 @@
 
 package com.google.api.places.places_api_poc
 
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        lifecycle.addObserver(PlacesAPI(applicationContext))
+
+        // Create the ViewModel
+        val placesAPIViewModel = ViewModelProviders.of(this).get(PlacesAPI::class.java)
+
+        // Connect to the Places API
+        lifecycle.addObserver(placesAPIViewModel)
+
+        // Attach LiveData observers for place_picker_text
+        placesAPIViewModel.placePickerData.observe(this, Observer {
+            this.place_picker_text.text = it ?: "n/a"
+        })
+
     }
 }

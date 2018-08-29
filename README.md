@@ -40,3 +40,7 @@ restriction (this type of API key is required by Places API).
 ## Android UI layouts
 - [Eg of LinearLayout w/ scrollview](http://tinyurl.com/yaht7rrm)
 - [Eg of RelativeLayout options](http://tinyurl.com/y7rer3ch)
+
+## Android Architecture Components
+- [Gradle imports](https://developer.android.com/topic/libraries/architecture/adding-components)
+- [Using LiveData](https://developer.android.com/topic/libraries/architecture/livedata)

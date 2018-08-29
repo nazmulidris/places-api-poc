@@ -44,6 +44,9 @@ android {
 }
 
 dependencies {
+    def anko_version = '0.10.5'
+    def lifecycle_version = '1.1.1'
+
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "com.android.support:appcompat-v7:$app_compat_version"
 
@@ -52,4 +55,8 @@ dependencies {
 
     // Add Anko (logging, UI)
     implementation "org.jetbrains.anko:anko:$anko_version"
+
+    // Add Architecture Components (ViewModel, LiveData)
+    implementation "android.arch.lifecycle:extensions:$lifecycle_version"
+    annotationProcessor "android.arch.lifecycle:compiler:$lifecycle_version"
 }

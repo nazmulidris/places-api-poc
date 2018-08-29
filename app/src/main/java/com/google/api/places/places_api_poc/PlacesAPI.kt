@@ -39,11 +39,14 @@ class PlacesAPI(val context: Application) : AndroidViewModel(context),
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     fun connect() {
         info {
-            "PlacesAPIClients.connect()"
+            "ON_CREATE ⇢ PlacesAPIClients.connect() ✅"
         }
         geoDataClient = Places.getGeoDataClient(context)
         placeDetectionClient = Places.getPlaceDetectionClient(context)
+
+        // Debug stuff
         placePickerData.value = "connect!"
+        currentPlaceData.value = "connect!"
         context.toast("connect() - got GetDataClient and PlaceDetectionClient")
     }
 
@@ -54,4 +57,9 @@ class PlacesAPI(val context: Application) : AndroidViewModel(context),
             "PlacesAPIClients.cleanup()"
         }
     }
+
+    fun getCurrentPlace() {
+        context.toast("todo - call getCurrentPlace()")
+    }
+
 }

@@ -44,3 +44,4 @@ restriction (this type of API key is required by Places API).
 ## Android Architecture Components
 - [Gradle imports](https://developer.android.com/topic/libraries/architecture/adding-components)
 - [Using LiveData](https://developer.android.com/topic/libraries/architecture/livedata)
+- [Code sample](https://github.com/nazmulidris/android_arch_comp_kt/tree/master/app/src/main/java/arch_comp_kt/nazmul/com)

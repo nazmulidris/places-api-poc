@@ -16,14 +16,21 @@
 
 package com.google.api.places.places_api_poc
 
+import android.Manifest
 import android.app.Application
 import android.arch.lifecycle.*
+import android.content.pm.PackageManager
+import android.support.v4.content.ContextCompat
 import com.google.android.gms.location.places.GeoDataClient
 import com.google.android.gms.location.places.PlaceDetectionClient
+import com.google.android.gms.location.places.PlaceLikelihoodBufferResponse
 import com.google.android.gms.location.places.Places
+import com.google.android.gms.tasks.OnCompleteListener
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 import org.jetbrains.anko.toast
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 class PlacesAPI(val context: Application) : AndroidViewModel(context),
         LifecycleObserver, AnkoLogger {
@@ -48,6 +55,9 @@ class PlacesAPI(val context: Application) : AndroidViewModel(context),
         placePickerData.value = "connect!"
         currentPlaceData.value = "connect!"
         context.toast("connect() - got GetDataClient and PlaceDetectionClient")
+
+        // Create executor
+        createExecutor()
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
@@ -56,10 +66,43 @@ class PlacesAPI(val context: Application) : AndroidViewModel(context),
         info {
             "PlacesAPIClients.cleanup()"
         }
+        destroyExecutor()
+    }
+
+    lateinit var executor: ExecutorService
+
+    fun createExecutor() {
+        executor = Executors.newCachedThreadPool()
+    }
+
+    fun destroyExecutor() {
+        executor.shutdown()
     }
 
     fun getCurrentPlace() {
-        context.toast("todo - call getCurrentPlace()")
+        if (ContextCompat.checkSelfPermission(context,
+                                              Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            // Permission is granted 🙌
+            placeDetectionClient.getCurrentPlace(null).apply {
+                addOnCompleteListener(executor, OnCompleteListener { task ->
+                    if (task.getResult() != null)
+                        processPlacelikelihoodBuffer(task.getResult()!!)
+                })
+            }
+
+        }
+
+    }
+
+    // This runs in background thread
+    private fun processPlacelikelihoodBuffer(likeyPlaces: PlaceLikelihoodBufferResponse) {
+        val outputString = StringBuilder()
+        likeyPlaces.forEach { placeLikelihood ->
+            outputString.append("📌 ${placeLikelihood.place.name} 🤷 ${placeLikelihood.likelihood}️")
+        }
+        likeyPlaces.release()
+        currentPlaceData.postValue(outputString.toString())
     }
 
 }

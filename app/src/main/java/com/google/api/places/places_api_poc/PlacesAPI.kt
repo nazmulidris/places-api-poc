@@ -27,7 +27,7 @@ import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 import org.jetbrains.anko.toast
 
-class PlacesAPIClients(val appContext: Context) : LifecycleObserver, AnkoLogger {
+class PlacesAPI(val appContext: Context) : LifecycleObserver, AnkoLogger {
     lateinit var geoDataClient: GeoDataClient
     lateinit var placeDetectionClient: PlaceDetectionClient
 

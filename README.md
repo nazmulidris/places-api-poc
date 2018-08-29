@@ -33,6 +33,9 @@ restriction (this type of API key is required by Places API).
 - [Get started w/ the Android API](https://developers.google.com/places/android-sdk/start)
 - [Get Places API key](https://developers.google.com/places/android-sdk/signup)
 
+# GMS API links
+- [Tasks API](https://developers.google.com/android/guides/tasks)
+
 ## Android API Documentation links
 - [Lifecycle awareness](https://developer.android.com/topic/libraries/architecture/lifecycle)
 - [Use Anko](https://www.kotlindevelopment.com/why-should-use-anko/)

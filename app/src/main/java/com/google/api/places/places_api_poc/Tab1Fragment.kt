@@ -74,6 +74,12 @@ class Tab1Fragment : Fragment(), AnkoLogger {
         attachToUI()
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        placesAPIViewModel.currentPlaceData.removeObservers(this)
+        info { "🛑 removing observers" }
+    }
+
     private fun attachToUI() {
         // Attach a behavior to the button
         button_current_place_fragment.onClick {

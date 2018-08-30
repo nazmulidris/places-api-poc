@@ -50,7 +50,10 @@ will throw an error like [this](https://stackoverflow.com/questions/47279161/run
 - [Gradle imports](https://developer.android.com/topic/libraries/architecture/adding-components)
 - [Using LiveData](https://developer.android.com/topic/libraries/architecture/livedata)
 - [Code sample](https://github.com/nazmulidris/android_arch_comp_kt/tree/master/app/src/main/java/arch_comp_kt/nazmul/com)
+
+## LiveData, ViewModel and Fragment
 - [With fragments](https://developer.android.com/topic/libraries/architecture/viewmodel#sharing)
+- [Fragment pitfalls](https://medium.com/@BladeCoder/architecture-components-pitfalls-part-1-9300dd969808)
 
 ## Android runtime permissions
 - [Requesting dangerous permissions](https://developer.android.com/training/permissions/requesting)

@@ -15,10 +15,15 @@
   -->
 
 <resources>
+    <!-- Global -->
     <string name="app_name">places-api-poc</string>
+
+    <!-- Places API configuration -->
     <string name="places_api_key">AIzaSyDMffQ1RgvYFDAQlXymZZubfoS-lHXHjjU</string>
+
+    <!-- Driver Activity and Tab Fragments -->
     <string name="title_activity_driver">DriverActivity</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_tab1">Tab1</string>
+    <string name="title_tab2">Tab2</string>
+    <string name="title_tab3">Tab3</string>
 </resources>

@@ -27,15 +27,15 @@ class DriverActivity : AppCompatActivity() {
             BottomNavigationView.OnNavigationItemSelectedListener { item ->
                 when (item.itemId) {
                     R.id.navigation_home          -> {
-                        message.setText(R.string.title_home)
+                        message.setText(R.string.title_tab1)
                         return@OnNavigationItemSelectedListener true
                     }
                     R.id.navigation_dashboard     -> {
-                        message.setText(R.string.title_dashboard)
+                        message.setText(R.string.title_tab2)
                         return@OnNavigationItemSelectedListener true
                     }
                     R.id.navigation_notifications -> {
-                        message.setText(R.string.title_notifications)
+                        message.setText(R.string.title_tab3)
                         return@OnNavigationItemSelectedListener true
                     }
                 }

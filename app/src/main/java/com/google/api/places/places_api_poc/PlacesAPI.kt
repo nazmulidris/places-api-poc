@@ -100,12 +100,15 @@ class PlacesAPI(val context: Application) : AndroidViewModel(context),
         val count = likeyPlaces.count
         for (index in 0 until count) {
             val placeLikelihood = likeyPlaces.get(index)
-            val name = placeLikelihood.place.name
             val confidence = placeLikelihood.likelihood * 100
-            outputList.add("📌 ${name}, ${confidence} %")
+            with(placeLikelihood.place) {
+                outputList.add("📌 ${name}, ${confidence}％, 🗺${address}")
+            }
         }
-        info { outputList.joinToString("\n") }
-        currentPlaceData.postValue(outputList.joinToString("\n"))
+        with(outputList.joinToString("\n")) {
+            info { this }
+            currentPlaceData.postValue(this)
+        }
     }
 
 }

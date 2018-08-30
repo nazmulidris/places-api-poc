@@ -39,7 +39,7 @@ class DriverActivity : AppCompatActivity() {
                         return@OnNavigationItemSelectedListener true
                     }
                 }
-                false
+                return@OnNavigationItemSelectedListener false
             }
 
     override fun onCreate(savedInstanceState: Bundle?) {

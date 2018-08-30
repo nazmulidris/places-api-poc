@@ -26,15 +26,15 @@ class DriverActivity : AppCompatActivity() {
     private val onNavigationItemSelectedListener =
             BottomNavigationView.OnNavigationItemSelectedListener { item ->
                 when (item.itemId) {
-                    R.id.navigation_home          -> {
+                    R.id.navigation_tab1 -> {
                         message.setText(R.string.title_tab1)
                         return@OnNavigationItemSelectedListener true
                     }
-                    R.id.navigation_dashboard     -> {
+                    R.id.navigation_tab2 -> {
                         message.setText(R.string.title_tab2)
                         return@OnNavigationItemSelectedListener true
                     }
-                    R.id.navigation_notifications -> {
+                    R.id.navigation_tab3 -> {
                         message.setText(R.string.title_tab3)
                         return@OnNavigationItemSelectedListener true
                     }

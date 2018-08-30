@@ -56,3 +56,6 @@ will throw an error like [this](https://stackoverflow.com/questions/47279161/run
 
 ## Android custom themes
 - [Overriding default styles and themes](https://medium.com/@joannekao/android-working-with-themes-and-styles-18cde717f4d)
+
+## Android UI
+- [Bottom bar navigation](http://blog.iamsuleiman.com/using-bottom-navigation-view-android-design-support-library/)

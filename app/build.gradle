@@ -40,6 +40,7 @@ android {
         targetSdkVersion "$sdk_version".toInteger()
         versionCode 1
         versionName "1.0"
+        vectorDrawables.useSupportLibrary = true
     }
 }
 
@@ -59,4 +60,9 @@ dependencies {
     // Add Architecture Components (ViewModel, LiveData)
     implementation "android.arch.lifecycle:extensions:$lifecycle_version"
     annotationProcessor "android.arch.lifecycle:compiler:$lifecycle_version"
+
+    // Add Material Design
+    implementation 'com.android.support:design:26.1.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.2'
+    implementation 'com.android.support:support-vector-drawable:26.1.0'
 }

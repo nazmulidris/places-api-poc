@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2018 Nazmul Idris. All rights reserved.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,10 +12,12 @@
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
-  -->
-
+-->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.google.api.places.places_api_poc">
+
+    <!-- Needed for PlaceDetectionClient#getCurrentPlace() -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -29,7 +30,6 @@
         <activity android:name=".PlacesAPIMainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -38,9 +38,15 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/places_api_key" />
 
-    </application>
+        <activity
+            android:name=".DriverActivity"
+            android:label="@string/title_activity_driver">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
-    <!-- Needed for PlaceDetectionClient#getCurrentPlace() -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    </application>
 
 </manifest>

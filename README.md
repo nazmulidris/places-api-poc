@@ -13,9 +13,9 @@ Create a new project and get an API key for Places API.
 Bind this APK with the project in Google APIs console by creating an Android
 restriction (this type of API key is required by Places API).
 
-You will need:
-  - Package name, in this case: `com.google.api.places.places_api_poc`
-  - SHA1 fingerprint from your keystore, eg: `BB:0D:...:44:5D:75`
+- You will need:
+    - Package name, in this case: `com.google.api.places.places_api_poc`
+    - SHA1 fingerprint from your keystore, eg: `BB:0D:...:44:5D:75`
 
 ### ⚠️ Repeat this for every APK
 Make sure to repeat this on every machine that you generate an APK from. For every

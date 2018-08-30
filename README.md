@@ -3,25 +3,21 @@ This project shows how to exercise the Google Places API surface. This project
 contains sensitive information about API keys and Android debug certificates,
 so this is a private repo.
 
-# API keys and such
-## From Google API console
+# API keys
+
+## 1. From Google API console
 Create a new project and get an API key for Places API.
+- [Google API Console](https://console.developers.google.com/flows/enableapi?apiid=placesandroid&reusekey=true)
+    - Create a new key for your project (new or existing)
+    - Copy the key and paste it in `strings.xml` in the `places_api_key` resource
 
-- `places-api-poc` project in Google APIs console
-    - [Project under nazmul@fasterlap account](http://tinyurl.com/yb67bn2f)
-
-- Places API key for `places-api-poc` project in Google Console
-    - `AIzaSyDMffQ1RgvYFDAQlXymZZubfoS-lHXHjjU`
-
-## Bind this APK to the Places API project
+## 2. Bind your app's SHA-1 fingerprint and package name
 Bind this APK with the project in Google APIs console by creating an Android
 restriction (this type of API key is required by Places API).
 
-- Package name
-    - `com.google.api.places.places_api_poc`
-
-- Debug Cert on dev machine (rmbp13) SHA1 key
-    - `21:9D:AC:80:E1:AB:3B:B7:2E:27:96:B0:2A:E5:21:D1:23:A7:D1:09`
+You will need:
+  - Package name, in this case: `com.google.api.places.places_api_poc`
+  - SHA1 fingerprint from your keystore, eg: `BB:0D:...:44:5D:75`
 
 ### ⚠️ Repeat this for every APK
 Make sure to repeat this on every machine that you generate an APK from. For every
@@ -29,7 +25,7 @@ laptop or workstation that has a `~/.android` folder, you have to whitelist the
 SHA1 code for that machine's keystore. If you don't do this, then Google Play Services
 will throw an error like [this](https://stackoverflow.com/questions/47279161/runtimeexecutionexception-com-google-android-gms-common-api-apiexception-13-e).
 
-# Misc
+# References
 
 ## Places API Documentation links
 - [Get started w/ the Android API](https://developers.google.com/places/android-sdk/start)

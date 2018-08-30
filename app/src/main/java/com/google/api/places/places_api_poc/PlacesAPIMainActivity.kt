@@ -16,13 +16,11 @@
 
 package com.google.api.places.places_api_poc
 
-import android.Manifest
+import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.support.v4.app.ActivityCompat
-import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.AnkoLogger
@@ -65,32 +63,16 @@ class PlacesAPIMainActivity : AppCompatActivity(), AnkoLogger {
     val REQUEST_ACCESS_FINE_LOCATION_FOR_GET_CURRENT_PLACE = 1234
 
     private fun requestPermissionAndGetCurrentPlace(placesAPIViewModel: PlacesAPI) {
-        if (ContextCompat.checkSelfPermission(this@PlacesAPIMainActivity,
-                                              Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            // Permission is not granted ☹
-            info {
-                "PlacesAPI ⇢ ACCESS_FINE_LOCATION permission not granted ☠️"
-            }
-            // Ask the user for the run time permission
-            requestPermissionFromUser(this@PlacesAPIMainActivity);
+        if (isPermissionDenied(this, ACCESS_FINE_LOCATION)) {
+            // Permission is not granted ☹. Ask the user for the run time permission 🙏
+            info { "PlacesAPI ⇢ ACCESS_FINE_LOCATION permission not granted 🛑, make request 🙏️" }
+            requestPermission(this,
+                              ACCESS_FINE_LOCATION,
+                              REQUEST_ACCESS_FINE_LOCATION_FOR_GET_CURRENT_PLACE)
         } else {
             // Permission is granted 🙌
-            info {
-                "PlacesAPI ⇢ performing PlaceDetectionClient.getCurrentPlace() ✅"
-            }
             actuallyGetCurrentPlace()
         }
-    }
-
-    private fun requestPermissionFromUser(activity: AppCompatActivity) {
-        info {
-            "PlacesAPI ⇢ Request ACCESS_FINE_LOCATION permission from user 🙏"
-        }
-        ActivityCompat.requestPermissions(
-            activity,
-            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-            REQUEST_ACCESS_FINE_LOCATION_FOR_GET_CURRENT_PLACE)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int,
@@ -109,7 +91,7 @@ class PlacesAPIMainActivity : AppCompatActivity(), AnkoLogger {
                 }
                 return
             }
-        // Add other 'when' lines to check for other permissions this app might request.
+            // Add other 'when' lines to check for other permissions this app might request.
             else -> {
                 // Ignore all other requests.
             }
@@ -117,6 +99,7 @@ class PlacesAPIMainActivity : AppCompatActivity(), AnkoLogger {
     }
 
     private fun actuallyGetCurrentPlace() {
+        info { "PlacesAPI ⇢ Permission granted 🙌, PlaceDetectionClient.getCurrentPlace() ✅" }
         placesAPIViewModel.getCurrentPlace()
     }
 

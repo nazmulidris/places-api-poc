@@ -1,13 +1,10 @@
 # Introduction
-
 This project shows how to exercise the Google Places API surface. This project
 contains sensitive information about API keys and Android debug certificates,
 so this is a private repo.
 
 # API keys and such
-
 ## From Google API console
-
 Create a new project and get an API key for Places API.
 
 - `places-api-poc` project in Google APIs console
@@ -17,7 +14,6 @@ Create a new project and get an API key for Places API.
     - `AIzaSyDMffQ1RgvYFDAQlXymZZubfoS-lHXHjjU`
 
 ## Bind this APK to the Places API project
-
 Bind this APK with the project in Google APIs console by creating an Android
 restriction (this type of API key is required by Places API).
 
@@ -26,6 +22,12 @@ restriction (this type of API key is required by Places API).
 
 - Debug Cert on dev machine (rmbp13) SHA1 key
     - `21:9D:AC:80:E1:AB:3B:B7:2E:27:96:B0:2A:E5:21:D1:23:A7:D1:09`
+
+### ⚠️ Repeat this for every APK
+Make sure to repeat this on every machine that you generate an APK from. For every
+laptop or workstation that has a `~/.android` folder, you have to whitelist the
+SHA1 code for that machine's keystore. If you don't do this, then Google Play Services
+will throw an error like [this](https://stackoverflow.com/questions/47279161/runtimeexecutionexception-com-google-android-gms-common-api-apiexception-13-e).
 
 # Misc
 

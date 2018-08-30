@@ -16,11 +16,10 @@
 
 package com.google.api.places.places_api_poc
 
-import android.Manifest
+import android.Manifest.permission.ACCESS_FINE_LOCATION
+import android.annotation.SuppressLint
 import android.app.Application
 import android.arch.lifecycle.*
-import android.content.pm.PackageManager
-import android.support.v4.content.ContextCompat
 import com.google.android.gms.location.places.GeoDataClient
 import com.google.android.gms.location.places.PlaceDetectionClient
 import com.google.android.gms.location.places.PlaceLikelihoodBufferResponse
@@ -45,9 +44,7 @@ class PlacesAPI(val context: Application) : AndroidViewModel(context),
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     fun connect() {
-        info {
-            "ON_CREATE ⇢ PlacesAPIClients.connect() ✅"
-        }
+        info { "ON_CREATE ⇢ PlacesAPIClients.connect() ✅" }
         geoDataClient = Places.getGeoDataClient(context)
         placeDetectionClient = Places.getPlaceDetectionClient(context)
 
@@ -63,9 +60,7 @@ class PlacesAPI(val context: Application) : AndroidViewModel(context),
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun cleanup() {
         context.toast("cleanup()")
-        info {
-            "PlacesAPIClients.cleanup()"
-        }
+        info { "PlacesAPIClients.cleanup()" }
         destroyExecutor()
     }
 
@@ -79,30 +74,37 @@ class PlacesAPI(val context: Application) : AndroidViewModel(context),
         executor.shutdown()
     }
 
+    @SuppressLint("MissingPermission")
     fun getCurrentPlace() {
-        if (ContextCompat.checkSelfPermission(context,
-                                              Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
+        if (isPermissionGranted(context, ACCESS_FINE_LOCATION)) {
             // Permission is granted 🙌
-            placeDetectionClient.getCurrentPlace(null).apply {
-                addOnCompleteListener(executor, OnCompleteListener { task ->
-                    if (task.getResult() != null)
-                        processPlacelikelihoodBuffer(task.getResult()!!)
-                })
+            placeDetectionClient.getCurrentPlace(null).let { task ->
+                // Run this in background thread
+                task.addOnCompleteListener(
+                    executor,
+                    OnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            processPlacelikelihoodBuffer(task.result)
+                            task.result.release()
+                        } else {
+                            info { "⚠️ Task failed with exception ${task.exception}" }
+                        }
+                    })
             }
-
         }
 
     }
 
-    // This runs in background thread
+    // Note - This runs in background thread
+    // PlaceLikelihoodBufferResponse docs - http://tinyurl.com/y9y9jl3d
     private fun processPlacelikelihoodBuffer(likeyPlaces: PlaceLikelihoodBufferResponse) {
-        val outputString = StringBuilder()
-        likeyPlaces.forEach { placeLikelihood ->
-            outputString.append("📌 ${placeLikelihood.place.name} 🤷 ${placeLikelihood.likelihood}️")
+        val outputList = mutableListOf<String>()
+        val count = likeyPlaces.count
+        for (index in 0 until count) {
+            val placeLikelihood = likeyPlaces.get(index)
+            outputList.add("📌 ${placeLikelihood.place.name} 🤷 ${placeLikelihood.likelihood}️")
         }
-        likeyPlaces.release()
-        currentPlaceData.postValue(outputString.toString())
+        currentPlaceData.postValue(outputList.joinToString("\n"))
     }
 
 }

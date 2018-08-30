@@ -18,34 +18,48 @@ package com.google.api.places.places_api_poc
 
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
+import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_driver.*
+import org.jetbrains.anko.AnkoLogger
 
-class DriverActivity : AppCompatActivity() {
-
-    private val onNavigationItemSelectedListener =
-            BottomNavigationView.OnNavigationItemSelectedListener { item ->
-                when (item.itemId) {
-                    R.id.navigation_tab1 -> {
-                        message.setText(R.string.title_tab1)
-                        return@OnNavigationItemSelectedListener true
-                    }
-                    R.id.navigation_tab2 -> {
-                        message.setText(R.string.title_tab2)
-                        return@OnNavigationItemSelectedListener true
-                    }
-                    R.id.navigation_tab3 -> {
-                        message.setText(R.string.title_tab3)
-                        return@OnNavigationItemSelectedListener true
-                    }
-                }
-                return@OnNavigationItemSelectedListener false
-            }
+class DriverActivity : AppCompatActivity(), AnkoLogger {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_driver)
 
+        // Enable bottom bar navigation to respond to user input
         navigation.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener)
+
+        // Pre-select the first fragment
+        switchFragment(R.id.navigation_tab1)
     }
+
+    // Handle user input on bottom bar navigation
+    private val onNavigationItemSelectedListener =
+            BottomNavigationView.OnNavigationItemSelectedListener { item ->
+                val id = item.itemId
+                if (id in fragmentMap.keys) {
+                    switchFragment(id)
+                    return@OnNavigationItemSelectedListener true
+                } else return@OnNavigationItemSelectedListener false
+            }
+
+    // Manage creating and switching Fragments
+    private val fragmentMap = mutableMapOf<Int, Fragment>().apply {
+        put(R.id.navigation_tab1, Tab1Fragment())
+        put(R.id.navigation_tab2, Tab2Fragment())
+        put(R.id.navigation_tab3, Tab3Fragment())
+    }
+
+    private fun switchFragment(id: Int) {
+        supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.frame_fragmentholder,
+                         fragmentMap[id])
+                .addToBackStack(null)
+                .commit()
+    }
+
 }

@@ -19,7 +19,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Tab1Fragment">
+    tools:context=".Tab2Fragment">
 
     <TextView
         android:id="@+id/message"
@@ -29,6 +29,6 @@
         android:layout_marginStart="@dimen/activity_horizontal_margin"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:text="@string/title_tab1" />
+        android:text="@string/title_tab2" />
 
 </FrameLayout>

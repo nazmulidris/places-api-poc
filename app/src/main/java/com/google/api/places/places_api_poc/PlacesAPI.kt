@@ -111,4 +111,5 @@ class PlacesAPI(val context: Application) : AndroidViewModel(context),
         }
     }
 
+
 }

@@ -25,9 +25,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_tab1.*
+import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.info
 import org.jetbrains.anko.sdk25.coroutines.onClick
 
-class Tab1Fragment : Fragment() {
+class Tab1Fragment : Fragment(), AnkoLogger {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +41,10 @@ class Tab1Fragment : Fragment() {
 
     private fun setupViewModel() {
         // Load ViewModel
-        placesAPIViewModel = ViewModelProviders.of(this).get(PlacesAPI::class.java)
+        // 🛑 Note - You **must** pass activity scope, in order to get this ViewModel, and if you
+        // pass the fragment instance, then you won't get the ViewModel that was attached w/ the
+        // parent activity (DriverActivity)
+        placesAPIViewModel = ViewModelProviders.of(activity).get(PlacesAPI::class.java)
     }
 
     // Inflate the layout
@@ -76,7 +81,8 @@ class Tab1Fragment : Fragment() {
         }
         // Attach LiveData observers for current_place_text
         placesAPIViewModel.currentPlaceData.observe(this, Observer {
-            this.current_place_text_fragment.text = it ?: "n/a"
+            info { "🎉observable reacting -> $it" }
+            current_place_text_fragment.text = it ?: "n/a"
         })
     }
 

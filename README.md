@@ -5,13 +5,13 @@ so this is a private repo.
 
 # API keys
 
-## 1. From Google API console
+## 1. Get API key from Google API console
 Create a new project and get an API key for Places API.
 - [Google API Console](https://console.developers.google.com/flows/enableapi?apiid=placesandroid&reusekey=true)
     - Create a new key for your project (new or existing)
     - Copy the key and paste it in `strings.xml` in the `places_api_key` resource
 
-## 2. Bind your app's SHA-1 fingerprint and package name
+## 2. Save your app's SHA-1 fingerprint and package name to Google API console
 Bind this APK with the project in Google APIs console by creating an Android
 restriction (this type of API key is required by Places API).
 

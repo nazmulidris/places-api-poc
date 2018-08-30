@@ -17,7 +17,6 @@
 package com.google.api.places.places_api_poc
 
 import android.Manifest.permission.ACCESS_FINE_LOCATION
-import android.annotation.SuppressLint
 import android.app.Application
 import android.arch.lifecycle.*
 import com.google.android.gms.location.places.GeoDataClient
@@ -74,7 +73,6 @@ class PlacesAPI(val context: Application) : AndroidViewModel(context),
         executor.shutdown()
     }
 
-    @SuppressLint("MissingPermission")
     fun getCurrentPlace() {
         if (isPermissionGranted(context, ACCESS_FINE_LOCATION)) {
             // Permission is granted 🙌
@@ -102,8 +100,11 @@ class PlacesAPI(val context: Application) : AndroidViewModel(context),
         val count = likeyPlaces.count
         for (index in 0 until count) {
             val placeLikelihood = likeyPlaces.get(index)
-            outputList.add("📌 ${placeLikelihood.place.name} 🤷 ${placeLikelihood.likelihood}️")
+            val name = placeLikelihood.place.name
+            val confidence = placeLikelihood.likelihood
+            outputList.add("${name}, ${confidence}")
         }
+        info { outputList.joinToString("\n") }
         currentPlaceData.postValue(outputList.joinToString("\n"))
     }
 

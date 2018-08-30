@@ -16,19 +16,84 @@
 
 package com.google.api.places.places_api_poc
 
+import android.Manifest
+import android.arch.lifecycle.ViewModelProviders
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_driver.*
 import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.info
+import org.jetbrains.anko.toast
 
 class DriverActivity : AppCompatActivity(), AnkoLogger {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_driver)
+        setupFragments()
+        setupViewModel()
+    }
 
+    // Manage runtime permissions for ACCESS_FINE_LOCATION
+    // Constant required when dealing with asking user for permission grant
+    val REQUEST_ACCESS_FINE_LOCATION_FOR_GET_CURRENT_PLACE = 1234
+
+    fun requestPermissionAndGetCurrentPlace(placesAPIViewModel: PlacesAPI) {
+        if (isPermissionDenied(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+            // Permission is not granted ☹. Ask the user for the run time permission 🙏
+            info { "PlacesAPI ⇢ ACCESS_FINE_LOCATION permission not granted 🛑, make request 🙏️" }
+            requestPermission(this,
+                              Manifest.permission.ACCESS_FINE_LOCATION,
+                              REQUEST_ACCESS_FINE_LOCATION_FOR_GET_CURRENT_PLACE)
+        } else {
+            // Permission is granted 🙌
+            actuallyGetCurrentPlace()
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int,
+                                            permissions: Array<String>,
+                                            grantResults: IntArray) {
+        when (requestCode) {
+            REQUEST_ACCESS_FINE_LOCATION_FOR_GET_CURRENT_PLACE -> {
+                // If request is cancelled, the result arrays are empty.
+                if ((grantResults.isNotEmpty() && grantResults[0] ==
+                                PackageManager.PERMISSION_GRANTED)) {
+                    // permission was granted, 🎉
+                    actuallyGetCurrentPlace()
+                } else {
+                    // permission denied, ☹
+                    toast("☠ This app will not function without this permission")
+                }
+                return
+            }
+            // Add other 'when' lines to check for other permissions this app might request.
+            else -> {
+                // Ignore all other requests.
+            }
+        }
+    }
+
+    private fun actuallyGetCurrentPlace() {
+        info { "PlacesAPI ⇢ Permission granted 🙌, PlaceDetectionClient.getCurrentPlace() ✅" }
+        placesAPIViewModel.getCurrentPlace()
+    }
+
+    // Manage ViewModels (which encapsulate Places API clients)
+    private lateinit var placesAPIViewModel: PlacesAPI
+
+    private fun setupViewModel() {
+        // Create the ViewModel which acts as my proxy to the Places API client(s)
+        placesAPIViewModel = ViewModelProviders.of(this).get(PlacesAPI::class.java)
+        // Connect to the Places API
+        lifecycle.addObserver(placesAPIViewModel)
+    }
+
+    // Manage creating and switching Fragments
+    fun setupFragments() {
         // Enable bottom bar navigation to respond to user input
         navigation.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener)
 
@@ -36,17 +101,6 @@ class DriverActivity : AppCompatActivity(), AnkoLogger {
         switchFragment(R.id.navigation_tab1)
     }
 
-    // Handle user input on bottom bar navigation
-    private val onNavigationItemSelectedListener =
-            BottomNavigationView.OnNavigationItemSelectedListener { item ->
-                val id = item.itemId
-                if (id in fragmentMap.keys) {
-                    switchFragment(id)
-                    return@OnNavigationItemSelectedListener true
-                } else return@OnNavigationItemSelectedListener false
-            }
-
-    // Manage creating and switching Fragments
     private val fragmentMap = mutableMapOf<Int, Fragment>().apply {
         put(R.id.navigation_tab1, Tab1Fragment())
         put(R.id.navigation_tab2, Tab2Fragment())
@@ -61,5 +115,15 @@ class DriverActivity : AppCompatActivity(), AnkoLogger {
                 .addToBackStack(null)
                 .commit()
     }
+
+    // Handle user input on bottom bar navigation
+    private val onNavigationItemSelectedListener =
+            BottomNavigationView.OnNavigationItemSelectedListener { item ->
+                val id = item.itemId
+                if (id in fragmentMap.keys) {
+                    switchFragment(id)
+                    return@OnNavigationItemSelectedListener true
+                } else return@OnNavigationItemSelectedListener false
+            }
 
 }

@@ -16,17 +16,68 @@
 
 package com.google.api.places.places_api_poc
 
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
+import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import kotlinx.android.synthetic.main.fragment_tab1.*
+import org.jetbrains.anko.sdk25.coroutines.onClick
 
 class Tab1Fragment : Fragment() {
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setupViewModel()
+    }
+
+    // Access shared ViewModel
+    private lateinit var placesAPIViewModel: PlacesAPI
+
+    private fun setupViewModel() {
+        // Load ViewModel
+        placesAPIViewModel = ViewModelProviders.of(this).get(PlacesAPI::class.java)
+    }
+
+    // Inflate the layout
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_tab1, container, false)
+
     }
+
+    // Access parent activity (DriverActivity)
+    private var parentActivity: DriverActivity? = null
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        parentActivity = context as DriverActivity
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        parentActivity = null
+    }
+
+    // Bind things to the UI
+    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        attachToUI()
+    }
+
+    private fun attachToUI() {
+        // Attach a behavior to the button
+        button_current_place_fragment.onClick {
+            parentActivity?.requestPermissionAndGetCurrentPlace(placesAPIViewModel)
+        }
+        // Attach LiveData observers for current_place_text
+        placesAPIViewModel.currentPlaceData.observe(this, Observer {
+            this.current_place_text_fragment.text = it ?: "n/a"
+        })
+    }
+
 }

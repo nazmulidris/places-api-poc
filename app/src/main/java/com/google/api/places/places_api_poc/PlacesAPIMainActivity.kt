@@ -47,7 +47,7 @@ class PlacesAPIMainActivity : AppCompatActivity(), AnkoLogger {
             this.place_picker_text.text = it ?: "n/a"
         })
 
-        // Attach LiveData observers for place_picker_text
+        // Attach LiveData observers for current_place_text
         placesAPIViewModel.currentPlaceData.observe(this, Observer {
             this.current_place_text.text = it ?: "n/a"
         })

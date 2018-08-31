@@ -57,3 +57,8 @@ will throw an error like [this](https://stackoverflow.com/questions/47279161/run
 
 ## Android UI
 - [Bottom bar navigation](http://blog.iamsuleiman.com/using-bottom-navigation-view-android-design-support-library/)
+- [CoordinatorLayout and FAB](https://www.androidauthority.com/using-coordinatorlayout-android-apps-703720/)
+- [FAB](https://developer.android.com/guide/topics/ui/floating-action-button)
+
+## Material Design Android Theme colors
+- [Android color theming Material Design](https://material.io/develop/android/theming/color/)

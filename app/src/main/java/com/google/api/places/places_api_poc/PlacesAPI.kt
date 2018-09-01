@@ -17,6 +17,7 @@
 package com.google.api.places.places_api_poc
 
 import android.Manifest.permission.ACCESS_FINE_LOCATION
+import android.annotation.SuppressLint
 import android.app.Application
 import android.arch.lifecycle.*
 import com.google.android.gms.location.places.GeoDataClient
@@ -31,7 +32,7 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 class PlacesAPI(val context: Application) : AndroidViewModel(context),
-        LifecycleObserver, AnkoLogger {
+                                            LifecycleObserver, AnkoLogger {
     // Client for geo data
     lateinit var geoDataClient: GeoDataClient
     // Client for place detection
@@ -73,6 +74,7 @@ class PlacesAPI(val context: Application) : AndroidViewModel(context),
         executor.shutdown()
     }
 
+    @SuppressLint("MissingPermission")
     fun getCurrentPlace() {
         if (isPermissionGranted(context, ACCESS_FINE_LOCATION)) {
             // Permission is granted 🙌

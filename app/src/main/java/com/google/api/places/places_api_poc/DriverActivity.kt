@@ -16,7 +16,7 @@
 
 package com.google.api.places.places_api_poc
 
-import android.Manifest
+import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.arch.lifecycle.ViewModelProviders
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -39,15 +39,13 @@ class DriverActivity : AppCompatActivity(), AnkoLogger {
 
     // Manage runtime permissions for ACCESS_FINE_LOCATION
     // Constant required when dealing with asking user for permission grant
-    val REQUEST_ACCESS_FINE_LOCATION_FOR_GET_CURRENT_PLACE = 1234
+    val PERMISSION_ID = 1234
 
-    fun requestPermissionAndGetCurrentPlace(placesAPIViewModel: PlacesAPI) {
-        if (isPermissionDenied(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+    fun requestPermissionAndGetCurrentPlace() {
+        if (isPermissionDenied(this, ACCESS_FINE_LOCATION)) {
             // Permission is not granted ☹. Ask the user for the run time permission 🙏
             info { "PlacesAPI ⇢ ACCESS_FINE_LOCATION permission not granted 🛑, make request 🙏️" }
-            requestPermission(this,
-                              Manifest.permission.ACCESS_FINE_LOCATION,
-                              REQUEST_ACCESS_FINE_LOCATION_FOR_GET_CURRENT_PLACE)
+            requestPermission(this, ACCESS_FINE_LOCATION, PERMISSION_ID)
         } else {
             // Permission is granted 🙌
             actuallyGetCurrentPlace()
@@ -58,7 +56,7 @@ class DriverActivity : AppCompatActivity(), AnkoLogger {
                                             permissions: Array<String>,
                                             grantResults: IntArray) {
         when (requestCode) {
-            REQUEST_ACCESS_FINE_LOCATION_FOR_GET_CURRENT_PLACE -> {
+            PERMISSION_ID -> {
                 // If request is cancelled, the result arrays are empty.
                 if ((grantResults.isNotEmpty() && grantResults[0] ==
                                 PackageManager.PERMISSION_GRANTED)) {
@@ -71,7 +69,7 @@ class DriverActivity : AppCompatActivity(), AnkoLogger {
                 return
             }
             // Add other 'when' lines to check for other permissions this app might request.
-            else -> {
+            else          -> {
                 // Ignore all other requests.
             }
         }

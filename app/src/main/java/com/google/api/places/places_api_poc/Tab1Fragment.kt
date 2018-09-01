@@ -83,7 +83,7 @@ class Tab1Fragment : Fragment(), AnkoLogger {
     private fun attachToUI() {
         // Attach a behavior to the button
         button_current_place_fragment.onClick {
-            parentActivity?.requestPermissionAndGetCurrentPlace(placesAPIViewModel)
+            parentActivity?.requestPermissionAndGetCurrentPlace()
         }
         // Attach LiveData observers for current_place_text
         placesAPIViewModel.currentPlaceData.observe(this, Observer {

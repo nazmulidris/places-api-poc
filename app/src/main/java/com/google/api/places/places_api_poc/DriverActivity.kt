@@ -69,7 +69,7 @@ class DriverActivity : AppCompatActivity(), AnkoLogger {
                 return
             }
             // Add other 'when' lines to check for other permissions this app might request.
-            else          -> {
+            else -> {
                 // Ignore all other requests.
             }
         }

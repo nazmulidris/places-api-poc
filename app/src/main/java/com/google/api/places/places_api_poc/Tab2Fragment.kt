@@ -16,27 +16,13 @@
 
 package com.google.api.places.places_api_poc
 
-import android.arch.lifecycle.ViewModelProviders
-import android.content.Context
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import kotlinx.android.synthetic.main.fragment_tab2.*
 
-class Tab2Fragment : Fragment() {
-
-    // Access shared ViewModel
-    private lateinit var placesAPIViewModel: PlacesAPI
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setupViewModel()
-    }
-
-    private fun setupViewModel(){
-        placesAPIViewModel = ViewModelProviders.of(this).get(PlacesAPI::class.java)
-    }
+class Tab2Fragment : BaseTabFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -44,17 +30,8 @@ class Tab2Fragment : Fragment() {
         return inflater.inflate(R.layout.fragment_tab2, container, false)
     }
 
-    // Access parent activity (DriverActivity)
-    private var parentActivity: DriverActivity? = null
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        parentActivity = context as DriverActivity
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        parentActivity = null
+    override fun attachToUI() {
+        ThemedSnackbar.show(fragment_container_tab2, "👍 Tab2")
     }
 
 }

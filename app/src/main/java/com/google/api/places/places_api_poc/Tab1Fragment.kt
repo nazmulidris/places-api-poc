@@ -17,10 +17,7 @@
 package com.google.api.places.places_api_poc
 
 import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
-import android.content.Context
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,61 +26,20 @@ import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 import org.jetbrains.anko.sdk25.coroutines.onClick
 
-class Tab1Fragment : Fragment(), AnkoLogger {
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setupViewModel()
-    }
-
-    // Access shared ViewModel
-    private lateinit var placesAPIViewModel: PlacesAPI
-
-    private fun setupViewModel() {
-        // Load ViewModel.
-        // 🛑 Note - You **must** pass activity scope, in order to get this ViewModel,
-        // and if you pass the fragment instance, then you won't get the ViewModel that
-        // was attached w/ the parent activity (DriverActivity).
-        placesAPIViewModel = ViewModelProviders.of(requireActivity()).get(PlacesAPI::class.java)
-    }
+class Tab1Fragment : BaseTabFragment(), AnkoLogger {
 
     // Inflate the layout.
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_tab1, container, false)
-
     }
 
-    // Access parent activity (DriverActivity).
-    private var parentActivity: DriverActivity? = null
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        parentActivity = context as DriverActivity
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        parentActivity = null
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        attachToUI()
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        placesAPIViewModel.currentPlaceData.removeObservers(this)
-        info { "🛑 removing observers" }
-    }
-
-    private fun attachToUI() {
+    override fun attachToUI() {
         // Attach a behavior to the button.
         button_current_place_fragment.onClick {
 
-            parentActivity?.executeTaskOnPermissionGranted(
+            getParentActivity().executeTaskOnPermissionGranted(
                 object : PermissionDependentTask {
                     override fun getRequiredPermission() =
                             android.Manifest.permission.ACCESS_FINE_LOCATION

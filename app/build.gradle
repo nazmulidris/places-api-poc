@@ -27,8 +27,8 @@ ext {
     // This is why the `app_compat_version` and `sdk_version` are set to 26
     // (Oreo) and not 28 (Pie).
     places_api_version = '15.0.1'
-    app_compat_version = '26.1.0'
-    sdk_version = 26
+    app_compat_version = '27.1.1' // was 26.1.0
+    sdk_version = 28 // was 26
 }
 
 // compile, target, and AppCompat versions are Oreo (26)

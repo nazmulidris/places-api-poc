@@ -44,7 +44,7 @@ class Tab1Fragment : Fragment(), AnkoLogger {
         // 🛑 Note - You **must** pass activity scope, in order to get this ViewModel,
         // and if you pass the fragment instance, then you won't get the ViewModel that
         // was attached w/ the parent activity (DriverActivity).
-        placesAPIViewModel = ViewModelProviders.of(activity).get(PlacesAPI::class.java)
+        placesAPIViewModel = ViewModelProviders.of(requireActivity()).get(PlacesAPI::class.java)
     }
 
     // Inflate the layout.
@@ -68,9 +68,8 @@ class Tab1Fragment : Fragment(), AnkoLogger {
         parentActivity = null
     }
 
-    // Bind things to the UI.
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
         attachToUI()
     }
 

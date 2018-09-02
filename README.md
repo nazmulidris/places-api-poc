@@ -23,7 +23,24 @@ laptop or workstation that has a `~/.android` folder, you have to whitelist the
 SHA1 code for that machine's keystore. If you don't do this, then Google Play Services
 will throw an error like [this](https://stackoverflow.com/questions/47279161/runtimeexecutionexception-com-google-android-gms-common-api-apiexception-13-e).
 
-# References
+# Mysterious case of Snackbar animations not working on some devices
+
+I ran into the issue of Snackbar animations not occurring on certain devices I tested this
+app on (I tested it on Pixel XL, Pixel 2, and Pixel 2XL). The devices that were running
+Lastpass had a strange behavior of Snackbars not animation when they were shown (they are
+supposed to animation and move the FAB out of the way when they appear and disappear).
+
+Turns out the reason for this is that when Accessibility Services (Talkback) is turned on,
+this triggers a bug in the Snackbar codebase, which prevents the animation from showing.
+1. [More info on SO](https://stackoverflow.com/a/37233527/2085356)
+1. [The bug](https://issuetracker.google.com/issues/37092972#c2)
+
+The current solution is to use M2 (Material Design 2) components for Android, which are in
+alpha (as of Sep 2, 2018). To get started w/ M2 for Android, here are some links. It looks
+promising, as themeing is getting fixed along with quite a few bugs.
+
+1. [Material Design 2 Components for Android, Getting Started](http://tinyurl.com/yak2s4jo)
+1. [Material Design 2 Components for Android, Theming](http://tinyurl.com/y7rs6f6z)
 
 ## Places API Documentation links
 - [Get started w/ the Android API](https://developers.google.com/places/android-sdk/start)

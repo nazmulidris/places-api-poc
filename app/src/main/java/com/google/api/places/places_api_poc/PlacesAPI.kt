@@ -32,7 +32,7 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 class PlacesAPI(val context: Application) : AndroidViewModel(context),
-                                            LifecycleObserver, AnkoLogger {
+        LifecycleObserver, AnkoLogger {
     // Client for geo data
     lateinit var geoDataClient: GeoDataClient
     // Client for place detection
@@ -42,6 +42,7 @@ class PlacesAPI(val context: Application) : AndroidViewModel(context),
     // LiveData for current place API responses
     val currentPlaceData = MutableLiveData<String>()
 
+    // Lifecycle hooks.
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     fun connect() {
         info { "ON_CREATE ⇢ PlacesAPIClients.connect() ✅" }
@@ -64,6 +65,7 @@ class PlacesAPI(val context: Application) : AndroidViewModel(context),
         destroyExecutor()
     }
 
+    // Manage background execution.
     lateinit var executor: ExecutorService
 
     fun createExecutor() {
@@ -74,10 +76,14 @@ class PlacesAPI(val context: Application) : AndroidViewModel(context),
         executor.shutdown()
     }
 
+    /**
+     * This function won't execute if FINE_ACCESS_LOCATION permission is not granted.
+     */
     @SuppressLint("MissingPermission")
     fun getCurrentPlace() {
         if (isPermissionGranted(context, ACCESS_FINE_LOCATION)) {
-            // Permission is granted 🙌
+            // Permission is granted 🙌.
+            info { "PlacesAPI ⇢ PlaceDetectionClient.getCurrentPlace() ✅" }
             placeDetectionClient.getCurrentPlace(null).let { task ->
                 // Run this in background thread
                 task.addOnCompleteListener(
@@ -95,8 +101,10 @@ class PlacesAPI(val context: Application) : AndroidViewModel(context),
 
     }
 
-    // Note - This runs in background thread
-    // PlaceLikelihoodBufferResponse docs - http://tinyurl.com/y9y9jl3d
+    /**
+     * This runs in the background thread.
+     * [PlaceLikelihoodBufferResponse docs](http://tinyurl.com/y9y9jl3d).
+     */
     private fun processPlacelikelihoodBuffer(likeyPlaces: PlaceLikelihoodBufferResponse) {
         val outputList = mutableListOf<String>()
         val count = likeyPlaces.count

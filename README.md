@@ -63,3 +63,7 @@ will throw an error like [this](https://stackoverflow.com/questions/47279161/run
 ## Material Design Android Theme colors
 - [Android color theming Material Design](https://material.io/develop/android/theming/color/)
 - [Material Design color picker tool](https://material.io/tools/color/#!/)
+- [Applying theme colors to Snackbar](https://www.viralandroid.com/2015/08/android-snackbar-design-support-library.html)
+
+## Kotlin and higher order functions
+- [Passing functions as arguments](https://discuss.kotlinlang.org/t/how-to-pass-a-function-as-parameter-to-another/848)

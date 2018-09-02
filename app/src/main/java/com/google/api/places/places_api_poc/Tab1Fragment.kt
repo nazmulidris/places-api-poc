@@ -40,14 +40,14 @@ class Tab1Fragment : Fragment(), AnkoLogger {
     private lateinit var placesAPIViewModel: PlacesAPI
 
     private fun setupViewModel() {
-        // Load ViewModel
-        // 🛑 Note - You **must** pass activity scope, in order to get this ViewModel, and if you
-        // pass the fragment instance, then you won't get the ViewModel that was attached w/ the
-        // parent activity (DriverActivity)
+        // Load ViewModel.
+        // 🛑 Note - You **must** pass activity scope, in order to get this ViewModel,
+        // and if you pass the fragment instance, then you won't get the ViewModel that
+        // was attached w/ the parent activity (DriverActivity).
         placesAPIViewModel = ViewModelProviders.of(activity).get(PlacesAPI::class.java)
     }
 
-    // Inflate the layout
+    // Inflate the layout.
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -55,7 +55,7 @@ class Tab1Fragment : Fragment(), AnkoLogger {
 
     }
 
-    // Access parent activity (DriverActivity)
+    // Access parent activity (DriverActivity).
     private var parentActivity: DriverActivity? = null
 
     override fun onAttach(context: Context) {
@@ -68,7 +68,7 @@ class Tab1Fragment : Fragment(), AnkoLogger {
         parentActivity = null
     }
 
-    // Bind things to the UI
+    // Bind things to the UI.
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         attachToUI()
@@ -81,11 +81,30 @@ class Tab1Fragment : Fragment(), AnkoLogger {
     }
 
     private fun attachToUI() {
-        // Attach a behavior to the button
+        // Attach a behavior to the button.
         button_current_place_fragment.onClick {
-            parentActivity?.requestPermissionAndGetCurrentPlace()
+
+            parentActivity?.executeTaskOnPermissionGranted(
+                object : PermissionDependentTask {
+                    override fun getRequiredPermission() =
+                            android.Manifest.permission.ACCESS_FINE_LOCATION
+
+                    override fun onPermissionGranted() {
+                        placesAPIViewModel.getCurrentPlace()
+                        ThemedSnackbar.show(
+                            fragment_container_tab1,
+                            "❤️ This app will function well with this permission")
+                    }
+
+                    override fun onPermissionRevoked() {
+                        ThemedSnackbar.show(
+                            fragment_container_tab1,
+                            "🛑 This app will not function without this permission")
+                    }
+                })
         }
-        // Attach LiveData observers for current_place_text
+
+        // Attach LiveData observers for current_place_text.
         placesAPIViewModel.currentPlaceData.observe(this, Observer {
             info { "🎉observable reacting -> $it" }
             current_place_text_fragment.text = it ?: "n/a"

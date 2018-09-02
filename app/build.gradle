@@ -56,6 +56,7 @@ dependencies {
 
     // Add Anko (logging, UI)
     implementation "org.jetbrains.anko:anko:$anko_version"
+    implementation "org.jetbrains.anko:anko-design:$anko_version" // SnackBars
 
     // Add Architecture Components (ViewModel, LiveData)
     implementation "android.arch.lifecycle:extensions:$lifecycle_version"

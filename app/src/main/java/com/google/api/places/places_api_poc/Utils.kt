@@ -1,0 +1,53 @@
+/*
+ * Copyright 2018 Nazmul Idris. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.google.api.places.places_api_poc
+
+import android.content.Context
+import android.support.design.widget.Snackbar
+import android.util.TypedValue
+import android.view.View
+
+object ThemedSnackbar {
+
+    fun show(containerView: View, message: CharSequence, duration: Int = Snackbar.LENGTH_SHORT) {
+        Snackbar.make(containerView, message, duration).apply {
+            setActionTextColor(
+                get(containerView.context, android.R.attr.textColorPrimary)
+            )
+            view.setBackgroundColor(
+                get(containerView.context, android.R.attr.colorPrimary)
+            )
+        }.show()
+    }
+
+    fun show(containerView: View, resId: Int, duration: Int) {
+        show(containerView, containerView.resources.getText(resId), duration)
+    }
+
+    private fun get(context: Context, resId: Int): Int {
+        val typedValue = TypedValue()
+        context.theme.resolveAttribute(resId, typedValue, true)
+        return typedValue.data
+    }
+
+}
+
+interface PermissionDependentTask {
+    fun getRequiredPermission(): String
+    fun onPermissionGranted()
+    fun onPermissionRevoked()
+}

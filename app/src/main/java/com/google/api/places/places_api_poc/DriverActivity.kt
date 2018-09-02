@@ -16,7 +16,6 @@
 
 package com.google.api.places.places_api_poc
 
-import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.arch.lifecycle.ViewModelProviders
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -26,7 +25,6 @@ import android.support.v7.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_driver.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
-import org.jetbrains.anko.toast
 
 class DriverActivity : AppCompatActivity(), AnkoLogger {
 
@@ -37,18 +35,23 @@ class DriverActivity : AppCompatActivity(), AnkoLogger {
         setupViewModel()
     }
 
-    // Manage runtime permissions for ACCESS_FINE_LOCATION
-    // Constant required when dealing with asking user for permission grant
+    // Manage runtime permissions for ACCESS_FINE_LOCATION.
+    // Constant required when dealing with asking user for permission grant.
     val PERMISSION_ID = 1234
 
-    fun requestPermissionAndGetCurrentPlace() {
-        if (isPermissionDenied(this, ACCESS_FINE_LOCATION)) {
-            // Permission is not granted ☹. Ask the user for the run time permission 🙏
-            info { "PlacesAPI ⇢ ACCESS_FINE_LOCATION permission not granted 🛑, make request 🙏️" }
-            requestPermission(this, ACCESS_FINE_LOCATION, PERMISSION_ID)
+    // Holds one pending task that will be run if permission is granted.
+    private var pendingTask: PermissionDependentTask? = null
+
+    fun executeTaskOnPermissionGranted(task: PermissionDependentTask) {
+        if (isPermissionDenied(this, task.getRequiredPermission())) {
+            // Permission is not granted ☹. Ask the user for the run time permission 🙏.
+            info { "🔒 ${task.getRequiredPermission()} not granted 🛑, request it 🙏️" }
+            requestPermission(this, task.getRequiredPermission(), PERMISSION_ID)
+            if (pendingTask == null) pendingTask = task
         } else {
-            // Permission is granted 🙌
-            actuallyGetCurrentPlace()
+            // Permission is granted 🙌. Run the task function.
+            info { "🔒 ${task.getRequiredPermission()} permission granted 🙌, Execute pendingTask" }
+            task.onPermissionGranted()
         }
     }
 
@@ -60,11 +63,15 @@ class DriverActivity : AppCompatActivity(), AnkoLogger {
                 // If request is cancelled, the result arrays are empty.
                 if ((grantResults.isNotEmpty() && grantResults[0] ==
                                 PackageManager.PERMISSION_GRANTED)) {
-                    // permission was granted, 🎉
-                    actuallyGetCurrentPlace()
+                    // Permission was granted, 🎉. Run the pending task function.
+                    if (pendingTask != null) {
+                        info { "🔒 Permission is granted 🙌, Execute pendingTask" }
+                        pendingTask?.onPermissionGranted()
+                        pendingTask = null
+                    }
                 } else {
-                    // permission denied, ☹
-                    toast("☠ This app will not function without this permission")
+                    // Permission denied, ☹.
+                    pendingTask?.onPermissionRevoked()
                 }
                 return
             }
@@ -75,27 +82,18 @@ class DriverActivity : AppCompatActivity(), AnkoLogger {
         }
     }
 
-    private fun actuallyGetCurrentPlace() {
-        info { "PlacesAPI ⇢ Permission granted 🙌, PlaceDetectionClient.getCurrentPlace() ✅" }
-        placesAPIViewModel.getCurrentPlace()
-    }
-
-    // Manage ViewModels (which encapsulate Places API clients)
-    private lateinit var placesAPIViewModel: PlacesAPI
-
     private fun setupViewModel() {
-        // Create the ViewModel which acts as my proxy to the Places API client(s)
-        placesAPIViewModel = ViewModelProviders.of(this).get(PlacesAPI::class.java)
-        // Connect to the Places API
+        // Create the ViewModel which acts as a proxy to the Places API client(s).
+        var placesAPIViewModel = ViewModelProviders.of(this).get(PlacesAPI::class.java)
+        // Connect to the Places API.
         lifecycle.addObserver(placesAPIViewModel)
     }
 
-    // Manage creating and switching Fragments
+    // Manage creating and switching Fragments.
     fun setupFragments() {
-        // Enable bottom bar navigation to respond to user input
+        // Enable bottom bar navigation to respond to user input.
         navigation.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener)
-
-        // Pre-select the first fragment
+        // Pre-select the first fragment.
         switchFragment(R.id.navigation_tab1)
     }
 
@@ -108,13 +106,13 @@ class DriverActivity : AppCompatActivity(), AnkoLogger {
     private fun switchFragment(id: Int) {
         supportFragmentManager
                 .beginTransaction()
-                .replace(R.id.frame_fragmentholder,
+                .replace(R.id.container_fragment,
                          fragmentMap[id])
                 .addToBackStack(null)
                 .commit()
     }
 
-    // Handle user input on bottom bar navigation
+    // Handle user input on bottom bar navigation.
     private val onNavigationItemSelectedListener =
             BottomNavigationView.OnNavigationItemSelectedListener { item ->
                 val id = item.itemId

@@ -61,7 +61,7 @@ supposed to animation and move the FAB out of the way when they appear and disap
 Turns out the reason for this is that when Accessibility Services (Talkback) is turned on,
 this triggers a bug in the Snackbar codebase, which prevents the animation from showing.
 1. [More info on SO](https://stackoverflow.com/a/37233527/2085356)
-1. [The bug](https://issuetracker.google.com/issues/37092972#c2)
+1. [🕷 The bug](https://issuetracker.google.com/issues/37092972#c2)
 
 The current solution is to use M2 (Material Design 2) components for Android, which are in
 alpha (as of Sep 2, 2018). To get started w/ M2 for Android, here are some links. It looks
@@ -72,7 +72,7 @@ promising, as themeing is getting fixed along with quite a few bugs.
 
 ### Snackbar theming
 With the current implementation of the Design Support lib (and the Material Design Components
-AndroidX library) there's a [bug in Snackbar](https://issuetracker.google.com/issues/37120757)
+AndroidX library) there's a [🕷 bug in Snackbar](https://issuetracker.google.com/issues/37120757)
 that hardcodes the background and text colors, instead of inheriting them from the current theme.
 This is planned to be addressed in the future with the [revamp of 
 theming](http://tinyurl.com/yb5equps) coming soon in Material Design Components (AndroidX library).

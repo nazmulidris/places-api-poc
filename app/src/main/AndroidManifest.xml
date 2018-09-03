@@ -31,7 +31,9 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/places_api_key" />
 
-        <activity android:name=".DriverActivity">
+        <activity
+            android:name=".DriverActivity"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

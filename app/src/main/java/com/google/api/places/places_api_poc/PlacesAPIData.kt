@@ -20,6 +20,7 @@ import android.net.Uri
 import com.google.android.gms.location.places.PlaceLikelihood
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
+import com.google.gson.GsonBuilder
 import java.util.*
 
 data class PlaceWrapper(val placeLikelihood: PlaceLikelihood) {
@@ -69,7 +70,7 @@ data class PlaceWrapper(val placeLikelihood: PlaceLikelihood) {
     }
 
     override fun toString(): String {
-        return map.values.joinToString(",", "📌 {", "}")
+        return GsonBuilder().setPrettyPrinting().create().toJson(map)
     }
 
 }

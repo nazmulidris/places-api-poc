@@ -58,7 +58,7 @@ class Tab1Fragment : BaseTabFragment() {
         // Attach LiveData observers for current_place_text.
         placesAPIViewModel.currentPlaceData.observe(this, Observer { data ->
             val outputString = data.joinToString("\n")
-            "🎉observable reacting -> $outputString".log()
+            "🎉 observable reacting -> #places=${data.size}".log()
             current_place_text_fragment.text = outputString
         })
     }

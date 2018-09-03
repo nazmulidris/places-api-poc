@@ -106,12 +106,14 @@ class DriverActivity : AppCompatActivity() {
     }
 
     private fun switchFragment(id: Int) {
-        supportFragmentManager
-                .beginTransaction()
-                .replace(R.id.container_fragment,
-                         fragmentMap[id]!!)
-                .addToBackStack(null)
-                .commit()
+        fragmentMap[id]?.let { newFragment ->
+            supportFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.container_fragment, newFragment)
+                    // To allow user to use back button to undo fragment switch uncomment this.
+                    //.addToBackStack(null)
+                    .commit()
+        }
     }
 
     // Handle user input on bottom bar navigation.

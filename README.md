@@ -87,7 +87,7 @@ that's defined in the Android Material Components (AndroidX library), and search
 
 This is the style that we have to override in order to get our app's theme to be applied to
 the Snackbar widget (without having to write any extra code to style our specific Snackbar
-widget as is shown in the code below). 
+widget as is shown in the next section). 
 
 Also, this technique can be used to override any default
 widget styles (do this with `materialButtonStyle` to change the default style of all Material

@@ -15,9 +15,7 @@
  */
 
 apply plugin: 'com.android.application'
-
 apply plugin: 'kotlin-android'
-
 apply plugin: 'kotlin-android-extensions'
 
 ext {
@@ -45,24 +43,19 @@ android {
 }
 
 dependencies {
-    def anko_version = '0.10.5'
-    def lifecycle_version = '1.1.1'
-
+    // Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation "com.android.support:appcompat-v7:$app_compat_version"
 
     // Add Google Places API
     implementation "com.google.android.gms:play-services-places:$places_api_version"
 
-    // Add Anko (logging, UI)
-    implementation "org.jetbrains.anko:anko:$anko_version"
-    implementation "org.jetbrains.anko:anko-design:$anko_version" // SnackBars
-
     // Add Architecture Components (ViewModel, LiveData)
-    implementation "android.arch.lifecycle:extensions:$lifecycle_version"
-    annotationProcessor "android.arch.lifecycle:compiler:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-extensions:2.0.0-rc01"
+    annotationProcessor "androidx.lifecycle:lifecycle-compiler:2.0.0-rc01"
 
     // Add Material Design
-    implementation "com.android.support:design:$app_compat_version"
-    implementation "com.android.support:support-vector-drawable:$app_compat_version"
+    implementation 'com.google.android.material:material:1.0.0-rc01'
+
+    // Add Vector Drawable Support
+    implementation "androidx.vectordrawable:vectordrawable:1.0.0-rc02"
 }

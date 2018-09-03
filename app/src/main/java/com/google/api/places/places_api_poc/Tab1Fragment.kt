@@ -16,17 +16,15 @@
 
 package com.google.api.places.places_api_poc
 
-import android.arch.lifecycle.Observer
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.fragment_tab1.*
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.info
-import org.jetbrains.anko.sdk25.coroutines.onClick
 
-class Tab1Fragment : BaseTabFragment(), AnkoLogger {
+class Tab1Fragment : BaseTabFragment() {
 
     // Inflate the layout.
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -37,8 +35,7 @@ class Tab1Fragment : BaseTabFragment(), AnkoLogger {
 
     override fun attachToUI() {
         // Attach a behavior to the button.
-        button_current_place_fragment.onClick {
-
+        button_current_place_fragment.setOnClickListener { viewClicked ->
             getParentActivity().executeTaskOnPermissionGranted(
                 object : PermissionDependentTask {
                     override fun getRequiredPermission() =
@@ -60,9 +57,9 @@ class Tab1Fragment : BaseTabFragment(), AnkoLogger {
         }
 
         // Attach LiveData observers for current_place_text.
-        placesAPIViewModel.currentPlaceData.observe(this, Observer {
-            info { "🎉observable reacting -> $it" }
-            current_place_text_fragment.text = it ?: "n/a"
+        placesAPIViewModel.currentPlaceData.observe(this, Observer { data ->
+            Log.i(javaClass.name, "🎉observable reacting -> $data")
+            current_place_text_fragment.text = data ?: "n/a"
         })
     }
 

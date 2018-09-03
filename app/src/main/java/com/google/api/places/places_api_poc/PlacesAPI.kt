@@ -19,20 +19,18 @@ package com.google.api.places.places_api_poc
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.annotation.SuppressLint
 import android.app.Application
-import android.arch.lifecycle.*
+import android.util.Log
+import androidx.lifecycle.*
 import com.google.android.gms.location.places.GeoDataClient
 import com.google.android.gms.location.places.PlaceDetectionClient
 import com.google.android.gms.location.places.PlaceLikelihoodBufferResponse
 import com.google.android.gms.location.places.Places
 import com.google.android.gms.tasks.OnCompleteListener
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.info
-import org.jetbrains.anko.toast
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 class PlacesAPI(val context: Application) : AndroidViewModel(context),
-        LifecycleObserver, AnkoLogger {
+        LifecycleObserver {
     // Client for geo data
     lateinit var geoDataClient: GeoDataClient
     // Client for place detection
@@ -45,14 +43,17 @@ class PlacesAPI(val context: Application) : AndroidViewModel(context),
     // Lifecycle hooks.
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     fun connect() {
-        info { "ON_CREATE ⇢ PlacesAPIClients.connect() ✅" }
+        Log.i(javaClass.name,
+              "ON_CREATE ⇢ PlacesAPIClients.connect() ✅")
         geoDataClient = Places.getGeoDataClient(context)
         placeDetectionClient = Places.getPlaceDetectionClient(context)
 
         // Debug stuff
         placePickerData.value = "connect!"
         currentPlaceData.value = "connect!"
-        context.toast("connect() - got GetDataClient and PlaceDetectionClient")
+        Log.i(javaClass.name,
+              "💥 connect() - got GetDataClient and PlaceDetectionClient"
+              )
 
         // Create executor
         createExecutor()
@@ -60,8 +61,8 @@ class PlacesAPI(val context: Application) : AndroidViewModel(context),
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun cleanup() {
-        context.toast("cleanup()")
-        info { "PlacesAPIClients.cleanup()" }
+        Log.i(javaClass.name,
+              "🛀 PlacesAPIClients.cleanup()")
         destroyExecutor()
     }
 
@@ -83,7 +84,8 @@ class PlacesAPI(val context: Application) : AndroidViewModel(context),
     fun getCurrentPlace() {
         if (isPermissionGranted(context, ACCESS_FINE_LOCATION)) {
             // Permission is granted 🙌.
-            info { "PlacesAPI ⇢ PlaceDetectionClient.getCurrentPlace() ✅" }
+            Log.i(javaClass.name,
+                  "PlacesAPI ⇢ PlaceDetectionClient.getCurrentPlace() ✅")
             placeDetectionClient.getCurrentPlace(null).let { task ->
                 // Run this in background thread
                 task.addOnCompleteListener(
@@ -93,7 +95,8 @@ class PlacesAPI(val context: Application) : AndroidViewModel(context),
                             processPlacelikelihoodBuffer(task.result)
                             task.result.release()
                         } else {
-                            info { "⚠️ Task failed with exception ${task.exception}" }
+                            Log.i(javaClass.name,
+                                  "⚠️ Task failed with exception ${task.exception}")
                         }
                     })
             }
@@ -116,10 +119,10 @@ class PlacesAPI(val context: Application) : AndroidViewModel(context),
             }
         }
         with(outputList.joinToString("\n")) {
-            info { this }
+            Log.i(javaClass.name,
+                  this)
             currentPlaceData.postValue(this)
         }
     }
-
 
 }

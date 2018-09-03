@@ -17,9 +17,9 @@
 package com.google.api.places.places_api_poc
 
 import android.content.Context
-import android.support.design.widget.Snackbar
 import android.util.TypedValue
 import android.view.View
+import com.google.android.material.snackbar.Snackbar
 
 object ThemedSnackbar {
 

@@ -16,17 +16,16 @@
 
 package com.google.api.places.places_api_poc
 
-import android.arch.lifecycle.ViewModelProviders
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.support.design.widget.BottomNavigationView
-import android.support.v4.app.Fragment
-import android.support.v7.app.AppCompatActivity
+import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.activity_driver.*
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.info
 
-class DriverActivity : AppCompatActivity(), AnkoLogger {
+class DriverActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,12 +44,14 @@ class DriverActivity : AppCompatActivity(), AnkoLogger {
     fun executeTaskOnPermissionGranted(task: PermissionDependentTask) {
         if (isPermissionDenied(this, task.getRequiredPermission())) {
             // Permission is not granted ☹. Ask the user for the run time permission 🙏.
-            info { "🔒 ${task.getRequiredPermission()} not granted 🛑, request it 🙏️" }
+            Log.i(javaClass.name,
+                  "🔒 ${task.getRequiredPermission()} not granted 🛑, request it 🙏️")
             requestPermission(this, task.getRequiredPermission(), PERMISSION_ID)
             if (pendingTask == null) pendingTask = task
         } else {
             // Permission is granted 🙌. Run the task function.
-            info { "🔒 ${task.getRequiredPermission()} permission granted 🙌, Execute pendingTask" }
+            Log.i(javaClass.name,
+                  "🔒 ${task.getRequiredPermission()} permission granted 🙌, Execute pendingTask ")
             task.onPermissionGranted()
         }
     }
@@ -65,7 +66,8 @@ class DriverActivity : AppCompatActivity(), AnkoLogger {
                                 PackageManager.PERMISSION_GRANTED)) {
                     // Permission was granted, 🎉. Run the pending task function.
                     if (pendingTask != null) {
-                        info { "🔒 Permission is granted 🙌, Execute pendingTask" }
+                        Log.i(javaClass.name,
+                              "🔒 Permission is granted 🙌, Execute pendingTask")
                         pendingTask?.onPermissionGranted()
                         pendingTask = null
                     }
@@ -107,7 +109,7 @@ class DriverActivity : AppCompatActivity(), AnkoLogger {
         supportFragmentManager
                 .beginTransaction()
                 .replace(R.id.container_fragment,
-                         fragmentMap[id])
+                         fragmentMap[id]!!)
                 .addToBackStack(null)
                 .commit()
     }

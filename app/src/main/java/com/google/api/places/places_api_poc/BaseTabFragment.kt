@@ -16,12 +16,11 @@
 
 package com.google.api.places.places_api_poc
 
-import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import org.jetbrains.anko.AnkoLogger
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 
-open class BaseTabFragment : Fragment(), AnkoLogger {
+open class BaseTabFragment : Fragment() {
 
     // Access shared ViewModel
     lateinit var placesAPIViewModel: PlacesAPI
@@ -36,7 +35,7 @@ open class BaseTabFragment : Fragment(), AnkoLogger {
         // 🛑 Note - You **must** pass activity scope, in order to get this ViewModel,
         // and if you pass the fragment instance, then you won't get the ViewModel that
         // was attached w/ the parent activity (DriverActivity).
-        placesAPIViewModel = ViewModelProviders.of(getParentActivity()).get(PlacesAPI::class.java)
+        placesAPIViewModel = ViewModelProviders.of(requireActivity()).get(PlacesAPI::class.java)
     }
 
     // Access parent activity (DriverActivity).

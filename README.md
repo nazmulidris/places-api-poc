@@ -84,3 +84,7 @@ promising, as themeing is getting fixed along with quite a few bugs.
 
 ## Kotlin and higher order functions
 - [Passing functions as arguments](https://discuss.kotlinlang.org/t/how-to-pass-a-function-as-parameter-to-another/848)
+
+## AndroidX
+- [Migration guide to AndroidX](https://developer.android.com/topic/libraries/support-library/refactor)
+- [Blog post](https://android-developers.googleblog.com/2018/05/hello-world-androidx.html)

@@ -43,13 +43,13 @@ class Tab1Fragment : BaseTabFragment() {
 
                     override fun onPermissionGranted() {
                         placesAPIViewModel.getCurrentPlace()
-                        ThemedSnackbar.show(
+                        showSnackbar(
                             fragment_container_tab1,
                             "❤️ This app will function well with this permission")
                     }
 
                     override fun onPermissionRevoked() {
-                        ThemedSnackbar.show(
+                        showSnackbar(
                             fragment_container_tab1,
                             "🛑 This app will not function without this permission")
                     }

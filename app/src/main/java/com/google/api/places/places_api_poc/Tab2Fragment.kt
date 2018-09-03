@@ -31,7 +31,7 @@ class Tab2Fragment : BaseTabFragment() {
     }
 
     override fun attachToUI() {
-        ThemedSnackbar.show(fragment_container_tab2, "👍 Tab2")
+        showSnackbar(fragment_container_tab2, "👍 Tab2")
     }
 
 }

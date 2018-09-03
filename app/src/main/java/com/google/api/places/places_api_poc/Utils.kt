@@ -16,38 +16,16 @@
 
 package com.google.api.places.places_api_poc
 
-import android.content.Context
-import android.util.TypedValue
 import android.view.View
 import com.google.android.material.snackbar.Snackbar
-
-object ThemedSnackbar {
-
-    fun show(containerView: View, message: CharSequence, duration: Int = Snackbar.LENGTH_SHORT) {
-        Snackbar.make(containerView, message, duration).apply {
-            setActionTextColor(
-                get(containerView.context, android.R.attr.textColorPrimary)
-            )
-            view.setBackgroundColor(
-                get(containerView.context, android.R.attr.colorPrimary)
-            )
-        }.show()
-    }
-
-    fun show(containerView: View, resId: Int, duration: Int) {
-        show(containerView, containerView.resources.getText(resId), duration)
-    }
-
-    private fun get(context: Context, resId: Int): Int {
-        val typedValue = TypedValue()
-        context.theme.resolveAttribute(resId, typedValue, true)
-        return typedValue.data
-    }
-
-}
 
 interface PermissionDependentTask {
     fun getRequiredPermission(): String
     fun onPermissionGranted()
     fun onPermissionRevoked()
+}
+
+fun showSnackbar(containerView: View, message: CharSequence, duration: Int = Snackbar.LENGTH_SHORT) {
+    Snackbar.make(containerView, message, duration).apply {
+    }.show()
 }

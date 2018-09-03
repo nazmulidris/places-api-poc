@@ -17,7 +17,6 @@
 package com.google.api.places.places_api_poc
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -58,8 +57,9 @@ class Tab1Fragment : BaseTabFragment() {
 
         // Attach LiveData observers for current_place_text.
         placesAPIViewModel.currentPlaceData.observe(this, Observer { data ->
-            Log.i(javaClass.name, "🎉observable reacting -> $data")
-            current_place_text_fragment.text = data ?: "n/a"
+            val outputString = data.joinToString("\n")
+            "🎉observable reacting -> $outputString".log()
+            current_place_text_fragment.text = outputString
         })
     }
 

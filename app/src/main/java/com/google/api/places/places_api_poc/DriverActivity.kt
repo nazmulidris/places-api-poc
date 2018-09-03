@@ -18,7 +18,6 @@ package com.google.api.places.places_api_poc
 
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
@@ -44,14 +43,12 @@ class DriverActivity : AppCompatActivity() {
     fun executeTaskOnPermissionGranted(task: PermissionDependentTask) {
         if (isPermissionDenied(this, task.getRequiredPermission())) {
             // Permission is not granted ☹. Ask the user for the run time permission 🙏.
-            Log.i(javaClass.name,
-                  "🔒 ${task.getRequiredPermission()} not granted 🛑, request it 🙏️")
+            "🔒 ${task.getRequiredPermission()} not granted 🛑, request it 🙏️".log()
             requestPermission(this, task.getRequiredPermission(), PERMISSION_ID)
             if (pendingTask == null) pendingTask = task
         } else {
             // Permission is granted 🙌. Run the task function.
-            Log.i(javaClass.name,
-                  "🔒 ${task.getRequiredPermission()} permission granted 🙌, Execute pendingTask ")
+            "🔒 ${task.getRequiredPermission()} permission granted 🙌, Execute pendingTask ".log()
             task.onPermissionGranted()
         }
     }
@@ -66,8 +63,7 @@ class DriverActivity : AppCompatActivity() {
                                 PackageManager.PERMISSION_GRANTED)) {
                     // Permission was granted, 🎉. Run the pending task function.
                     if (pendingTask != null) {
-                        Log.i(javaClass.name,
-                              "🔒 Permission is granted 🙌, Execute pendingTask")
+                        "🔒 Permission is granted 🙌, Execute pendingTask".log()
                         pendingTask?.onPermissionGranted()
                         pendingTask = null
                     }

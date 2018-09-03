@@ -16,6 +16,7 @@
 
 package com.google.api.places.places_api_poc
 
+import android.util.Log
 import android.view.View
 import com.google.android.material.snackbar.Snackbar
 
@@ -25,7 +26,11 @@ interface PermissionDependentTask {
     fun onPermissionRevoked()
 }
 
-fun showSnackbar(containerView: View, message: CharSequence, duration: Int = Snackbar.LENGTH_SHORT) {
+fun showSnackbar(containerView: View,
+                 message: CharSequence,
+                 duration: Int = Snackbar.LENGTH_SHORT) {
     Snackbar.make(containerView, message, duration).apply {
     }.show()
 }
+
+fun String.log() = Log.i("places-api-poc", this)

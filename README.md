@@ -1,4 +1,4 @@
-# Introduction
+# Android app that tests Google Places API for Android
 This project shows how to exercise the Google Places API surface.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
@@ -194,3 +194,8 @@ object ThemedSnackbar {
 ## AndroidX
 - [Migration guide to AndroidX](http://tinyurl.com/y74uob3s)
 - [Blog post](https://android-developers.googleblog.com/2018/05/hello-world-androidx.html)
+
+## GSON
+- [GSON User Guide](https://github.com/google/gson/blob/master/UserGuide.md)
+- [GSON API docs](https://google.github.io/gson/apidocs/)
+- [GSON pretty print](https://www.mkyong.com/java/how-to-enable-pretty-print-json-output-gson/)

@@ -53,10 +53,11 @@ will throw an error like [this](http://tinyurl.com/y8hwnegt).
 # Implementation notes
 
 ## Mysterious case of Snackbar animations not working on some devices
-I ran into the issue of Snackbar animations not occurring on certain devices I tested this
-app on (I tested it on Pixel XL, Pixel 2, and Pixel 2XL). The devices that were running
-Lastpass had a strange behavior of Snackbars not animation when they were shown (they are
-supposed to animation and move the FAB out of the way when they appear and disappear).
+While using the design support library, I ran into the issue of Snackbar animations
+not occurring on certain devices I tested this app on (I tested it on Pixel XL, Pixel 2, and 
+Pixel 2XL). The devices that were running Lastpass had a strange behavior of Snackbars not 
+animation when they were shown (they are supposed to animation and move the FAB out of the way 
+when they appear and disappear).
 
 Turns out the reason for this is that when Accessibility Services (Talkback) is turned on,
 this triggers a bug in the Snackbar codebase, which prevents the animation from showing.
@@ -65,7 +66,7 @@ this triggers a bug in the Snackbar codebase, which prevents the animation from 
 
 The current solution is to use M2 (Material Design 2) components for Android, which are in
 alpha (as of Sep 2, 2018). To get started w/ M2 for Android, here are some links. It looks
-promising, as themeing is getting fixed along with quite a few bugs.
+promising, as there are plans to address theming along with quite a few bugs.
 
 1. [Material Design 2 Components for Android, Getting Started](http://tinyurl.com/yak2s4jo)
 1. [Material Design 2 Components for Android, Theming](http://tinyurl.com/y7rs6f6z)

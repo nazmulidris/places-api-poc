@@ -23,6 +23,40 @@ import com.google.android.gms.maps.model.LatLngBounds
 import com.google.gson.GsonBuilder
 import java.util.*
 
+/*
+    Sample data for PlaceWrapper object converted to JSON.
+
+    {
+        "likelihood": 0.95,
+        "id": "ChIJoxJh_Ue7j4AR2256AbvEuKQ",
+        "placeTypes": [
+            69,
+            1013,
+            34
+        ],
+        "address": "268 Waverley St, Palo Alto, CA 94301, USA",
+        "locale": "en_US",
+        "name": "Johnson Park",
+        "latLng": {
+            "latitude": 37.4493795,
+            "longitude": -122.16315629999998
+        },
+        "viewport": {
+            "northeast": {
+                "latitude": 37.4507458302915,
+                "longitude": -122.16179314999997
+            },
+            "southwest": {
+                "latitude": 37.4480478697085,
+                "longitude": -122.16483615000001
+            }
+        },
+        "websiteUri": {},
+        "phoneNumber": "+1 650-329-2100",
+        "rating": 4.4,
+        "priceLevel": -1
+    }
+ */
 data class PlaceWrapper(val placeLikelihood: PlaceLikelihood) {
     private val map: Map<String, Any?> = importFrom(placeLikelihood)
     val likelihood: Float by map

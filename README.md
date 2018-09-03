@@ -29,15 +29,15 @@ This project shows how to exercise the Google Places API surface.
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## API keys
+# API keys
 
-### 1. Get API key from Google API console
+## 1. Get API key from Google API console
 Create a new project and get an API key for Places API.
 - [Google API Console](https://console.developers.google.com/flows/enableapi?apiid=placesandroid&reusekey=true)
     - Create a new key for your project (new or existing)
     - Copy the key and paste it in `strings.xml` in the `places_api_key` resource
 
-### 2. Save your app's SHA-1 fingerprint and package name to Google API console
+## 2. Save your app's SHA-1 fingerprint and package name to Google API console
 Bind this APK with the project in Google APIs console by creating an Android
 restriction (this type of API key is required by Places API).
 
@@ -50,9 +50,9 @@ laptop or workstation that has a `~/.android` folder, you have to whitelist the
 SHA1 code for that machine's keystore. If you don't do this, then Google Play Services
 will throw an error like [this](http://tinyurl.com/y8hwnegt).
 
-## Implementation notes
+# Implementation notes
 
-### Mysterious case of Snackbar animations not working on some devices
+## Mysterious case of Snackbar animations not working on some devices
 I ran into the issue of Snackbar animations not occurring on certain devices I tested this
 app on (I tested it on Pixel XL, Pixel 2, and Pixel 2XL). The devices that were running
 Lastpass had a strange behavior of Snackbars not animation when they were shown (they are
@@ -70,7 +70,7 @@ promising, as themeing is getting fixed along with quite a few bugs.
 1. [Material Design 2 Components for Android, Getting Started](http://tinyurl.com/yak2s4jo)
 1. [Material Design 2 Components for Android, Theming](http://tinyurl.com/y7rs6f6z)
 
-### Snackbar theming
+## Snackbar theming
 With the current implementation of the Design Support lib (and the Material Design Components
 AndroidX library) there's a [🕷 bug in Snackbar](https://issuetracker.google.com/issues/37120757)
 that hardcodes the background and text colors, instead of inheriting them from the current theme.
@@ -79,7 +79,7 @@ theming](http://tinyurl.com/yb5equps) coming soon in Material Design Components 
 
 In the meantime, there are 2 workarounds, one in XML and one in code.
 
-#### 1. In XML
+### 1. In XML
 If you take a look at the [source code for `theme_base.xml` file](http://tinyurl.com/y8eex34w) 
 that's defined in the Android Material Components (AndroidX library), and search for the 
 `<!-- Widget styles -->` comment, you will find the `snackbarStyle` item that's defined there.
@@ -115,7 +115,7 @@ Button components).
     </style>
     ```
 
-#### 2. In code
+### 2. In code
 The code below shows the approach of overriding the Snackbar's background color and action
 text color w/ the desired color values (which are loaded from the currently applied theme).
 
@@ -145,51 +145,51 @@ object ThemedSnackbar {
 
 }
 ```
-## References
+# References
 
-### Places API Documentation links
+## Places API Documentation links
 - [Get started w/ the Android API](https://developers.google.com/places/android-sdk/start)
 - [Get Places API key](https://developers.google.com/places/android-sdk/signup)
 
-### GMS API links
+## GMS API links
 - [Tasks API](https://developers.google.com/android/guides/tasks)
 
-### Android API Documentation links
+## Android API Documentation links
 - [Lifecycle awareness](https://developer.android.com/topic/libraries/architecture/lifecycle)
 - [Use Anko](https://www.kotlindevelopment.com/why-should-use-anko/)
 
-### Android UI layouts
+## Android UI layouts
 - [Eg of LinearLayout w/ scrollview](http://tinyurl.com/yaht7rrm)
 - [Eg of RelativeLayout options](http://tinyurl.com/y7rer3ch)
 
-### Android Architecture Components
+## Android Architecture Components
 - [Gradle imports](https://developer.android.com/topic/libraries/architecture/adding-components)
 - [Using LiveData](https://developer.android.com/topic/libraries/architecture/livedata)
 - [Code sample](http://tinyurl.com/ya5q3cpq)
 
-### LiveData, ViewModel and Fragment
+## LiveData, ViewModel and Fragment
 - [With fragments](https://developer.android.com/topic/libraries/architecture/viewmodel#sharing)
 - [Fragment pitfalls](http://tinyurl.com/yc9wm6k6)
 
-### Android runtime permissions
+## Android runtime permissions
 - [Requesting dangerous permissions](https://developer.android.com/training/permissions/requesting)
 
-### Android custom themes
+## Android custom themes
 - [Overriding default styles and themes](http://tinyurl.com/y7tk2eap)
 
-### Android UI
+## Android UI
 - [Bottom bar navigation](http://tinyurl.com/y7dhzhgj)
 - [CoordinatorLayout and FAB](http://tinyurl.com/yanogrql)
 - [FAB](https://developer.android.com/guide/topics/ui/floating-action-button)
 
-### Material Design Android Theme colors
+## Material Design Android Theme colors
 - [Android color theming Material Design](https://material.io/develop/android/theming/color/)
 - [Material Design color picker tool](https://material.io/tools/color/#!/)
 - [Applying theme colors to Snackbar](http://tinyurl.com/yb2vnxau)
 
-### Kotlin and higher order functions
+## Kotlin and higher order functions
 - [Passing functions as arguments](http://tinyurl.com/y925dr7c)
 
-### AndroidX
+## AndroidX
 - [Migration guide to AndroidX](http://tinyurl.com/y74uob3s)
 - [Blog post](https://android-developers.googleblog.com/2018/05/hello-world-androidx.html)

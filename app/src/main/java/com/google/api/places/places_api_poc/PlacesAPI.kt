@@ -19,7 +19,6 @@ package com.google.api.places.places_api_poc
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.annotation.SuppressLint
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.*
 import com.google.android.gms.location.places.GeoDataClient
 import com.google.android.gms.location.places.PlaceDetectionClient
@@ -29,31 +28,26 @@ import com.google.android.gms.tasks.OnCompleteListener
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-class PlacesAPI(val context: Application) : AndroidViewModel(context),
-        LifecycleObserver {
+class PlacesAPI(val context: Application) : AndroidViewModel(context), LifecycleObserver {
+
     // Client for geo data
     lateinit var geoDataClient: GeoDataClient
+
     // Client for place detection
     lateinit var placeDetectionClient: PlaceDetectionClient
-    // LiveData for place picker API responses
-    val placePickerData = MutableLiveData<String>()
+
     // LiveData for current place API responses
-    val currentPlaceData = MutableLiveData<String>()
+    val currentPlaceData = MutableLiveData<List<PlaceWrapper>>()
 
     // Lifecycle hooks.
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     fun connect() {
-        Log.i(javaClass.name,
-              "ON_CREATE ⇢ PlacesAPIClients.connect() ✅")
+        "ON_CREATE ⇢ PlacesAPIClients.connect() ✅".log()
         geoDataClient = Places.getGeoDataClient(context)
         placeDetectionClient = Places.getPlaceDetectionClient(context)
 
         // Debug stuff
-        placePickerData.value = "connect!"
-        currentPlaceData.value = "connect!"
-        Log.i(javaClass.name,
-              "💥 connect() - got GetDataClient and PlaceDetectionClient"
-              )
+        "💥 connect() - got GetDataClient and PlaceDetectionClient".log()
 
         // Create executor
         createExecutor()
@@ -61,8 +55,7 @@ class PlacesAPI(val context: Application) : AndroidViewModel(context),
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun cleanup() {
-        Log.i(javaClass.name,
-              "🛀 PlacesAPIClients.cleanup()")
+        "🚿 PlacesAPIClients.cleanup()".log()
         destroyExecutor()
     }
 
@@ -84,8 +77,7 @@ class PlacesAPI(val context: Application) : AndroidViewModel(context),
     fun getCurrentPlace() {
         if (isPermissionGranted(context, ACCESS_FINE_LOCATION)) {
             // Permission is granted 🙌.
-            Log.i(javaClass.name,
-                  "PlacesAPI ⇢ PlaceDetectionClient.getCurrentPlace() ✅")
+            "PlacesAPI ⇢ PlaceDetectionClient.getCurrentPlace() ✅".log()
             placeDetectionClient.getCurrentPlace(null).let { task ->
                 // Run this in background thread
                 task.addOnCompleteListener(
@@ -95,13 +87,11 @@ class PlacesAPI(val context: Application) : AndroidViewModel(context),
                             processPlacelikelihoodBuffer(task.result)
                             task.result.release()
                         } else {
-                            Log.i(javaClass.name,
-                                  "⚠️ Task failed with exception ${task.exception}")
+                            "⚠️ Task failed with exception ${task.exception}".log()
                         }
                     })
             }
         }
-
     }
 
     /**
@@ -109,20 +99,17 @@ class PlacesAPI(val context: Application) : AndroidViewModel(context),
      * [PlaceLikelihoodBufferResponse docs](http://tinyurl.com/y9y9jl3d).
      */
     private fun processPlacelikelihoodBuffer(likeyPlaces: PlaceLikelihoodBufferResponse) {
-        val outputList = mutableListOf<String>()
+        val outputList = mutableListOf<PlaceWrapper>()
         val count = likeyPlaces.count
         for (index in 0 until count) {
-            val placeLikelihood = likeyPlaces.get(index)
-            val confidence = placeLikelihood.likelihood * 100
-            with(placeLikelihood.place) {
-                outputList.add("📌 ${name}, ${confidence}％, 🗺${address}")
-            }
+            outputList.add(PlaceWrapper(likeyPlaces.get(index)))
         }
-        with(outputList.joinToString("\n")) {
-            Log.i(javaClass.name,
-                  this)
-            currentPlaceData.postValue(this)
-        }
+
+        // Dump the list of PlaceWrapper objects to logcat.
+        outputList.joinToString("\n").log()
+
+        // Update the LiveData, so observables can react to this change.
+        currentPlaceData.postValue(outputList)
     }
 
 }

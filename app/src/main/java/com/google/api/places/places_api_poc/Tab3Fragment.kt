@@ -20,7 +20,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import kotlinx.android.synthetic.main.fragment_tab3.*
 
 class Tab3Fragment : BaseTabFragment() {
 
@@ -31,7 +30,7 @@ class Tab3Fragment : BaseTabFragment() {
     }
 
     override fun attachToUI() {
-        showSnackbar(fragment_container_tab3, "👍 Tab3")
+        getParentActivity().snack(R.id.fragment_container_tab3, "👍 Tab3")
     }
 
 }

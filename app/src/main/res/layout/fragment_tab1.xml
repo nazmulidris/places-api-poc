@@ -30,24 +30,16 @@
         android:layout_marginTop="@dimen/activity_vertical_margin"
         android:orientation="vertical">
 
-        <ScrollView
-            android:id="@+id/current_place_text_container"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/current_place_recyclerview"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
-            <TextView
-                android:id="@+id/current_place_text_fragment"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="current_place_text_fragment" />
-
-        </ScrollView>
+        </androidx.recyclerview.widget.RecyclerView>
 
     </FrameLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/button_current_place_fragment"
+        android:id="@+id/fab_current_place"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"

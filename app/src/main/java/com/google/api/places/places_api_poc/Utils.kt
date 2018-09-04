@@ -20,12 +20,14 @@ import android.util.Log
 import android.view.View
 import com.google.android.material.snackbar.Snackbar
 
+// Simple interface to perform a task that requires a permission.
 interface PermissionDependentTask {
     fun getRequiredPermission(): String
     fun onPermissionGranted()
     fun onPermissionRevoked()
 }
 
+// Snackbar syntactic sugar.
 fun showSnackbar(containerView: View,
                  message: CharSequence,
                  duration: Int = Snackbar.LENGTH_SHORT) {
@@ -33,4 +35,14 @@ fun showSnackbar(containerView: View,
     }.show()
 }
 
+//
+// Extension functions.
+//
+
 fun String.log() = Log.i("places-api-poc", this)
+
+fun <T : View> DriverActivity.find(id: Int): T = this.findViewById(id)
+
+fun DriverActivity.snack(id: Int, message: String) {
+    showSnackbar(this.find(id), message)
+}

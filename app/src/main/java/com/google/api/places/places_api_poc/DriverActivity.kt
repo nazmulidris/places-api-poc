@@ -22,7 +22,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import kotlinx.android.synthetic.main.activity_driver.*
 
 class DriverActivity : AppCompatActivity() {
 
@@ -90,7 +89,8 @@ class DriverActivity : AppCompatActivity() {
     // Manage creating and switching Fragments.
     fun setupFragments() {
         // Enable bottom bar navigation to respond to user input.
-        navigation.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener)
+        find<BottomNavigationView>(R.id.navigation)
+                .setOnNavigationItemSelectedListener(onNavigationItemSelectedListener)
         // Pre-select the first fragment.
         switchFragment(R.id.navigation_tab1)
     }

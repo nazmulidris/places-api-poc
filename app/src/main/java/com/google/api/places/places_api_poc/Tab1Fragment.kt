@@ -20,47 +20,119 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.lifecycle.Observer
-import kotlinx.android.synthetic.main.fragment_tab1.*
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class Tab1Fragment : BaseTabFragment() {
 
     // Inflate the layout.
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
+        // Inflate the layout for this fragment.
         return inflater.inflate(R.layout.fragment_tab1, container, false)
     }
 
     override fun attachToUI() {
-        // Attach a behavior to the button.
-        button_current_place_fragment.setOnClickListener { viewClicked ->
-            getParentActivity().executeTaskOnPermissionGranted(
-                object : PermissionDependentTask {
-                    override fun getRequiredPermission() =
-                            android.Manifest.permission.ACCESS_FINE_LOCATION
+        // Setup RecyclerView.
+        setupRecyclerView(getParentActivity().find(R.id.current_place_recyclerview))
 
-                    override fun onPermissionGranted() {
-                        placesAPIViewModel.getCurrentPlace()
-                        showSnackbar(
-                            fragment_container_tab1,
-                            "❤️ This app will function well with this permission")
-                    }
+        // Attach a behavior to the FAB.
+        getParentActivity().findViewById<FloatingActionButton>(R.id.fab_current_place)
+                .setOnClickListener { viewClicked ->
+                    getParentActivity().executeTaskOnPermissionGranted(
+                        object : PermissionDependentTask {
+                            override fun getRequiredPermission() =
+                                    android.Manifest.permission.ACCESS_FINE_LOCATION
 
-                    override fun onPermissionRevoked() {
-                        showSnackbar(
-                            fragment_container_tab1,
-                            "🛑 This app will not function without this permission")
-                    }
-                })
+                            override fun onPermissionGranted() {
+                                placesAPIViewModel.getCurrentPlace()
+                                getParentActivity().snack(
+                                    R.id.fragment_container_tab1,
+                                    "❤️ This app will function well with this permission")
+                            }
+
+                            override fun onPermissionRevoked() {
+                                getParentActivity().snack(
+                                    R.id.fragment_container_tab1,
+                                    "🛑 This app will not function without this permission")
+                            }
+                        })
+                }
+
+    }
+
+    private fun setupRecyclerView(recyclerView: RecyclerView) {
+        // Create the RecyclerView Adapter.
+        val dataAdapter = DataAdapter(getParentActivity())
+
+        // Attach LiveData observers for current place data (from Places API).
+        placesAPIViewModel.currentPlaceData.observe(this@Tab1Fragment, Observer { data ->
+            "🎉 observable reacting -> #places=${data.size}".log()
+            dataAdapter.loadData(data)
+        })
+
+        with(recyclerView) {
+            addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
+            layoutManager = LinearLayoutManager(context)
+            adapter = dataAdapter
         }
 
-        // Attach LiveData observers for current_place_text.
-        placesAPIViewModel.currentPlaceData.observe(this, Observer { data ->
-            val outputString = data.joinToString("\n")
-            "🎉 observable reacting -> #places=${data.size}".log()
-            current_place_text_fragment.text = outputString
-        })
+    }
+
+}
+
+//
+// List Adapter.
+//
+class DataAdapter(val activity: DriverActivity) : RecyclerView.Adapter<RowViewHolder>() {
+    // Underlying data storage.
+    val underlyingData: MutableList<PlaceWrapper> = mutableListOf()
+
+    // Load underlying data and update RecyclerView.
+    fun loadData(data: List<PlaceWrapper>) {
+        underlyingData.apply {
+            clear()
+            addAll(data)
+        }
+        notifyDataSetChanged()
+    }
+
+    override fun getItemCount(): Int {
+        return underlyingData.size
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RowViewHolder {
+        with(activity.layoutInflater.inflate(R.layout.item_row_place,
+                                             parent,
+                                             false)) {
+            return RowViewHolder(activity, this)
+        }
+    }
+
+    override fun onBindViewHolder(holder: RowViewHolder, position: Int) {
+        holder.bindToDataItem(underlyingData[position])
+    }
+
+}
+
+//
+// Row renderer (ViewHolder).
+//
+class RowViewHolder(val activity: DriverActivity, itemView: View) :
+        RecyclerView.ViewHolder(itemView) {
+
+    // Get the row renderer from the itemView that's passed (which loads R.layout.item_row_place)
+    private val rowView: TextView = itemView.findViewById(R.id.text_row_place)
+
+    fun bindToDataItem(place: PlaceWrapper) {
+        rowView.text = place.id
+        rowView.setOnClickListener {
+            activity.snack(R.id.fragment_container_tab1, "👍 ${place.name}")
+        }
     }
 
 }

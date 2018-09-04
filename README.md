@@ -199,3 +199,9 @@ object ThemedSnackbar {
 - [GSON User Guide](https://github.com/google/gson/blob/master/UserGuide.md)
 - [GSON API docs](https://google.github.io/gson/apidocs/)
 - [GSON pretty print](https://www.mkyong.com/java/how-to-enable-pretty-print-json-output-gson/)
+
+## Modal Bottom Sheets (BottomSheetDialogFragment)
+
+- [MDC Android doc](http://tinyurl.com/ydgvspm4)
+- [MDC Android src](http://tinyurl.com/y7q7loxm)
+- [BottomSheetDialogFragment tutorial](http://tinyurl.com/y76vyeks)

@@ -17,11 +17,13 @@
 package com.google.api.places.places_api_poc
 
 import android.net.Uri
+import android.os.Bundle
 import com.google.android.gms.location.places.PlaceLikelihood
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.gson.GsonBuilder
 import java.util.*
+import kotlin.collections.HashMap
 
 /*
     Sample data for PlaceWrapper object converted to JSON.
@@ -58,7 +60,7 @@ import java.util.*
     }
  */
 data class PlaceWrapper(val placeLikelihood: PlaceLikelihood) {
-    private val map: Map<String, Any?> = importFrom(placeLikelihood)
+    private val map: HashMap<String, Any?> = importFrom(placeLikelihood)
     val likelihood: Float by map
     val id: String by map
     val placeTypes: List<Int> by map
@@ -80,8 +82,8 @@ data class PlaceWrapper(val placeLikelihood: PlaceLikelihood) {
          *    is released.
          * 2. Wrap the [Place] object using a [Map] that is easy via [PlaceWrapper].
          */
-        fun importFrom(placeLikelihood: PlaceLikelihood): Map<String, Any?> {
-            return LinkedHashMap<String, Any?>().also { map ->
+        fun importFrom(placeLikelihood: PlaceLikelihood): HashMap<String, Any?> {
+            return HashMap<String, Any?>().also { map ->
                 map["likelihood"] = placeLikelihood.likelihood
                 // Make sure to get an instance from freeze() that will be available
                 // after the buffer is released.
@@ -100,6 +102,12 @@ data class PlaceWrapper(val placeLikelihood: PlaceLikelihood) {
                     map["attributions"] = attributions
                 }
             }
+        }
+    }
+
+    fun getBundle(key: String): Bundle {
+        return Bundle().apply {
+            putSerializable(key, map)
         }
     }
 

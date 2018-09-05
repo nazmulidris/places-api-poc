@@ -20,17 +20,24 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 
 class Tab3Fragment : BaseTabFragment() {
+
+    private lateinit var fragmentContainer: CoordinatorLayout
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_tab3, container, false)
+        val layout = inflater.inflate(R.layout.fragment_tab3, container, false)
+
+        fragmentContainer = layout.findViewById(R.id.fragment_container_tab3)
+
+        return layout
     }
 
     override fun attachToUI() {
-        getParentActivity().snack(R.id.fragment_container_tab3, "👍 Tab3")
+        "👍 Tab3".snack(fragmentContainer)
     }
 
 }

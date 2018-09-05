@@ -81,7 +81,7 @@ class DriverActivity : AppCompatActivity() {
 
     private fun setupViewModel() {
         // Create the ViewModel which acts as a proxy to the Places API client(s).
-        var placesAPIViewModel = ViewModelProviders.of(this).get(PlacesAPI::class.java)
+        val placesAPIViewModel = ViewModelProviders.of(this).get(PlacesAPI::class.java)
         // Connect to the Places API.
         lifecycle.addObserver(placesAPIViewModel)
     }

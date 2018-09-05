@@ -21,6 +21,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -29,43 +30,50 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class Tab1Fragment : BaseTabFragment() {
 
+    private lateinit var fab: FloatingActionButton
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var fragmentContainer: CoordinatorLayout
+
     // Inflate the layout.
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment.
-        return inflater.inflate(R.layout.fragment_tab1, container, false)
+        val layout = inflater.inflate(R.layout.fragment_tab1, container, false)
+
+        fab = layout.findViewById(R.id.fab_current_place)
+        recyclerView = layout.findViewById(R.id.current_place_recyclerview)
+        fragmentContainer = layout.findViewById(R.id.fragment_container_tab1)
+
+        return layout
     }
 
     override fun attachToUI() {
         // Setup RecyclerView.
-        setupRecyclerView(getParentActivity().find(R.id.current_place_recyclerview))
+        setupRecyclerView()
 
         // Attach a behavior to the FAB.
-        getParentActivity().findViewById<FloatingActionButton>(R.id.fab_current_place)
-                .setOnClickListener { viewClicked ->
-                    getParentActivity().executeTaskOnPermissionGranted(
-                        object : PermissionDependentTask {
-                            override fun getRequiredPermission() =
-                                    android.Manifest.permission.ACCESS_FINE_LOCATION
+        fab.setOnClickListener { viewClicked ->
+            getParentActivity().executeTaskOnPermissionGranted(
+                object : PermissionDependentTask {
+                    override fun getRequiredPermission() =
+                            android.Manifest.permission.ACCESS_FINE_LOCATION
 
-                            override fun onPermissionGranted() {
-                                placesAPIViewModel.getCurrentPlace()
-                                getParentActivity().snack(
-                                    R.id.fragment_container_tab1,
-                                    "❤️ This app will function well with this permission")
-                            }
+                    override fun onPermissionGranted() {
+                        placesAPIViewModel.getCurrentPlace()
+                        "❤️ This app will function well with this permission".snack(
+                            fragmentContainer)
+                    }
 
-                            override fun onPermissionRevoked() {
-                                getParentActivity().snack(
-                                    R.id.fragment_container_tab1,
-                                    "🛑 This app will not function without this permission")
-                            }
-                        })
-                }
+                    override fun onPermissionRevoked() {
+                        "🛑 This app will not function without this permission".snack(
+                            fragmentContainer)
+                    }
+                })
+        }
 
     }
 
-    private fun setupRecyclerView(recyclerView: RecyclerView) {
+    private fun setupRecyclerView() {
         // Create the RecyclerView Adapter.
         val dataAdapter = DataAdapter(getParentActivity())
 
@@ -132,6 +140,9 @@ class RowViewHolder(val activity: DriverActivity, itemView: View) :
         rowView.text = place.id
         rowView.setOnClickListener {
             activity.snack(R.id.fragment_container_tab1, "👍 ${place.name}")
+            PlaceDetailsBottomSheetDialogFragment().apply {
+                arguments = place.getBundle("place")
+            }.show(activity.supportFragmentManager, PlaceDetailsBottomSheetDialogFragment::javaClass.name)
         }
     }
 

@@ -18,6 +18,7 @@ package com.google.api.places.places_api_poc
 
 import android.util.Log
 import android.view.View
+import androidx.fragment.app.FragmentActivity
 import com.google.android.material.snackbar.Snackbar
 
 // Simple interface to perform a task that requires a permission.
@@ -31,8 +32,7 @@ interface PermissionDependentTask {
 fun showSnackbar(containerView: View,
                  message: CharSequence,
                  duration: Int = Snackbar.LENGTH_SHORT) {
-    Snackbar.make(containerView, message, duration).apply {
-    }.show()
+    Snackbar.make(containerView, message, duration).show()
 }
 
 //
@@ -41,8 +41,10 @@ fun showSnackbar(containerView: View,
 
 fun String.log() = Log.i("places-api-poc", this)
 
-fun <T : View> DriverActivity.find(id: Int): T = this.findViewById(id)
+fun String.snack(view: View) = showSnackbar(view, this)
 
-fun DriverActivity.snack(id: Int, message: String) {
+fun <T : View> FragmentActivity.find(id: Int): T = this.findViewById(id)
+
+fun FragmentActivity.snack(id: Int, message: String) {
     showSnackbar(this.find(id), message)
 }

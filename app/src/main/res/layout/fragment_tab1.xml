@@ -30,8 +30,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/current_place_recyclerview"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-        </androidx.recyclerview.widget.RecyclerView>
+            android:layout_height="match_parent" />
 
     </FrameLayout>
 

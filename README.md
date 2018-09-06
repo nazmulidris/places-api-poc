@@ -13,6 +13,7 @@ This project shows how to exercise the Google Places API surface.
   - [Snackbar theming](#snackbar-theming)
     - [1. In XML](#1-in-xml)
     - [2. In code](#2-in-code)
+  - [BottomSheetDialogFragment theming](#bottomsheetdialogfragment-theming)
 - [References](#references)
   - [Places API Documentation links](#places-api-documentation-links)
   - [GMS API links](#gms-api-links)
@@ -26,6 +27,8 @@ This project shows how to exercise the Google Places API surface.
   - [Material Design Android Theme colors](#material-design-android-theme-colors)
   - [Kotlin and higher order functions](#kotlin-and-higher-order-functions)
   - [AndroidX](#androidx)
+  - [GSON](#gson)
+  - [Modal Bottom Sheets (BottomSheetDialogFragment)](#modal-bottom-sheets-bottomsheetdialogfragment)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 

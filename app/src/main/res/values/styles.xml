@@ -32,10 +32,20 @@
         <!-- Override the default Snackbar style -->
         <item name="snackbarStyle">@style/AppSnackbarStyle</item>
 
+        <!-- Override the default BottomSheetDialog theme to dark -->
+        <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogStyle</item>
+
+
     </style>
 
     <style name="AppSnackbarStyle" parent="Widget.MaterialComponents.Snackbar">
         <item name="android:background">@color/colorPrimary</item>
+    </style>
+
+    <style name="AppBottomSheetDialogStyle" parent="Theme.MaterialComponents.BottomSheetDialog">
+        <!-- Base.V7.Theme.AppCompat.Dialog defines a style with item "android:colorBackground"
+        that has to be updated to match the current theme-->
+        <item name="android:colorBackground">@color/colorPrimary</item>
     </style>
 
 </resources>

@@ -17,6 +17,7 @@
 package com.google.api.places.places_api_poc
 
 import android.os.Bundle
+import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,8 +35,8 @@ class PlaceDetailsBottomSheetDialogFragment : BottomSheetDialogFragment() {
 
         // Inflate the layout for this fragment.
         val layout = inflater.inflate(R.layout.fragment_place_details,
-                                      container,
-                                      false)
+                container,
+                false)
 
         textBody = layout.findViewById(R.id.text_place_details_body)
         textHeader = layout.findViewById(R.id.text_place_details_header)
@@ -51,15 +52,24 @@ class PlaceDetailsBottomSheetDialogFragment : BottomSheetDialogFragment() {
         arguments?.apply {
             val map = getSerializable("place") as HashMap<String, Any?>
             textHeader.text = map["name"] as String
-            textBody.text = StringBuffer().apply {
+
+            StringBuffer().apply {
                 for (entry in map) {
-                    append("👉${entry.key}\n")
-                    append("${entry.value}\n")
+                    append("<br/><b>${entry.key}</b><br/>")
+                    append("<code>${generateValueString(entry.value)}<code><br/>")
                 }
-            }.toString()
+            }.apply {
+                textBody.text = Html.fromHtml(this.toString())
+            }
+
         }
 
     }
 
+    private fun generateValueString(value: Any?) = when {
+        value == null -> "n/a"
+        value.toString().trim().isEmpty() -> "n/a"
+        else -> value.toString()
+    }
 
 }

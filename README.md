@@ -146,6 +146,39 @@ object ThemedSnackbar {
 
 }
 ```
+
+## BottomSheetDialogFragment theming
+
+The process of theming the `BottomSheetDialog` was very similar to what had to be done with the
+`Snackbar` above. Here's a code snippet.
+
+```xml
+<resources>
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.MaterialComponents">
+        ...
+        <!-- Override the default BottomSheetDialog theme to dark -->
+        <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogStyle</item>
+    </style>
+
+    <style name="AppBottomSheetDialogStyle" parent="Theme.MaterialComponents.BottomSheetDialog">
+        <!-- Base.V7.Theme.AppCompat.Dialog defines a style with item "android:colorBackground"
+        that has to be updated to match the current theme-->
+        <item name="android:colorBackground">@color/colorPrimary</item>
+    </style>
+</resources>
+```
+
+Notes on the code above:
+1. In the `AppTheme` it is necessary to override `bottomSheetDialogTheme` item with a custom style
+   that I've defined as `AppBottomSheetDialogStyle`. This overrides the default styling of the
+   `bottomSheetDialogTheme` which uses the default dark background color (for a dark theme) and
+   not the `colorPrimary` value that I've set in `AppTheme`.
+1. The `AppBottomSheetDialogStyle` itself extends Material Design 
+   `Theme.MaterialComponents.BottomSheetDialog` which thru a series of dependencies, ends up in an
+   ancestor style (`Base.V7.Theme.AppCompat.Dialog`) that defines `android:colorBackground`. Once
+   this color is overridden w/ `colorPrimary`, the job is done.
+
 # References
 
 ## Places API Documentation links

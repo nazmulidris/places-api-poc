@@ -81,15 +81,15 @@ class PlacesAPI(val context: Application) : AndroidViewModel(context), Lifecycle
             placeDetectionClient.getCurrentPlace(null).let { task ->
                 // Run this in background thread
                 task.addOnCompleteListener(
-                    executor,
-                    OnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            processPlacelikelihoodBuffer(task.result)
-                            task.result.release()
-                        } else {
-                            "⚠️ Task failed with exception ${task.exception}".log()
-                        }
-                    })
+                        executor,
+                        OnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                processPlacelikelihoodBuffer(task.result)
+                                task.result.release()
+                            } else {
+                                "⚠️ Task failed with exception ${task.exception}".log()
+                            }
+                        })
             }
         }
     }

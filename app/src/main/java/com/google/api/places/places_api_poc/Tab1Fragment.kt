@@ -54,21 +54,21 @@ class Tab1Fragment : BaseTabFragment() {
         // Attach a behavior to the FAB.
         fab.setOnClickListener { viewClicked ->
             getParentActivity().executeTaskOnPermissionGranted(
-                object : PermissionDependentTask {
-                    override fun getRequiredPermission() =
-                            android.Manifest.permission.ACCESS_FINE_LOCATION
+                    object : PermissionDependentTask {
+                        override fun getRequiredPermission() =
+                                android.Manifest.permission.ACCESS_FINE_LOCATION
 
-                    override fun onPermissionGranted() {
-                        placesAPIViewModel.getCurrentPlace()
-                        "❤️ This app will function well with this permission".snack(
-                            fragmentContainer)
-                    }
+                        override fun onPermissionGranted() {
+                            placesAPIViewModel.getCurrentPlace()
+                            "❤️ This app will function well with this permission".snack(
+                                    fragmentContainer)
+                        }
 
-                    override fun onPermissionRevoked() {
-                        "🛑 This app will not function without this permission".snack(
-                            fragmentContainer)
-                    }
-                })
+                        override fun onPermissionRevoked() {
+                            "🛑 This app will not function without this permission".snack(
+                                    fragmentContainer)
+                        }
+                    })
         }
 
     }
@@ -115,8 +115,8 @@ class DataAdapter(val activity: DriverActivity) : RecyclerView.Adapter<RowViewHo
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RowViewHolder {
         with(activity.layoutInflater.inflate(R.layout.item_row_place,
-                                             parent,
-                                             false)) {
+                parent,
+                false)) {
             return RowViewHolder(activity, this)
         }
     }
@@ -142,7 +142,7 @@ class RowViewHolder(val activity: DriverActivity, itemView: View) :
             activity.snack(R.id.fragment_container_tab1, "👍 ${place.name}")
             PlaceDetailsBottomSheetDialogFragment().apply {
                 arguments = place.getBundle("place")
-            }.show(activity.supportFragmentManager, PlaceDetailsBottomSheetDialogFragment::javaClass.name)
+            }.show(activity.supportFragmentManager, Tab1Fragment::javaClass.name)
         }
     }
 

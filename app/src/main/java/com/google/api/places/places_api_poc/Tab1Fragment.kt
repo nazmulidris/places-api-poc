@@ -137,9 +137,8 @@ class RowViewHolder(val activity: DriverActivity, itemView: View) :
     private val rowView: TextView = itemView.findViewById(R.id.text_row_place)
 
     fun bindToDataItem(place: PlaceWrapper) {
-        rowView.text = place.id
+        rowView.text = place.name
         rowView.setOnClickListener {
-            activity.snack(R.id.fragment_container_tab1, "👍 ${place.name}")
             PlaceDetailsBottomSheetDialogFragment().apply {
                 arguments = place.getBundle("place")
             }.show(activity.supportFragmentManager, Tab1Fragment::javaClass.name)

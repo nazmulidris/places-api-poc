@@ -16,17 +16,12 @@
 
 package com.google.api.places.places_api_poc
 
+import android.content.Context
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
 import com.google.android.material.snackbar.Snackbar
-
-// Simple interface to perform a task that requires a permission.
-interface PermissionDependentTask {
-    fun getRequiredPermission(): String
-    fun onPermissionGranted()
-    fun onPermissionRevoked()
-}
 
 // Snackbar syntactic sugar.
 fun showSnackbar(containerView: View,
@@ -48,3 +43,5 @@ fun <T : View> FragmentActivity.find(id: Int): T = this.findViewById(id)
 fun FragmentActivity.snack(id: Int, message: String) {
     showSnackbar(this.find(id), message)
 }
+
+fun String.toast(context: Context) = Toast.makeText(context, this, Toast.LENGTH_SHORT).show()

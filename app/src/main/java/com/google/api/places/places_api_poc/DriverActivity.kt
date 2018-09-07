@@ -52,6 +52,13 @@ class DriverActivity : AppCompatActivity() {
         }
     }
 
+    // Simple interface to perform a task that requires a permission.
+    interface PermissionDependentTask {
+        fun getRequiredPermission(): String
+        fun onPermissionGranted()
+        fun onPermissionRevoked()
+    }
+
     override fun onRequestPermissionsResult(requestCode: Int,
                                             permissions: Array<String>,
                                             grantResults: IntArray) {

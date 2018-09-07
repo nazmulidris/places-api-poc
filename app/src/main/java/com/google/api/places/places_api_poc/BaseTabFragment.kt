@@ -45,9 +45,15 @@ open class BaseTabFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        attachToUI()
+        onFragmentCreate()
     }
 
-    open fun attachToUI() {}
+    /**
+     * This method is called when the Fragment is created (which is just once). It is the
+     * equivalent of onCreate() for a Fragment.
+     * The onStop() and onStart() methods can be used to deal with more recurring UI change
+     * events.
+     */
+    open fun onFragmentCreate() {}
 
 }

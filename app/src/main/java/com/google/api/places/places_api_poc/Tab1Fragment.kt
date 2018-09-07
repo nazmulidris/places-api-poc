@@ -47,14 +47,14 @@ class Tab1Fragment : BaseTabFragment() {
         return layout
     }
 
-    override fun attachToUI() {
+    override fun onFragmentCreate() {
         // Setup RecyclerView.
         setupRecyclerView()
 
         // Attach a behavior to the FAB.
         fab.setOnClickListener { viewClicked ->
             getParentActivity().executeTaskOnPermissionGranted(
-                object : PermissionDependentTask {
+                object : DriverActivity.PermissionDependentTask {
                     override fun getRequiredPermission() =
                             android.Manifest.permission.ACCESS_FINE_LOCATION
 
@@ -78,10 +78,12 @@ class Tab1Fragment : BaseTabFragment() {
         val dataAdapter = DataAdapter(getParentActivity())
 
         // Attach LiveData observers for current place data (from Places API).
-        placesAPIViewModel.currentPlaceData.observe(this@Tab1Fragment, Observer { data ->
-            "🎉 observable reacting -> #places=${data.size}".log()
-            dataAdapter.loadData(data)
-        })
+        placesAPIViewModel.currentPlaceLiveData.observe(
+            this@Tab1Fragment,
+            Observer { data ->
+                "🎉 observable reacting -> #places=${data.size}".log()
+                dataAdapter.loadData(data)
+            })
 
         with(recyclerView) {
             addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))

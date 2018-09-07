@@ -36,7 +36,7 @@ class Tab3Fragment : BaseTabFragment() {
         return layout
     }
 
-    override fun attachToUI() {
+    override fun onFragmentCreate() {
         "👍 Tab3".snack(fragmentContainer)
     }
 

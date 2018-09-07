@@ -64,7 +64,7 @@ data class PlaceWrapper(val place: Place, val confidence: Float = 1f) {
     constructor(placeLikelihood: PlaceLikelihood) :
             this(placeLikelihood.place, placeLikelihood.likelihood)
 
-    private val map: HashMap<String, Any?> = importFrom(place, confidence)
+    private val map: HashMap<String, Any?> = importFrom(place, confidence, this)
     val likelihood: Float by map
     val id: String by map
     val placeTypes: List<Int> by map
@@ -78,6 +78,7 @@ data class PlaceWrapper(val place: Place, val confidence: Float = 1f) {
     val rating: Float by map
     val priceLevel: Int by map
     val attributions: String? by map
+    lateinit var placeObject: Place
 
     companion object {
         /**
@@ -86,7 +87,9 @@ data class PlaceWrapper(val place: Place, val confidence: Float = 1f) {
          *    is released.
          * 2. Wrap the [Place] object using a [Map] that is easy via [PlaceWrapper].
          */
-        private fun importFrom(place: Place, confidence: Float): HashMap<String, Any?> {
+        private fun importFrom(place: Place,
+                               confidence: Float,
+                               placeWrapper: PlaceWrapper): HashMap<String, Any?> {
             return HashMap<String, Any?>().also { map ->
                 map["likelihood"] = confidence
                 // Make sure to get an instance from freeze() that will be available
@@ -104,6 +107,7 @@ data class PlaceWrapper(val place: Place, val confidence: Float = 1f) {
                     map["rating"] = rating
                     map["priceLevel"] = priceLevel
                     map["attributions"] = attributions
+                    placeWrapper.placeObject = this
                 }
             }
         }

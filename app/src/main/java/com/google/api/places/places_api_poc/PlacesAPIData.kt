@@ -64,7 +64,7 @@ data class PlaceWrapper(val place: Place, val confidence: Float = 1f) {
     constructor(placeLikelihood: PlaceLikelihood) :
             this(placeLikelihood.place, placeLikelihood.likelihood)
 
-    private val map: HashMap<String, Any?> = importFrom(place, confidence, this)
+    val map: HashMap<String, Any?> = importFrom(place, confidence, this)
     val likelihood: Float by map
     val id: String by map
     val placeTypes: List<Int> by map

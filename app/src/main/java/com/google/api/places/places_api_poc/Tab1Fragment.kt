@@ -140,7 +140,7 @@ class RowViewHolder(val activity: DriverActivity, itemView: View) :
         rowView.text = place.name
         rowView.setOnClickListener {
             PlaceDetailsBottomSheetDialogFragment().apply {
-                arguments = place.getBundle("place")
+                placeWrapper = place
             }.show(activity.supportFragmentManager, Tab1Fragment::javaClass.name)
         }
     }

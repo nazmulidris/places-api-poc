@@ -23,7 +23,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import java.util.*
 
 class PlaceDetailsBottomSheetDialogFragment : BottomSheetDialogFragment() {
 
@@ -35,8 +34,8 @@ class PlaceDetailsBottomSheetDialogFragment : BottomSheetDialogFragment() {
 
         // Inflate the layout for this fragment.
         val layout = inflater.inflate(R.layout.fragment_place_details,
-                container,
-                false)
+                                      container,
+                                      false)
 
         textBody = layout.findViewById(R.id.text_place_details_body)
         textHeader = layout.findViewById(R.id.text_place_details_header)
@@ -44,25 +43,25 @@ class PlaceDetailsBottomSheetDialogFragment : BottomSheetDialogFragment() {
         return layout
     }
 
+    lateinit var placeWrapper: PlaceWrapper
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        // Get argument that is passed to fragment.
-        arguments?.apply {
-            val map = getSerializable("place") as HashMap<String, Any?>
-            textHeader.text = map["name"] as String
+        if (this::placeWrapper.isInitialized)
+            placeWrapper.apply {
+                textHeader.text = placeWrapper.name
 
-            StringBuffer().apply {
-                for (entry in map) {
-                    append("<br/><b>${entry.key}</b><br/>")
-                    append("<code>${generateValueString(entry.value)}<code><br/>")
+                StringBuffer().apply {
+                    for (entry in map) {
+                        append("<br/><b>${entry.key}</b><br/>")
+                        append("<code>${generateValueString(entry.value)}<code><br/>")
+                    }
+                }.apply {
+                    textBody.text = Html.fromHtml(this.toString())
                 }
-            }.apply {
-                textBody.text = Html.fromHtml(this.toString())
-            }
 
-        }
+            }
 
     }
 

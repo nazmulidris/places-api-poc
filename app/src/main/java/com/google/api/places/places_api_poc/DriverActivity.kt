@@ -87,7 +87,7 @@ class DriverActivity : AppCompatActivity() {
     }
 
     // Manage creating and switching Fragments.
-    fun setupFragments() {
+    private fun setupFragments() {
         // Enable bottom bar navigation to respond to user input.
         find<BottomNavigationView>(R.id.navigation)
                 .setOnNavigationItemSelectedListener(onNavigationItemSelectedListener)
@@ -95,11 +95,12 @@ class DriverActivity : AppCompatActivity() {
         switchFragment(R.id.navigation_tab1)
     }
 
-    private val fragmentMap = mutableMapOf<Int, Fragment>().apply {
-        put(R.id.navigation_tab1, Tab1Fragment())
-        put(R.id.navigation_tab2, Tab2Fragment())
-        put(R.id.navigation_tab3, Tab3Fragment())
-    }
+    private val fragmentMap: Map<Int, Fragment> =
+            mutableMapOf<Int, Fragment>().apply {
+                put(R.id.navigation_tab1, Tab1Fragment())
+                put(R.id.navigation_tab2, Tab2Fragment())
+                put(R.id.navigation_tab3, Tab3Fragment())
+            }.toMap()
 
     private fun switchFragment(id: Int) {
         fragmentMap[id]?.let { newFragment ->

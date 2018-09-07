@@ -241,3 +241,6 @@ Notes on the code above:
 - [MDC Android doc](http://tinyurl.com/ydgvspm4)
 - [MDC Android src](http://tinyurl.com/y7q7loxm)
 - [BottomSheetDialogFragment tutorial](http://tinyurl.com/y76vyeks)
+
+## LatLngBounds
+- [Generate LatLngBounds given LatLng](http://tinyurl.com/y7fcr8pd)

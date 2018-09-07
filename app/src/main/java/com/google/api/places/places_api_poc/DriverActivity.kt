@@ -89,7 +89,7 @@ class DriverActivity : AppCompatActivity() {
     // Manage creating and switching Fragments.
     private fun setupFragments() {
         // Enable bottom bar navigation to respond to user input.
-        find<BottomNavigationView>(R.id.navigation)
+        find<BottomNavigationView>(R.id.layout_app_navigation)
                 .setOnNavigationItemSelectedListener(onNavigationItemSelectedListener)
         // Pre-select the first fragment.
         switchFragment(R.id.navigation_tab1)
@@ -106,7 +106,7 @@ class DriverActivity : AppCompatActivity() {
         fragmentMap[id]?.let { newFragment ->
             supportFragmentManager
                     .beginTransaction()
-                    .replace(R.id.container_fragment, newFragment)
+                    .replace(R.id.layout_app_fragment, newFragment)
                     // To allow user to use back button to undo fragment switch uncomment this.
                     //.addToBackStack(null)
                     .commit()

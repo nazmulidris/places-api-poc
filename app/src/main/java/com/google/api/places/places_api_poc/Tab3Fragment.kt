@@ -31,7 +31,7 @@ class Tab3Fragment : BaseTabFragment() {
         // Inflate the layout for this fragment
         val layout = inflater.inflate(R.layout.fragment_tab3, container, false)
 
-        fragmentContainer = layout.findViewById(R.id.fragment_container_tab3)
+        fragmentContainer = layout.findViewById(R.id.layout_tab3_root)
 
         return layout
     }

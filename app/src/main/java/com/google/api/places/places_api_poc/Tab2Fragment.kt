@@ -17,27 +17,44 @@
 package com.google.api.places.places_api_poc
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 
 class Tab2Fragment : BaseTabFragment() {
 
     private lateinit var fragmentContainer: CoordinatorLayout
+    private lateinit var textInputQuery: EditText
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         val layout = inflater.inflate(R.layout.fragment_tab2, container, false)
-
-        fragmentContainer = layout.findViewById(R.id.fragment_container_tab2)
-
+        with(layout) {
+            fragmentContainer = findViewById(R.id.layout_tab2_root)
+            textInputQuery = findViewById(R.id.text_input_query)
+        }
         return layout
     }
 
     override fun attachToUI() {
-        "👍 Tab2".snack(fragmentContainer)
+        textInputQuery.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(inputString: Editable) {
+                respondToTextChange(inputString)
+            }
+
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
+        })
+    }
+
+    private fun respondToTextChange(inputString: Editable) {
+        "🔤 $inputString".snack(fragmentContainer)
     }
 
 }

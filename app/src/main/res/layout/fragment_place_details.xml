@@ -46,6 +46,7 @@
     </ScrollView>
 
     <ImageView
+        android:id="@+id/image_attribution"
         android:background="@color/colorPrimaryDark"
         android:src="@drawable/powered_by_google_dark"
         android:layout_width="match_parent"

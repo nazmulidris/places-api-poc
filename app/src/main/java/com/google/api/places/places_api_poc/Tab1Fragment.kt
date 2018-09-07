@@ -41,8 +41,8 @@ class Tab1Fragment : BaseTabFragment() {
         val layout = inflater.inflate(R.layout.fragment_tab1, container, false)
 
         fab = layout.findViewById(R.id.fab_current_place)
-        recyclerView = layout.findViewById(R.id.current_place_recyclerview)
-        fragmentContainer = layout.findViewById(R.id.fragment_container_tab1)
+        recyclerView = layout.findViewById(R.id.rv_current_place_list)
+        fragmentContainer = layout.findViewById(R.id.layout_tab1_root)
 
         return layout
     }
@@ -139,7 +139,7 @@ class RowViewHolder(val activity: DriverActivity, itemView: View) :
     fun bindToDataItem(place: PlaceWrapper) {
         rowView.text = place.name
         rowView.setOnClickListener {
-            PlaceDetailsBottomSheetDialogFragment().apply {
+            PlaceDetailsSheetFragment().apply {
                 placeWrapper = place
             }.show(activity.supportFragmentManager, Tab1Fragment::javaClass.name)
         }

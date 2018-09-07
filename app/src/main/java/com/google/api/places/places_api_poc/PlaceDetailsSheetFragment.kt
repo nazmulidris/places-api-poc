@@ -24,7 +24,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-class PlaceDetailsBottomSheetDialogFragment : BottomSheetDialogFragment() {
+class PlaceDetailsSheetFragment : BottomSheetDialogFragment() {
 
     lateinit var textBody: TextView
     lateinit var textHeader: TextView

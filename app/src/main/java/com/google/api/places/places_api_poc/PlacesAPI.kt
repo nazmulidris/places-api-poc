@@ -23,10 +23,8 @@ import android.location.Location
 import androidx.lifecycle.*
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.places.GeoDataClient
-import com.google.android.gms.location.places.PlaceDetectionClient
-import com.google.android.gms.location.places.PlaceLikelihoodBufferResponse
-import com.google.android.gms.location.places.Places
+import com.google.android.gms.location.places.*
+import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.tasks.OnCompleteListener
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -34,15 +32,18 @@ import java.util.concurrent.Executors
 class PlacesAPI(val context: Application) : AndroidViewModel(context), LifecycleObserver {
 
     //
-    // Places API clients.
+    // Places API clients - Current Place.
     //
 
-    // Client for geo data.
-    private lateinit var geoDataClient: GeoDataClient
-    // Client for place detection.
     private lateinit var currentPlaceClient: PlaceDetectionClient
-    // LiveData for current place API responses.
     val currentPlaceLiveData = MutableLiveData<List<PlaceWrapper>>()
+
+    //
+    // Places API clients - Current Place.
+    //
+
+    private lateinit var geoDataClient: GeoDataClient
+    val autocompletePredictionLiveData = MutableLiveData<List<AutocompletePredictionData>>()
 
     //
     // Fused Location Provider.
@@ -143,6 +144,55 @@ class PlacesAPI(val context: Application) : AndroidViewModel(context), Lifecycle
     // Place Autocomplete.
     //
 
+    fun getAutocompletePredictions(queryString: String,
+                                   bounds: LatLngBounds,
+                                   filter: AutocompleteFilter = AutocompleteFilter.Builder()
+                                           .setTypeFilter(AutocompleteFilter.TYPE_FILTER_NONE)
+                                           .build()) {
+        "PlacesAPI ⇢ GeoDataClient.getAutocompletePredictions() ✅".log()
+        geoDataClient.getAutocompletePredictions(queryString, bounds, filter).let { requestTask ->
+            requestTask.addOnCompleteListener(
+                executor,
+                OnCompleteListener { responseTask ->
+                    if (responseTask.isSuccessful) {
+                        processAutocompletePrediction(responseTask.result)
+                    } else {
+                        "⚠️ Task failed with exception ${responseTask.exception}".log()
+                    }
+                }
+            )
+        }
+    }
+
+    private fun processAutocompletePrediction(buffer: AutocompletePredictionBufferResponse) {
+        val count = buffer.count
+
+        if (count == 0) {
+            "⚠️ No autocomplete predictions found".log()
+            return
+        }
+
+        val outputList: MutableList<AutocompletePredictionData> = mutableListOf()
+
+        for (index in 0 until count) {
+            val item = buffer.get(index)
+            outputList.add(AutocompletePredictionData(
+                placeId = item.placeId,
+                placeTypes = item.placeTypes,
+                fullText = item.getFullText(null),
+                primaryText = item.getPrimaryText(null),
+                secondaryText = item.getSecondaryText(null)
+            ))
+        }
+
+        // Dump the list of AutocompletePrediction objects to logcat.
+        outputList.joinToString("\n").log()
+
+        // Update the LiveData, so observables can react to this change.
+        autocompletePredictionLiveData.postValue(outputList)
+
+    }
+
     /**
      * This function won't execute if FINE_ACCESS_LOCATION permission is not granted.
      */
@@ -152,11 +202,6 @@ class PlacesAPI(val context: Application) : AndroidViewModel(context), Lifecycle
             "PlacesAPI ⇢ FusedLocationProviderClient.lastLocation() ✅".log()
             currentLocationClient.lastLocation.let { requestTask ->
                 // Run this in background thread
-//                requestTask.addOnSuccessListener(
-//                    executor,
-//                    OnSuccessListener { location ->
-//                        processCurrentLocation(location)
-//                    })
                 requestTask.addOnCompleteListener(
                     executor,
                     OnCompleteListener { responseTask ->

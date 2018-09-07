@@ -31,7 +31,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 class Tab1Fragment : BaseTabFragment() {
 
     private lateinit var fab: FloatingActionButton
-    private lateinit var recyclerView: RecyclerView
+    internal lateinit var recyclerView: RecyclerView
     private lateinit var fragmentContainer: CoordinatorLayout
 
     // Inflate the layout.
@@ -49,7 +49,7 @@ class Tab1Fragment : BaseTabFragment() {
 
     override fun onFragmentCreate() {
         // Setup RecyclerView.
-        setupRecyclerView()
+        Tab1RecyclerViewHandler(this)
 
         // Attach a behavior to the FAB.
         fab.setOnClickListener { viewClicked ->
@@ -73,78 +73,79 @@ class Tab1Fragment : BaseTabFragment() {
 
     }
 
-    private fun setupRecyclerView() {
+}
+
+private class Tab1RecyclerViewHandler(fragment: Tab1Fragment) {
+
+    init {
         // Create the RecyclerView Adapter.
-        val dataAdapter = DataAdapter(getParentActivity())
+        val dataAdapter = DataAdapter(fragment)
 
         // Attach LiveData observers for current place data (from Places API).
-        placesAPIViewModel.currentPlaceLiveData.observe(
-            this@Tab1Fragment,
+        fragment.placesAPIViewModel.currentPlaceLiveData.observe(
+            fragment,
             Observer { data ->
                 "🎉 observable reacting -> #places=${data.size}".log()
                 dataAdapter.loadData(data)
             })
 
-        with(recyclerView) {
+        // Setup RecyclerView.
+        with(fragment.recyclerView) {
             addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
             layoutManager = LinearLayoutManager(context)
             adapter = dataAdapter
         }
+    }
+
+
+    // List Adapter.
+    class DataAdapter(val fragment: Tab1Fragment) : RecyclerView.Adapter<RowViewHolder>() {
+        // Underlying data storage.
+        val underlyingData: MutableList<PlaceWrapper> = mutableListOf()
+
+        // Load underlying data and update RecyclerView.
+        fun loadData(data: List<PlaceWrapper>) {
+            underlyingData.apply {
+                clear()
+                addAll(data)
+            }
+            notifyDataSetChanged()
+        }
+
+        override fun getItemCount(): Int {
+            return underlyingData.size
+        }
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RowViewHolder {
+            val activity = fragment.getParentActivity()
+            val inflatedView = activity.layoutInflater.inflate(
+                R.layout.item_row_place, parent, false)
+            return Tab1RecyclerViewHandler.RowViewHolder(fragment, inflatedView)
+        }
+
+        override fun onBindViewHolder(holder: RowViewHolder, position: Int) {
+            holder.bindToDataItem(underlyingData[position])
+        }
 
     }
 
+    // Row renderer (ViewHolder).
+    class RowViewHolder(val fragment: Tab1Fragment, itemView: View) :
+            RecyclerView.ViewHolder(itemView) {
+
+        // Get the row renderer from the itemView that's passed (which loads R.layout.item_row_place)
+        private val rowView: TextView = itemView.findViewById(R.id.text_row_place)
+
+        fun bindToDataItem(place: PlaceWrapper) {
+            rowView.text = place.name
+            rowView.setOnClickListener {
+                PlaceDetailsSheetFragment().apply {
+                    placeWrapper = place
+                }.show(fragment.getParentActivity().supportFragmentManager,
+                       Tab1Fragment::javaClass.name)
+            }
+        }
+
+    }
 }
 
-//
-// List Adapter.
-//
-class DataAdapter(val activity: DriverActivity) : RecyclerView.Adapter<RowViewHolder>() {
-    // Underlying data storage.
-    val underlyingData: MutableList<PlaceWrapper> = mutableListOf()
-
-    // Load underlying data and update RecyclerView.
-    fun loadData(data: List<PlaceWrapper>) {
-        underlyingData.apply {
-            clear()
-            addAll(data)
-        }
-        notifyDataSetChanged()
-    }
-
-    override fun getItemCount(): Int {
-        return underlyingData.size
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RowViewHolder {
-        with(activity.layoutInflater.inflate(R.layout.item_row_place,
-                                             parent,
-                                             false)) {
-            return RowViewHolder(activity, this)
-        }
-    }
-
-    override fun onBindViewHolder(holder: RowViewHolder, position: Int) {
-        holder.bindToDataItem(underlyingData[position])
-    }
-
-}
-
-//
-// Row renderer (ViewHolder).
-//
-class RowViewHolder(val activity: DriverActivity, itemView: View) :
-        RecyclerView.ViewHolder(itemView) {
-
-    // Get the row renderer from the itemView that's passed (which loads R.layout.item_row_place)
-    private val rowView: TextView = itemView.findViewById(R.id.text_row_place)
-
-    fun bindToDataItem(place: PlaceWrapper) {
-        rowView.text = place.name
-        rowView.setOnClickListener {
-            PlaceDetailsSheetFragment().apply {
-                placeWrapper = place
-            }.show(activity.supportFragmentManager, Tab1Fragment::javaClass.name)
-        }
-    }
-
-}

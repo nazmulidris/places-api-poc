@@ -24,6 +24,6 @@
     <!-- Driver Activity and Tab Fragments -->
     <string name="title_activity_driver">DriverActivity</string>
     <string name="title_tab1">Current Place</string>
-    <string name="title_tab2">Tab2</string>
+    <string name="title_tab2">Autocomplete</string>
     <string name="title_tab3">Tab3</string>
 </resources>

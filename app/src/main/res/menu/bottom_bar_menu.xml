@@ -23,7 +23,7 @@
 
     <item
         android:id="@+id/navigation_tab2"
-        android:icon="@drawable/ic_dashboard_black_24dp"
+        android:icon="@drawable/ic_keyboard_black_24dp"
         android:title="@string/title_tab2" />
 
     <item

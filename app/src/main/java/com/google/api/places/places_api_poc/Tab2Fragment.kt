@@ -17,7 +17,6 @@
 package com.google.api.places.places_api_poc
 
 import android.Manifest
-import android.location.Location
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -25,15 +24,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.TextView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.lifecycle.Observer
-import com.google.android.gms.maps.model.LatLng
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.maps.model.LatLngBounds
 
 class Tab2Fragment : BaseTabFragment() {
 
-    private lateinit var fragmentContainer: CoordinatorLayout
-    private lateinit var textInputQuery: EditText
+    internal lateinit var textInputQuery: EditText
+    internal lateinit var fragmentContainer: CoordinatorLayout
+    internal lateinit var recyclerView: RecyclerView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -42,91 +45,22 @@ class Tab2Fragment : BaseTabFragment() {
         with(layout) {
             fragmentContainer = findViewById(R.id.layout_tab2_root)
             textInputQuery = findViewById(R.id.text_input_query)
+            recyclerView = findViewById<RecyclerView>(R.id.rv_autocomplete_prediction_list)
         }
         return layout
     }
 
-
-    private val textChangeListener = object : TextWatcher {
-        override fun afterTextChanged(inputString: Editable) {
-            respondToTextChange(inputString)
-        }
-
-        override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-        override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
-    }
+    val locationHandler = LocationHandler(this)
+    val textChangeListener = TextChangeListener(this)
 
     override fun onFragmentCreate() {
-        observeLocationLiveData()
-    }
-
-    fun observeLocationLiveData() {
-        placesAPIViewModel.currentLocationLiveData.observe(
-            this@Tab2Fragment,
-            Observer { location ->
-                "📌 Current Location = $location".log()
-
-                val bounds = getBounds(location)
-                "$bounds".log()
-
-                "Current: ${getUrl(location.latitude, location.longitude)}".log()
-                "NorthEast: ${getUrl(bounds.northeast.latitude, bounds.northeast.longitude)}".log()
-                "SouthWest: ${getUrl(bounds.southwest.latitude, bounds.southwest.longitude)}".log()
-            })
-
-
-    }
-
-    fun getUrl(lat: Double, lon: Double): String {
-        return "https://maps.google.com/maps?q=$lat,$lon"
-        //return "https://www.latlong.net/c/?lat=$lat&long=$lon\n"
-    }
-
-    fun getLocation() {
-        getParentActivity().executeTaskOnPermissionGranted(
-            object : DriverActivity.PermissionDependentTask {
-                override fun getRequiredPermission() =
-                        Manifest.permission.ACCESS_FINE_LOCATION
-
-                override fun onPermissionGranted() {
-                    placesAPIViewModel.getLastLocation()
-                    "🚀️ Calling FusedLocationProvider lastLocation()".snack(
-                        fragmentContainer)
-                }
-
-                override fun onPermissionRevoked() {
-                    "🛑 This app will not function without ${getRequiredPermission()}"
-                            .snack(fragmentContainer)
-                }
-            })
-    }
-
-    /** [More info on Wikipedia](https://en.wikipedia.org/wiki/Decimal_degrees) */
-    enum class Range(val decimalDegrees: Double) {
-        Country(1.0),
-        LargeCityOoDistrict(0.1),
-        TownOrVillage(0.01),
-        NeighborhoodOrStreet(0.001),
-        IndvidualStreetOrLandParcel(0.0001),
-        DoorEntranceOrIndvidualTree(0.00001),
-        IndividualHumans(0.000001)
-    }
-
-    /** [More Info](https://stackoverflow.com/a/32368196/2085356) */
-    fun getBounds(location: Location, range: Range = Range.NeighborhoodOrStreet): LatLngBounds {
-        val radiusDegrees = range.decimalDegrees
-        val center = LatLng(location.latitude, location.longitude)
-        val northEast = LatLng(center.latitude + radiusDegrees, center.longitude + radiusDegrees)
-        val southWest = LatLng(center.latitude - radiusDegrees, center.longitude - radiusDegrees)
-        return LatLngBounds.builder()
-                .include(northEast)
-                .include(southWest)
-                .build()
+        locationHandler.observeLocationLiveData()
+        Tab2RecyclerViewHandler(this)
     }
 
     override fun onStart() {
         super.onStart()
-        getLocation()
+        locationHandler.getLocation()
         textInputQuery.addTextChangedListener(textChangeListener)
     }
 
@@ -135,8 +69,149 @@ class Tab2Fragment : BaseTabFragment() {
         textInputQuery.removeTextChangedListener(textChangeListener)
     }
 
-    private fun respondToTextChange(inputString: Editable) {
-        "🔤 $inputString".toast(getParentActivity())
+}
+
+private class Tab2RecyclerViewHandler(fragment: Tab2Fragment) {
+
+    init {
+        // Create the RecyclerView Adapter.
+        val dataAdapter = DataAdapter(fragment)
+
+        // Attach LiveData observers for autocomplete prediction data (from Places API).
+        fragment.placesAPIViewModel.autocompletePredictionLiveData.observe(
+            fragment,
+            Observer { data ->
+                "🎉 observable reacting -> #autocompletePredictions=${data.size}".log()
+                dataAdapter.loadData(data)
+            }
+        )
+
+        // Setup RecyclerView.
+        with(fragment.recyclerView) {
+            addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
+            layoutManager = LinearLayoutManager(context)
+            adapter = dataAdapter
+        }
     }
 
+    // List Adapter.
+    class DataAdapter(val fragment: Tab2Fragment) : RecyclerView.Adapter<RowViewHolder>() {
+        // Underlying data storage.
+        val underlyingData: MutableList<AutocompletePredictionData> = mutableListOf()
+
+        // Load underlying data and update RecyclerView.
+        fun loadData(data: List<AutocompletePredictionData>) {
+            underlyingData.apply {
+                clear()
+                addAll(data)
+            }
+            notifyDataSetChanged()
+        }
+
+        override fun getItemCount(): Int {
+            return underlyingData.size
+        }
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RowViewHolder {
+            val activity = fragment.getParentActivity()
+            val inflatedView = activity.layoutInflater.inflate(
+                R.layout.item_row_place, parent, false)
+            return Tab2RecyclerViewHandler.RowViewHolder(fragment, inflatedView)
+        }
+
+        override fun onBindViewHolder(holder: RowViewHolder, position: Int) {
+            holder.bindToDataItem(underlyingData[position])
+        }
+
+    }
+
+    // Row renderer (ViewHolder).
+    class RowViewHolder(val fragment: Tab2Fragment, itemView: View) :
+            RecyclerView.ViewHolder(itemView) {
+
+        // Get the row renderer from the itemView that's passed (which loads R.layout.item_row_place)
+        private val rowView: TextView = itemView.findViewById(R.id.text_row_place)
+
+        fun bindToDataItem(data: AutocompletePredictionData) {
+            rowView.text = data.primaryText
+            rowView.setOnClickListener {
+                // todo 1) load a place for this given placeId, 2) render it in a place detail sheet
+                "📋 Todo - load this place and show a PlaceDetailsSheetFragment".snack(
+                    fragment.fragmentContainer
+                )
+
+//                PlaceDetailsSheetFragment().apply {
+//                    placeWrapper = place
+//                }.show(activity.supportFragmentManager, Tab2Fragment::javaClass.name)
+
+            }
+        }
+
+    }
+
+}
+
+class TextChangeListener(val fragment: Tab2Fragment) : TextWatcher {
+    override fun afterTextChanged(inputString: Editable) {
+        respondToTextChange(inputString)
+    }
+
+    override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+    override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
+
+    private fun respondToTextChange(inputString: Editable) {
+        //"🔤 $inputString".toast(fragment.getParentActivity())
+        val bounds = fragment.locationHandler.getBounds()
+        if (bounds != null) {
+            fragment.placesAPIViewModel.getAutocompletePredictions(
+                inputString.toString(), bounds)
+        } else {
+            "⚠️ Can't make request if location is null".toast(fragment.getParentActivity())
+        }
+    }
+}
+
+class LocationHandler(val fragment: Tab2Fragment) {
+    private fun getUrl(lat: Double, lon: Double): String {
+        return "https://maps.google.com/maps?q=$lat,$lon"
+    }
+
+    fun observeLocationLiveData() {
+        fragment.placesAPIViewModel.currentLocationLiveData.observe(
+            fragment,
+            Observer { location ->
+                val bounds = LatLngRange.getBounds(location)
+                "📌 Current Location = $location".log()
+                "NorthEast: ${getUrl(bounds.northeast.latitude, bounds.northeast.longitude)}".log()
+                "SouthWest: ${getUrl(bounds.southwest.latitude, bounds.southwest.longitude)}".log()
+            })
+    }
+
+    fun getLocation() {
+        fragment.getParentActivity().executeTaskOnPermissionGranted(
+            object : DriverActivity.PermissionDependentTask {
+                override fun getRequiredPermission() =
+                        Manifest.permission.ACCESS_FINE_LOCATION
+
+                override fun onPermissionGranted() {
+                    fragment.placesAPIViewModel.getLastLocation()
+                    "🚀️ Calling FusedLocationProvider lastLocation()".snack(
+                        fragment.fragmentContainer)
+                }
+
+                override fun onPermissionRevoked() {
+                    "🛑 This app will not function without ${getRequiredPermission()}"
+                            .snack(fragment.fragmentContainer)
+                }
+            })
+    }
+
+    fun getBounds(): LatLngBounds? {
+        val location = fragment.placesAPIViewModel.currentLocationLiveData.value
+        return if (location != null) {
+            LatLngRange.getBounds(location)
+        } else {
+            null
+        }
+    }
 }

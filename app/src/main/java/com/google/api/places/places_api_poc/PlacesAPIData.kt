@@ -124,3 +124,9 @@ data class PlaceWrapper(val place: Place, val confidence: Float = 1f) {
     }
 
 }
+
+data class AutocompletePredictionData(val fullText: CharSequence,
+                                      val primaryText: CharSequence,
+                                      val secondaryText: CharSequence,
+                                      val placeId: String?,
+                                      val placeTypes: List<Int>?)

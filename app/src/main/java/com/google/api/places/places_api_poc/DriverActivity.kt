@@ -96,7 +96,7 @@ class DriverActivity : AppCompatActivity() {
     // Manage creating and switching Fragments.
     private fun setupFragments() {
         // Enable bottom bar navigation to respond to user input.
-        find<BottomNavigationView>(R.id.layout_app_navigation)
+        findViewById<BottomNavigationView>(R.id.layout_app_navigation)
                 .setOnNavigationItemSelectedListener(onNavigationItemSelectedListener)
         // Pre-select the first fragment.
         switchFragment(R.id.navigation_tab1)

@@ -33,7 +33,7 @@ class PlaceDetailsSheetFragment : BottomSheetDialogFragment() {
                               savedInstanceState: Bundle?): View? {
 
         // Inflate the layout for this fragment.
-        val layout = inflater.inflate(R.layout.fragment_place_details,
+        val layout = inflater.inflate(R.layout.fragment_place_details_sheet,
                                       container,
                                       false)
 
@@ -65,10 +65,9 @@ class PlaceDetailsSheetFragment : BottomSheetDialogFragment() {
 
     }
 
-    private fun generateValueString(value: Any?) = when {
-        value == null -> "n/a"
-        value.toString().trim().isEmpty() -> "n/a"
-        else -> value.toString()
-    }
+    private fun generateValueString(value: Any?) =
+            if (value == null) "n/a"
+            else if (value.toString().trim().isEmpty()) "n/a"
+            else value.toString()
 
 }

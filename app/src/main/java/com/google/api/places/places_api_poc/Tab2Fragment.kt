@@ -34,7 +34,7 @@ import com.google.android.gms.maps.model.LatLngBounds
 
 class Tab2Fragment : BaseTabFragment() {
 
-    internal lateinit var textInputQuery: EditText
+    private lateinit var textInputQuery: EditText
     internal lateinit var fragmentContainer: CoordinatorLayout
     internal lateinit var recyclerView: RecyclerView
 
@@ -50,12 +50,18 @@ class Tab2Fragment : BaseTabFragment() {
         return layout
     }
 
-    val locationHandler = LocationHandler(this)
-    val textChangeListener = TextChangeListener(this)
+    lateinit var locationHandler: LocationHandler
+    lateinit var textChangeListener: TextChangeListener
+    lateinit var recyclerViewHandler: Tab2RecyclerViewHandler
 
     override fun onFragmentCreate() {
+        locationHandler = LocationHandler(this)
         locationHandler.observeLocationLiveData()
-        Tab2RecyclerViewHandler(this)
+
+        recyclerViewHandler = Tab2RecyclerViewHandler(this)
+
+        textChangeListener = TextChangeListener(this, recyclerViewHandler)
+
     }
 
     override fun onStart() {
@@ -71,11 +77,13 @@ class Tab2Fragment : BaseTabFragment() {
 
 }
 
-private class Tab2RecyclerViewHandler(fragment: Tab2Fragment) {
+class Tab2RecyclerViewHandler(fragment: Tab2Fragment) {
+
+    val dataAdapter: DataAdapter
 
     init {
         // Create the RecyclerView Adapter.
-        val dataAdapter = DataAdapter(fragment)
+        dataAdapter = DataAdapter(fragment)
 
         // Attach LiveData observers for autocomplete prediction data (from Places API).
         fragment.placesAPIViewModel.autocompletePredictionLiveData.observe(
@@ -105,6 +113,11 @@ private class Tab2RecyclerViewHandler(fragment: Tab2Fragment) {
                 clear()
                 addAll(data)
             }
+            notifyDataSetChanged()
+        }
+
+        fun clearData() {
+            underlyingData.clear()
             notifyDataSetChanged()
         }
 
@@ -151,7 +164,8 @@ private class Tab2RecyclerViewHandler(fragment: Tab2Fragment) {
 
 }
 
-class TextChangeListener(val fragment: Tab2Fragment) : TextWatcher {
+class TextChangeListener(val fragment: Tab2Fragment,
+                         val recyclerViewHandler: Tab2RecyclerViewHandler) : TextWatcher {
     override fun afterTextChanged(inputString: Editable) {
         respondToTextChange(inputString)
     }
@@ -163,8 +177,12 @@ class TextChangeListener(val fragment: Tab2Fragment) : TextWatcher {
         //"🔤 $inputString".toast(fragment.getParentActivity())
         val bounds = fragment.locationHandler.getBounds()
         if (bounds != null) {
-            fragment.placesAPIViewModel.getAutocompletePredictions(
-                inputString.toString(), bounds)
+            if (inputString.isBlank()) {
+                recyclerViewHandler.dataAdapter.clearData()
+            } else {
+                fragment.placesAPIViewModel.getAutocompletePredictions(
+                    inputString.toString(), bounds)
+            }
         } else {
             "⚠️ Can't make request if location is null".toast(fragment.getParentActivity())
         }

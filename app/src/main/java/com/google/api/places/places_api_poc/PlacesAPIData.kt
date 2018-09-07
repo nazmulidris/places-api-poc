@@ -18,6 +18,7 @@ package com.google.api.places.places_api_poc
 
 import android.net.Uri
 import android.os.Bundle
+import com.google.android.gms.location.places.Place
 import com.google.android.gms.location.places.PlaceLikelihood
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
@@ -59,8 +60,11 @@ import kotlin.collections.HashMap
         "priceLevel": -1
     }
  */
-data class PlaceWrapper(val placeLikelihood: PlaceLikelihood) {
-    private val map: HashMap<String, Any?> = importFrom(placeLikelihood)
+data class PlaceWrapper(val place: Place, val confidence: Float = 1f) {
+    constructor(placeLikelihood: PlaceLikelihood) :
+            this(placeLikelihood.place, placeLikelihood.likelihood)
+
+    private val map: HashMap<String, Any?> = importFrom(place, confidence)
     val likelihood: Float by map
     val id: String by map
     val placeTypes: List<Int> by map
@@ -82,12 +86,12 @@ data class PlaceWrapper(val placeLikelihood: PlaceLikelihood) {
          *    is released.
          * 2. Wrap the [Place] object using a [Map] that is easy via [PlaceWrapper].
          */
-        fun importFrom(placeLikelihood: PlaceLikelihood): HashMap<String, Any?> {
+        private fun importFrom(place: Place, confidence: Float): HashMap<String, Any?> {
             return HashMap<String, Any?>().also { map ->
-                map["likelihood"] = placeLikelihood.likelihood
+                map["likelihood"] = confidence
                 // Make sure to get an instance from freeze() that will be available
                 // after the buffer is released.
-                placeLikelihood.place.freeze().apply {
+                place.freeze().apply {
                     map["id"] = id
                     map["placeTypes"] = placeTypes
                     map["address"] = address

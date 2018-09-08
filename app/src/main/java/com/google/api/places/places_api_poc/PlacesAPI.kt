@@ -41,7 +41,7 @@ class PlacesAPI(val context: Application) : AndroidViewModel(context), Lifecycle
     val currentPlaceLiveData = MutableLiveData<List<PlaceWrapper>>()
 
     //
-    // Places API clients - Current Place.
+    // Places API clients - Autocomplete Predictions.
     //
 
     private lateinit var geoDataClient: GeoDataClient

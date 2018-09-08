@@ -210,14 +210,18 @@ class PlacesAPI(val context: Application) : AndroidViewModel(context), Lifecycle
         // Get the PlacePhotoMetadataBuffer (metadata for all of the photos).
         val photoMetadataBuffer = photos.photoMetadata
 
-        // Get the first photo in the list.
-        val photoMetadata = photoMetadataBuffer.get(0)
+        val count = photoMetadataBuffer.count
 
-        // Get the attribution text.
-        val attribution = photoMetadata.attributions
+        if (count > 0) {
+            // Get the first photo in the list.
+            val photoMetadata = photoMetadataBuffer.get(0)
 
-        // Actually get the photo.
-        getPhoto(photoMetadata, attribution)
+            // Get the attribution text.
+            val attribution = photoMetadata.attributions
+
+            // Actually get the photo.
+            getPhoto(photoMetadata, attribution)
+        }
 
     }
 

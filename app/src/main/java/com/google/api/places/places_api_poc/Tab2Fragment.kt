@@ -51,17 +51,13 @@ class Tab2Fragment : BaseTabFragment() {
     }
 
     lateinit var locationHandler: LocationHandler
-    lateinit var textChangeListener: TextChangeListener
-    lateinit var recyclerViewHandler: Tab2RecyclerViewHandler
+    private lateinit var textChangeListener: TextChangeListener
+    private lateinit var recyclerViewHandler: Tab2RecyclerViewHandler
 
     override fun onFragmentCreate() {
         locationHandler = LocationHandler(this)
-        locationHandler.observeLocationLiveData()
-
         recyclerViewHandler = Tab2RecyclerViewHandler(this)
-
-        textChangeListener = TextChangeListener(this, recyclerViewHandler)
-
+        textChangeListener = TextChangeListener(this)
     }
 
     override fun onStart() {
@@ -79,7 +75,7 @@ class Tab2Fragment : BaseTabFragment() {
 
 class Tab2RecyclerViewHandler(fragment: Tab2Fragment) {
 
-    val dataAdapter: DataAdapter
+    private val dataAdapter: DataAdapter
 
     init {
         // Create the RecyclerView Adapter.
@@ -164,8 +160,7 @@ class Tab2RecyclerViewHandler(fragment: Tab2Fragment) {
 
 }
 
-class TextChangeListener(val fragment: Tab2Fragment,
-                         val recyclerViewHandler: Tab2RecyclerViewHandler) : TextWatcher {
+class TextChangeListener(val fragment: Tab2Fragment) : TextWatcher {
     override fun afterTextChanged(inputString: Editable) {
         respondToTextChange(inputString)
     }
@@ -178,7 +173,7 @@ class TextChangeListener(val fragment: Tab2Fragment,
         val bounds = fragment.locationHandler.getBounds()
         if (bounds != null) {
             if (inputString.isBlank()) {
-                recyclerViewHandler.dataAdapter.clearData()
+                fragment.placesAPIViewModel.autocompletePredictionLiveData.value = mutableListOf()
             } else {
                 fragment.placesAPIViewModel.getAutocompletePredictions(
                     inputString.toString(), bounds)
@@ -190,8 +185,8 @@ class TextChangeListener(val fragment: Tab2Fragment,
 }
 
 class LocationHandler(val fragment: Tab2Fragment) {
-    private fun getUrl(lat: Double, lon: Double): String {
-        return "https://maps.google.com/maps?q=$lat,$lon"
+    init {
+        observeLocationLiveData()
     }
 
     fun observeLocationLiveData() {
@@ -231,5 +226,9 @@ class LocationHandler(val fragment: Tab2Fragment) {
         } else {
             null
         }
+    }
+
+    private fun getUrl(lat: Double, lon: Double): String {
+        return "https://maps.google.com/maps?q=$lat,$lon"
     }
 }

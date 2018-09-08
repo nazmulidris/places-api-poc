@@ -43,17 +43,16 @@ class PlaceDetailsSheetFragment : BottomSheetDialogFragment() {
         return layout
     }
 
-    lateinit var placeWrapper: PlaceWrapper
+    lateinit var hashMap: HashMap<String, Any?>
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        if (this::placeWrapper.isInitialized)
-            placeWrapper.apply {
-                textHeader.text = placeWrapper.name
-
+        if (this::hashMap.isInitialized)
+            hashMap.apply {
+                textHeader.text = hashMap["name"] as String
                 StringBuffer().apply {
-                    for (entry in map) {
+                    for (entry in hashMap) {
                         append("<br/><b>${entry.key}</b><br/>")
                         append("<code>${generateValueString(entry.value)}<code><br/>")
                     }

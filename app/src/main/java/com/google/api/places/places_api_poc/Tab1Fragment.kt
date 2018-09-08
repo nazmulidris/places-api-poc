@@ -139,7 +139,7 @@ private class Tab1RecyclerViewHandler(fragment: Tab1Fragment) {
             rowView.text = place.name
             rowView.setOnClickListener {
                 PlaceDetailsSheetFragment().apply {
-                    placeWrapper = place
+                    hashMap = place.map
                 }.show(fragment.getParentActivity().supportFragmentManager,
                        Tab1Fragment::javaClass.name)
             }

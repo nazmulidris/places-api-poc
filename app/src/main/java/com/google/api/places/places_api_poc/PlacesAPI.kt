@@ -19,8 +19,10 @@ package com.google.api.places.places_api_poc
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.annotation.SuppressLint
 import android.app.Application
+import android.content.Intent
 import android.location.Location
 import androidx.lifecycle.*
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.places.*
@@ -44,11 +46,6 @@ class PlacesAPI(val context: Application) : AndroidViewModel(context), Lifecycle
 
     private lateinit var geoDataClient: GeoDataClient
     val autocompletePredictionLiveData = MutableLiveData<List<AutocompletePredictionData>>()
-
-    //
-    // Places API clients - Place IDs and Details.
-    //
-    val placeIDsAndDetailsLiveData = MutableLiveData<List<PlaceWrapper>>()
 
     //
     // Fused Location Provider.
@@ -166,11 +163,16 @@ class PlacesAPI(val context: Application) : AndroidViewModel(context), Lifecycle
         }
     }
 
+    enum class GetPlaceByID { Key, Action }
+
+    // This runs in a background thread.
     private fun processPlace(placeBufferResponse: PlaceBufferResponse) {
-        val place = placeBufferResponse.get(0).freeze()
-        val outputList: MutableList<PlaceWrapper> = mutableListOf()
-        outputList.add(PlaceWrapper(place))
-        placeIDsAndDetailsLiveData.postValue(outputList)
+        val place = placeBufferResponse.get(0)
+        LocalBroadcastManager.getInstance(context).sendBroadcast(
+            Intent(GetPlaceByID.Action.name).apply {
+                putExtra(GetPlaceByID.Key.name, PlaceWrapper(place).map)
+            }
+        )
     }
 
     //
@@ -197,6 +199,7 @@ class PlacesAPI(val context: Application) : AndroidViewModel(context), Lifecycle
         }
     }
 
+    // This runs in a background thread.
     private fun processAutocompletePrediction(buffer: AutocompletePredictionBufferResponse) {
         val count = buffer.count
 
@@ -249,6 +252,7 @@ class PlacesAPI(val context: Application) : AndroidViewModel(context), Lifecycle
         }
     }
 
+    // This runs in a background thread.
     private fun processCurrentLocation(value: Location) {
         currentLocationLiveData.postValue(value)
     }

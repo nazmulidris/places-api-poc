@@ -244,3 +244,7 @@ Notes on the code above:
 
 ## LatLngBounds
 - [Generate LatLngBounds given LatLng](http://tinyurl.com/y7fcr8pd)
+
+## ImageViews
+- [ImageView ScaleType](https://robots.thoughtbot.com/android-imageview-scaletype-a-visual-guide)
+- [Bitmaps and Bundles](https://stackoverflow.com/a/33797090/2085356)

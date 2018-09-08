@@ -20,6 +20,7 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
@@ -30,6 +31,7 @@ class DriverActivity : AppCompatActivity() {
         setContentView(R.layout.activity_driver)
         setupFragments()
         setupViewModel()
+        setupModalPlaceDetailSheetHandler()
     }
 
     // Manage runtime permissions for ACCESS_FINE_LOCATION.
@@ -86,9 +88,11 @@ class DriverActivity : AppCompatActivity() {
         }
     }
 
+    private lateinit var placesAPIViewModel: PlacesAPI
+
     private fun setupViewModel() {
         // Create the ViewModel which acts as a proxy to the Places API client(s).
-        val placesAPIViewModel = ViewModelProviders.of(this).get(PlacesAPI::class.java)
+        placesAPIViewModel = ViewModelProviders.of(this).get(PlacesAPI::class.java)
         // Connect to the Places API.
         lifecycle.addObserver(placesAPIViewModel)
     }
@@ -129,5 +133,24 @@ class DriverActivity : AppCompatActivity() {
                     return@OnNavigationItemSelectedListener true
                 } else return@OnNavigationItemSelectedListener false
             }
+
+    // Handle showing the PlaceDetailsSheetFragment (modal/dialog).
+    private fun setupModalPlaceDetailSheetHandler() {
+
+        placesAPIViewModel.showPlaceDetailsSheetLiveData.observe(
+            this,
+            Observer { showFlag ->
+                if (showFlag) {
+                    PlaceDetailsSheetFragment()
+                            .show(this.supportFragmentManager,
+                                  PlaceDetailsSheetFragment::javaClass.name)
+
+                } else {
+                    // Don't do anything.
+                }
+            }
+        )
+
+    }
 
 }

@@ -19,11 +19,9 @@ package com.google.api.places.places_api_poc
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.annotation.SuppressLint
 import android.app.Application
-import android.content.Intent
 import android.graphics.Bitmap
 import android.location.Location
 import androidx.lifecycle.*
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.places.*
@@ -55,6 +53,17 @@ class PlacesAPI(val context: Application) : AndroidViewModel(context), Lifecycle
 
     private lateinit var currentLocationClient: FusedLocationProviderClient
     val currentLocationLiveData = MutableLiveData<Location>()
+
+    //
+    // Modal Place Details Sheet.
+    //
+
+    val showPlaceDetailsSheetLiveData =
+            MutableLiveData<Boolean>().apply { value = false }
+    val placeWrapperLiveData = MutableLiveData<PlaceWrapper>()
+    val bitmapWrapperLiveData = MutableLiveData<BitmapWrapper>()
+
+    data class BitmapWrapper(val bitmap: Bitmap, val attribution: String)
 
     //
     // Activity lifecycle.
@@ -111,7 +120,7 @@ class PlacesAPI(val context: Application) : AndroidViewModel(context), Lifecycle
             // Permission is granted 🙌.
             "PlacesAPI ⇢ PlaceDetectionClient.getCurrentPlace() ✅".log()
             currentPlaceClient.getCurrentPlace(null).let { requestTask ->
-                // Run this in background thread
+                // Run this in background thread.
                 requestTask.addOnCompleteListener(
                     executor,
                     OnCompleteListener { responseTask ->
@@ -151,6 +160,7 @@ class PlacesAPI(val context: Application) : AndroidViewModel(context), Lifecycle
     fun getPlaceById(placeId: String) {
         "PlacesAPI ⇢ GeoDataClient.getPlaceById() ✅".log()
         geoDataClient.getPlaceById(placeId).let { requestTask ->
+            // Run this in background thread.
             requestTask.addOnCompleteListener(
                 executor,
                 OnCompleteListener { responseTask ->
@@ -165,38 +175,73 @@ class PlacesAPI(val context: Application) : AndroidViewModel(context), Lifecycle
         }
     }
 
-    enum class GET_PLACE_BY_ID { KEY, ACTION }
-
     // This runs in a background thread.
     private fun processPlace(placeBufferResponse: PlaceBufferResponse) {
         val place = placeBufferResponse.get(0)
-        LocalBroadcastManager.getInstance(context).sendBroadcast(
-            Intent(GET_PLACE_BY_ID.ACTION.name).apply {
-                putExtra(GET_PLACE_BY_ID.KEY.name, PlaceWrapper(place).map)
-            }
-        )
+        placeWrapperLiveData.postValue(PlaceWrapper(place))
+        showPlaceDetailsSheetLiveData.postValue(true)
     }
 
     //
     // Place Photos.
     //
 
-    enum class GET_PHOTO { KEY, ACTION }
-
-    // todo 1. Make PlaceDetailsSheetFragment call this function
-    // todo 2. Make the call to the GeoDataClient to get the bitmap
-    // todo 3. Fire the LocalBroadcast message
-    // todo 4. Make PlaceDetailsSheetFragment respond to this message
-    fun getPhoto(placeId: String) {
+    fun getPlacePhotos(placeId: String) {
         "PlacesAPI ⇢ GeoDataClient.getPlacePhotos() ✅".log()
+        // Run this in background thread.
+        geoDataClient.getPlacePhotos(placeId).let { requestTask ->
+            requestTask.addOnCompleteListener(
+                executor,
+                OnCompleteListener { responseTask ->
+                    if (responseTask.isSuccessful) {
+                        processPhotosMetadata(responseTask.result)
+                    } else {
+                        "⚠️ Task failed with exception ${responseTask.exception}".log()
+                    }
+                }
+            )
+        }
 
     }
 
-    fun sendBitmap(bitmap: Bitmap) {
-        LocalBroadcastManager.getInstance(context).sendBroadcast(
-            Intent(GET_PHOTO.ACTION.name).apply {
-                putExtra(GET_PHOTO.KEY.name, bitmapToBundle(bitmap))
-            }
+    // This runs in a background thread.
+    private fun processPhotosMetadata(photos: PlacePhotoMetadataResponse) {
+
+        // Get the PlacePhotoMetadataBuffer (metadata for all of the photos).
+        val photoMetadataBuffer = photos.photoMetadata
+
+        // Get the first photo in the list.
+        val photoMetadata = photoMetadataBuffer.get(0)
+
+        // Get the attribution text.
+        val attribution = photoMetadata.attributions
+
+        // Actually get the photo.
+        getPhoto(photoMetadata, attribution)
+
+    }
+
+    private fun getPhoto(photoMetadata: PlacePhotoMetadata, attribution: CharSequence) {
+        // Get a full-size bitmap for the photo.
+        "PlacesAPI ⇢ GeoDataClient.getPhoto() ✅".log()
+
+        geoDataClient.getPhoto(photoMetadata).let { requestTask ->
+            requestTask.addOnCompleteListener(
+                executor,
+                OnCompleteListener { responseTask ->
+                    if (responseTask.isSuccessful) {
+                        processPhoto(responseTask.result.bitmap, attribution)
+                    } else {
+                        "⚠️ Task failed with exception ${responseTask.exception}".log()
+                    }
+                }
+            )
+        }
+    }
+
+    private fun processPhoto(bitmap: Bitmap, attribution: CharSequence) {
+        bitmapWrapperLiveData.postValue(
+            BitmapWrapper(bitmap, attribution.toString())
         )
     }
 
@@ -211,11 +256,13 @@ class PlacesAPI(val context: Application) : AndroidViewModel(context), Lifecycle
                                            .build()) {
         "PlacesAPI ⇢ GeoDataClient.getAutocompletePredictions() ✅".log()
         geoDataClient.getAutocompletePredictions(queryString, bounds, filter).let { requestTask ->
+            // Run this in background thread.
             requestTask.addOnCompleteListener(
                 executor,
                 OnCompleteListener { responseTask ->
                     if (responseTask.isSuccessful) {
                         processAutocompletePrediction(responseTask.result)
+                        responseTask.result.release()
                     } else {
                         "⚠️ Task failed with exception ${responseTask.exception}".log()
                     }
@@ -262,7 +309,7 @@ class PlacesAPI(val context: Application) : AndroidViewModel(context), Lifecycle
         if (isPermissionGranted(context, ACCESS_FINE_LOCATION)) {
             "PlacesAPI ⇢ FusedLocationProviderClient.lastLocation() ✅".log()
             currentLocationClient.lastLocation.let { requestTask ->
-                // Run this in background thread
+                // Run this in background thread.
                 requestTask.addOnCompleteListener(
                     executor,
                     OnCompleteListener { responseTask ->

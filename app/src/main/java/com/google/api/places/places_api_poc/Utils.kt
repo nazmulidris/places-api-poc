@@ -43,8 +43,8 @@ fun bitmapToBundle(bitmap: Bitmap): Bundle {
     }
 }
 
-fun bundleToBitmap(bundle: Bundle): Bitmap {
-    val byteArray = bundle.getByteArray(PlacesAPI.GET_PHOTO.KEY.name)
+fun bundleToBitmap(bundle: Bundle, key: String): Bitmap {
+    val byteArray = bundle.getByteArray(key)
     return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
 }
 

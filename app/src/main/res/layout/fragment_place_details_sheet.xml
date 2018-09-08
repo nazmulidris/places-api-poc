@@ -50,6 +50,7 @@
 
             <ImageView
                 android:id="@+id/image_place_photo"
+                android:scaleType="centerCrop"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 

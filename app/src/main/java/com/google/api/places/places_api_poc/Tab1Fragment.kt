@@ -138,10 +138,10 @@ private class Tab1RecyclerViewHandler(fragment: Tab1Fragment) {
         fun bindToDataItem(place: PlaceWrapper) {
             rowView.text = place.name
             rowView.setOnClickListener {
-                PlaceDetailsSheetFragment().apply {
-                    hashMap = place.map
-                }.show(fragment.getParentActivity().supportFragmentManager,
-                       Tab1Fragment::javaClass.name)
+                fragment.placesAPIViewModel.also { model ->
+                    model.showPlaceDetailsSheetLiveData.value = true
+                    model.placeWrapperLiveData.value = place
+                }
             }
         }
 

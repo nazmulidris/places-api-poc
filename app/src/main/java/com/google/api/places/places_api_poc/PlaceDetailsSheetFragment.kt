@@ -16,18 +16,23 @@
 
 package com.google.api.places.places_api_poc
 
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class PlaceDetailsSheetFragment : BottomSheetDialogFragment() {
 
-    lateinit var textBody: TextView
-    lateinit var textHeader: TextView
+    private lateinit var textBody: TextView
+    private lateinit var textHeader: TextView
+    private lateinit var imagePlacePhoto: ImageView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -37,31 +42,80 @@ class PlaceDetailsSheetFragment : BottomSheetDialogFragment() {
                                       container,
                                       false)
 
-        textBody = layout.findViewById(R.id.text_place_details_body)
-        textHeader = layout.findViewById(R.id.text_place_details_header)
+        with(layout) {
+            textBody = findViewById(R.id.text_place_details_body)
+            textHeader = findViewById(R.id.text_place_details_header)
+            imagePlacePhoto = findViewById(R.id.image_place_photo)
+        }
 
         return layout
     }
 
-    lateinit var hashMap: HashMap<String, Any?>
-
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        setupViewModel()
+        setupPlaceWrapperLiveDataObserver()
+        setupBitmapWrapperLiveDataObserver()
+    }
 
-        if (this::hashMap.isInitialized)
-            hashMap.apply {
-                textHeader.text = hashMap["name"] as String
-                StringBuffer().apply {
-                    for (entry in hashMap) {
-                        append("<br/><b>${entry.key}</b><br/>")
-                        append("<code>${generateValueString(entry.value)}<code><br/>")
-                    }
-                }.apply {
-                    textBody.text = Html.fromHtml(this.toString())
-                }
+    //
+    // Observe changes in LiveData (placeWrapperLiveData, bitmapWrapperLiveData).
+    //
 
+    private lateinit var placesAPIViewModel: PlacesAPI
+    private fun setupViewModel() {
+        // Load ViewModel.
+        // 🛑 Note - You **must** pass activity scope, in order to get this ViewModel,
+        // and if you pass the fragment instance, then you won't get the ViewModel that
+        // was attached w/ the parent activity (DriverActivity).
+        placesAPIViewModel = ViewModelProviders.of(requireActivity()).get(PlacesAPI::class.java)
+    }
+
+    private fun setupBitmapWrapperLiveDataObserver() {
+        placesAPIViewModel.bitmapWrapperLiveData.observe(
+            this,
+            Observer { bitmapWrapper ->
+                renderPhoto(bitmapWrapper.bitmap)
             }
+        )
+    }
 
+    private fun setupPlaceWrapperLiveDataObserver() {
+        placesAPIViewModel.placeWrapperLiveData.observe(
+            this,
+            Observer { placeWrapper ->
+                renderPlace(placeWrapper)
+                lookupPhoto(placeId = placeWrapper.id)
+            }
+        )
+    }
+
+    //
+    // Make Places API call to get photos.
+    //
+
+    private fun lookupPhoto(placeId: String) {
+        placesAPIViewModel.getPlacePhotos(placeId)
+    }
+
+    //
+    // Render this View.
+    //
+
+    private fun renderPhoto(bitmap: Bitmap) {
+        imagePlacePhoto.setImageBitmap(bitmap)
+    }
+
+    private fun renderPlace(placeWrapper: PlaceWrapper) {
+        textHeader.text = placeWrapper.name
+        StringBuffer().apply {
+            for (entry in placeWrapper.map) {
+                append("<br/><b>${entry.key}</b><br/>")
+                append("<code>${generateValueString(entry.value)}<code><br/>")
+            }
+        }.apply {
+            textBody.text = Html.fromHtml(this.toString())
+        }
     }
 
     private fun generateValueString(value: Any?) =

@@ -17,10 +17,6 @@
 package com.google.api.places.places_api_poc
 
 import android.Manifest
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -31,7 +27,6 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.lifecycle.Observer
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -58,13 +53,11 @@ class Tab2Fragment : BaseTabFragment() {
     lateinit var locationHandler: LocationHandler
     private lateinit var textChangeListener: TextChangeListener
     private lateinit var recyclerViewHandler: Tab2RecyclerViewHandler
-    private lateinit var placeDetailsResponder: PlaceDetailsResponder
 
     override fun onFragmentCreate() {
         locationHandler = LocationHandler(this)
         recyclerViewHandler = Tab2RecyclerViewHandler(this)
         textChangeListener = TextChangeListener(this)
-        placeDetailsResponder = PlaceDetailsResponder(this)
     }
 
     override fun onStart() {
@@ -78,51 +71,6 @@ class Tab2Fragment : BaseTabFragment() {
         textInputQuery.removeTextChangedListener(textChangeListener)
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        placeDetailsResponder.unregister()
-    }
-}
-
-class PlaceDetailsResponder(private val fragment: Tab2Fragment) {
-    private lateinit var receiver: BroadcastReceiver
-
-    init {
-        createReceiver()
-        register()
-    }
-
-    private fun createReceiver() {
-        receiver = object : BroadcastReceiver() {
-            override fun onReceive(context: Context, intent: Intent) {
-                intent.extras?.apply {
-                    val map = get(PlacesAPI.GET_PLACE_BY_ID.KEY.name) as HashMap<String, Any?>
-                    show(map)
-                }
-            }
-        }
-    }
-
-    fun show(map: HashMap<String, Any?>) {
-        // Show the Place Detail Sheet.
-        PlaceDetailsSheetFragment().apply {
-            hashMap = map
-        }.show(fragment.getParentActivity().supportFragmentManager,
-               Tab2Fragment::javaClass.name)
-    }
-
-    private fun register() {
-        LocalBroadcastManager
-                .getInstance(fragment.getParentActivity())
-                .registerReceiver(receiver,
-                                  IntentFilter(PlacesAPI.GET_PLACE_BY_ID.ACTION.name))
-    }
-
-    fun unregister() {
-        LocalBroadcastManager
-                .getInstance(fragment.getParentActivity())
-                .unregisterReceiver(receiver)
-    }
 }
 
 class Tab2RecyclerViewHandler(fragment: Tab2Fragment) {
@@ -214,7 +162,6 @@ class TextChangeListener(val fragment: Tab2Fragment) : TextWatcher {
     override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
 
     private fun respondToTextChange(inputString: Editable) {
-        //"🔤 $inputString".toast(fragment.getParentActivity())
         val bounds = fragment.locationHandler.getBounds()
         if (bounds != null) {
             if (inputString.isBlank()) {

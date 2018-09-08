@@ -40,12 +40,12 @@ class Tab2Fragment : BaseTabFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
+        // Inflate the layout for this fragment.
         val layout = inflater.inflate(R.layout.fragment_tab2, container, false)
         with(layout) {
             fragmentContainer = findViewById(R.id.layout_tab2_root)
             textInputQuery = findViewById(R.id.text_input_query)
-            recyclerView = findViewById<RecyclerView>(R.id.rv_autocomplete_prediction_list)
+            recyclerView = findViewById(R.id.rv_autocomplete_prediction_list)
         }
         return layout
     }

@@ -34,7 +34,6 @@ class Tab1Fragment : BaseTabFragment() {
     internal lateinit var recyclerView: RecyclerView
     private lateinit var fragmentContainer: CoordinatorLayout
 
-    // Inflate the layout.
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment.

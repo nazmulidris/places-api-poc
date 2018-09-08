@@ -29,6 +29,10 @@
         <EditText
             android:id="@+id/text_input_query"
             android:hint="Type your place search"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
             android:inputType="textAutoComplete|textMultiLine"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
             android:layout_width="match_parent"

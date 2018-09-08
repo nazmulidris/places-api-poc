@@ -53,11 +53,13 @@ class Tab2Fragment : BaseTabFragment() {
     lateinit var locationHandler: LocationHandler
     private lateinit var textChangeListener: TextChangeListener
     private lateinit var recyclerViewHandler: Tab2RecyclerViewHandler
+    private lateinit var placeIDResponder: PlaceDetailsResponder
 
     override fun onFragmentCreate() {
         locationHandler = LocationHandler(this)
         recyclerViewHandler = Tab2RecyclerViewHandler(this)
         textChangeListener = TextChangeListener(this)
+        placeIDResponder = PlaceDetailsResponder(this)
     }
 
     override fun onStart() {
@@ -71,6 +73,25 @@ class Tab2Fragment : BaseTabFragment() {
         textInputQuery.removeTextChangedListener(textChangeListener)
     }
 
+}
+
+class PlaceDetailsResponder(fragment: Tab2Fragment) {
+    init {
+        fragment.placesAPIViewModel.placeIDsAndDetailsLiveData.observe(
+            fragment,
+            Observer { placeList ->
+                if (placeList.isNotEmpty()) {
+                    // Show the Place Detail Sheet.
+                    PlaceDetailsSheetFragment().apply {
+                        placeWrapper = placeList.get(0)
+                    }.show(fragment.getParentActivity().supportFragmentManager,
+                           Tab2Fragment::javaClass.name)
+                    // Clear the LiveData.
+                    fragment.placesAPIViewModel.placeIDsAndDetailsLiveData.value = mutableListOf()
+                }
+            }
+        )
+    }
 }
 
 class Tab2RecyclerViewHandler(fragment: Tab2Fragment) {
@@ -144,18 +165,11 @@ class Tab2RecyclerViewHandler(fragment: Tab2Fragment) {
         fun bindToDataItem(data: AutocompletePredictionData) {
             rowView.text = data.primaryText
             rowView.setOnClickListener {
-                // todo 1) load a place for this given placeId, 2) render it in a place detail sheet
-                "📋 Todo - load this place and show a PlaceDetailsSheetFragment".snack(
-                    fragment.fragmentContainer
-                )
-
-//                PlaceDetailsSheetFragment().apply {
-//                    placeWrapper = place
-//                }.show(activity.supportFragmentManager, Tab2Fragment::javaClass.name)
-
+                data.placeId?.let { placeId ->
+                    fragment.placesAPIViewModel.getPlaceById(placeId)
+                }
             }
         }
-
     }
 
 }

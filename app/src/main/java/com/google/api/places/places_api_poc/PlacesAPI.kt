@@ -46,6 +46,11 @@ class PlacesAPI(val context: Application) : AndroidViewModel(context), Lifecycle
     val autocompletePredictionLiveData = MutableLiveData<List<AutocompletePredictionData>>()
 
     //
+    // Places API clients - Place IDs and Details.
+    //
+    val placeIDsAndDetailsLiveData = MutableLiveData<List<PlaceWrapper>>()
+
+    //
     // Fused Location Provider.
     //
 
@@ -138,6 +143,34 @@ class PlacesAPI(val context: Application) : AndroidViewModel(context), Lifecycle
 
         // Update the LiveData, so observables can react to this change.
         currentPlaceLiveData.postValue(outputList)
+    }
+
+    //
+    // Place IDs and Details.
+    //
+
+    fun getPlaceById(placeId: String) {
+        "PlacesAPI ⇢ GeoDataClient.getPlaceById() ✅".log()
+        geoDataClient.getPlaceById(placeId).let { requestTask ->
+            requestTask.addOnCompleteListener(
+                executor,
+                OnCompleteListener { responseTask ->
+                    if (responseTask.isSuccessful) {
+                        processPlace(responseTask.result)
+                        responseTask.result.release()
+                    } else {
+                        "⚠️ Task failed with exception ${responseTask.exception}".log()
+                    }
+                }
+            )
+        }
+    }
+
+    private fun processPlace(placeBufferResponse: PlaceBufferResponse) {
+        val place = placeBufferResponse.get(0).freeze()
+        val outputList: MutableList<PlaceWrapper> = mutableListOf()
+        outputList.add(PlaceWrapper(place))
+        placeIDsAndDetailsLiveData.postValue(outputList)
     }
 
     //

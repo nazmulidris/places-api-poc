@@ -96,7 +96,7 @@ class PlaceDetailsResponder(private val fragment: Tab2Fragment) {
         receiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
                 intent.extras?.apply {
-                    val map = get(PlacesAPI.GetPlaceByID.Key.name) as HashMap<String, Any?>
+                    val map = get(PlacesAPI.GET_PLACE_BY_ID.KEY.name) as HashMap<String, Any?>
                     show(map)
                 }
             }
@@ -115,7 +115,7 @@ class PlaceDetailsResponder(private val fragment: Tab2Fragment) {
         LocalBroadcastManager
                 .getInstance(fragment.getParentActivity())
                 .registerReceiver(receiver,
-                                  IntentFilter(PlacesAPI.GetPlaceByID.Action.name))
+                                  IntentFilter(PlacesAPI.GET_PLACE_BY_ID.ACTION.name))
     }
 
     fun unregister() {

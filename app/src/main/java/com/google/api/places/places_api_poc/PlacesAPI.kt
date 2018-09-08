@@ -20,6 +20,7 @@ import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Intent
+import android.graphics.Bitmap
 import android.location.Location
 import androidx.lifecycle.*
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -30,6 +31,7 @@ import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.tasks.OnCompleteListener
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+
 
 class PlacesAPI(val context: Application) : AndroidViewModel(context), LifecycleObserver {
 
@@ -163,14 +165,37 @@ class PlacesAPI(val context: Application) : AndroidViewModel(context), Lifecycle
         }
     }
 
-    enum class GetPlaceByID { Key, Action }
+    enum class GET_PLACE_BY_ID { KEY, ACTION }
 
     // This runs in a background thread.
     private fun processPlace(placeBufferResponse: PlaceBufferResponse) {
         val place = placeBufferResponse.get(0)
         LocalBroadcastManager.getInstance(context).sendBroadcast(
-            Intent(GetPlaceByID.Action.name).apply {
-                putExtra(GetPlaceByID.Key.name, PlaceWrapper(place).map)
+            Intent(GET_PLACE_BY_ID.ACTION.name).apply {
+                putExtra(GET_PLACE_BY_ID.KEY.name, PlaceWrapper(place).map)
+            }
+        )
+    }
+
+    //
+    // Place Photos.
+    //
+
+    enum class GET_PHOTO { KEY, ACTION }
+
+    // todo 1. Make PlaceDetailsSheetFragment call this function
+    // todo 2. Make the call to the GeoDataClient to get the bitmap
+    // todo 3. Fire the LocalBroadcast message
+    // todo 4. Make PlaceDetailsSheetFragment respond to this message
+    fun getPhoto(placeId: String) {
+        "PlacesAPI ⇢ GeoDataClient.getPlacePhotos() ✅".log()
+
+    }
+
+    fun sendBitmap(bitmap: Bitmap) {
+        LocalBroadcastManager.getInstance(context).sendBroadcast(
+            Intent(GET_PHOTO.ACTION.name).apply {
+                putExtra(GET_PHOTO.KEY.name, bitmapToBundle(bitmap))
             }
         )
     }

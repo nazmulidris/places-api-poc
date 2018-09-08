@@ -17,13 +17,37 @@
 package com.google.api.places.places_api_poc
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.location.Location
+import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.material.snackbar.Snackbar
+import java.io.ByteArrayOutputStream
+
+//
+// Bitmap helper.
+//
+
+fun bitmapToBundle(bitmap: Bitmap): Bundle {
+    return Bundle().apply {
+        val stream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+        stream.close()
+        val byteArray = stream.toByteArray()
+        putByteArray("image", byteArray)
+    }
+}
+
+fun bundleToBitmap(bundle: Bundle): Bitmap {
+    val byteArray = bundle.getByteArray(PlacesAPI.GET_PHOTO.KEY.name)
+    return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+}
+
 
 //
 // Location helper classes.

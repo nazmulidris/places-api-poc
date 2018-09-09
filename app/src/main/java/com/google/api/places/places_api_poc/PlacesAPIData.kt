@@ -18,12 +18,10 @@ package com.google.api.places.places_api_poc
 
 import android.graphics.Bitmap
 import android.net.Uri
-import android.os.Bundle
 import com.google.android.gms.location.places.Place
 import com.google.android.gms.location.places.PlaceLikelihood
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
-import com.google.gson.GsonBuilder
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -61,11 +59,33 @@ import kotlin.collections.HashMap
         "priceLevel": -1
     }
  */
-data class PlaceWrapper(val place: Place, val confidence: Float = 1f) {
-    constructor(placeLikelihood: PlaceLikelihood) :
-            this(placeLikelihood.place, placeLikelihood.likelihood)
+class PlaceWrapper(place: Place, confidence: Float = 1f) {
+    constructor(placeLikelihood: PlaceLikelihood) : this(placeLikelihood.place,
+                                                         placeLikelihood.likelihood)
 
-    val map: HashMap<String, Any?> = importFrom(place, confidence, this)
+    val map: HashMap<String, Any?> by lazy {
+        HashMap<String, Any?>().also { map ->
+            map["likelihood"] = confidence
+            // Make sure to get an instance from freeze() that will be available
+            // after the buffer is released.
+            place.freeze().apply {
+                map["id"] = id
+                map["placeTypes"] = placeTypes
+                map["address"] = address
+                map["locale"] = locale
+                map["name"] = name
+                map["latLng"] = latLng
+                map["viewport"] = viewport
+                map["websiteUri"] = websiteUri
+                map["phoneNumber"] = phoneNumber
+                map["rating"] = rating
+                map["priceLevel"] = priceLevel
+                map["attributions"] = attributions
+                placeObject = this
+            }
+        }
+    }
+    lateinit var placeObject: Place
     val likelihood: Float by map
     val id: String by map
     val placeTypes: List<Int> by map
@@ -79,51 +99,6 @@ data class PlaceWrapper(val place: Place, val confidence: Float = 1f) {
     val rating: Float by map
     val priceLevel: Int by map
     val attributions: String? by map
-    lateinit var placeObject: Place
-
-    companion object {
-        /**
-         * 1. Freeze the given [PlaceLikelihood] object's [Place]. This ensures that the
-         *    this object will be available after the [PlaceLikelihoodBufferResponse]
-         *    is released.
-         * 2. Wrap the [Place] object using a [Map] that is easy via [PlaceWrapper].
-         */
-        private fun importFrom(place: Place,
-                               confidence: Float,
-                               placeWrapper: PlaceWrapper): HashMap<String, Any?> {
-            return HashMap<String, Any?>().also { map ->
-                map["likelihood"] = confidence
-                // Make sure to get an instance from freeze() that will be available
-                // after the buffer is released.
-                place.freeze().apply {
-                    map["id"] = id
-                    map["placeTypes"] = placeTypes
-                    map["address"] = address
-                    map["locale"] = locale
-                    map["name"] = name
-                    map["latLng"] = latLng
-                    map["viewport"] = viewport
-                    map["websiteUri"] = websiteUri
-                    map["phoneNumber"] = phoneNumber
-                    map["rating"] = rating
-                    map["priceLevel"] = priceLevel
-                    map["attributions"] = attributions
-                    placeWrapper.placeObject = this
-                }
-            }
-        }
-    }
-
-    fun getBundle(key: String): Bundle {
-        return Bundle().apply {
-            putSerializable(key, map)
-        }
-    }
-
-    override fun toString(): String {
-        return GsonBuilder().setPrettyPrinting().create().toJson(map)
-    }
-
 }
 
 data class AutocompletePredictionData(val fullText: CharSequence,

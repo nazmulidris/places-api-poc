@@ -30,6 +30,8 @@ class Tab3Fragment : BaseTabFragment() {
     private lateinit var fragmentContainer: CoordinatorLayout
     private lateinit var textDebugCurrentPlace: TextView
     private lateinit var textDebugCurrentLocation: TextView
+    private lateinit var textDebugModalData: TextView
+    private lateinit var textDebugAutocompletePrediction: TextView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -39,6 +41,8 @@ class Tab3Fragment : BaseTabFragment() {
             fragmentContainer = findViewById(R.id.layout_tab3_root)
             textDebugCurrentPlace = findViewById(R.id.text_debug_current_place)
             textDebugCurrentLocation = findViewById(R.id.text_debug_current_location)
+            textDebugModalData = findViewById(R.id.text_debug_modal_data)
+            textDebugAutocompletePrediction = findViewById(R.id.text_debug_autocomplete_prediction)
         }
         return layout
     }
@@ -46,18 +50,81 @@ class Tab3Fragment : BaseTabFragment() {
     override fun onFragmentCreate() {
         getCurrentPlace()
         getCurrentLocation()
+        getAutocompletePredictions()
+        getModalData()
+    }
+
+    private fun getModalData() {
+        fun render() {
+            textDebugModalData.text = Html.fromHtml(StringBuilder().apply {
+                append("<h3>Modal Place Detail Sheet Data</h3>")
+                with(placesViewModel.modalPlaceDetailsSheetLiveData) {
+                    placeObservable().value?.apply {
+                        append("<b>place:</b> ${name}<br/>")
+                    }
+                    sheetVisibleObservable().value?.apply {
+                        append("<b>sheetVisible:</b> ${this}<br/>")
+                    }
+                    bitmap.value?.apply {
+                        val size = this.bitmap?.byteCount?.div(1024) ?: "0"
+                        append("<b>bitmap:</b> $size KB<br/>")
+                    }
+                }
+            }.toString())
+        }
+
+        placesViewModel.modalPlaceDetailsSheetLiveData.placeObservable().observe(
+            this,
+            Observer { place ->
+                render()
+            }
+        )
+
+        placesViewModel.modalPlaceDetailsSheetLiveData.sheetVisibleObservable().observe(
+            this,
+            Observer { visibility ->
+                render()
+            }
+        )
+
+        placesViewModel.modalPlaceDetailsSheetLiveData.bitmap.observe(
+            this,
+            Observer { bitmap ->
+                render()
+            }
+        )
+
+    }
+
+
+    private fun getAutocompletePredictions() {
+        placesViewModel.autoCompletePredictions.liveData.observe(
+            this,
+            Observer { listOfAutocompletePreductions ->
+                val count = listOfAutocompletePreductions.size
+                textDebugAutocompletePrediction.text = Html.fromHtml(StringBuilder().apply {
+                    append("<h3>Autocomplete Predictions</h3>")
+                    for ((index, prediction) in listOfAutocompletePreductions.withIndex()) {
+                        append("<i>${index + 1}/$count</i>▶")
+                        append("<b>name:</b> ${prediction.primaryText}")
+                        //append(", <b>id:</b> ${prediction.placeId}")
+                        append("<br/>")
+                    }
+                }.toString())
+            }
+        )
     }
 
     private fun getCurrentLocation() {
         placesViewModel.getLastLocation.liveData.observe(
             this,
             Observer { location ->
-                val output = StringBuilder()
-                output.append("<h4>Current Location</h4>")
-                val url = getUrl(location.latitude, location.longitude)
-                output.append("$url<br/>")
-                output.append("${location}")
-                textDebugCurrentLocation.text = Html.fromHtml(output.toString())
+                textDebugCurrentLocation.text = Html.fromHtml(StringBuilder().apply {
+                    append("<h3>Current Location</h3>")
+                    val url = getUrl(location.latitude, location.longitude)
+                    append("$url")
+                    //append("${location}")
+                }.toString())
             }
         )
     }
@@ -66,19 +133,16 @@ class Tab3Fragment : BaseTabFragment() {
         placesViewModel.getCurrentPlace.liveData.observe(
             this,
             Observer { listOfPlaceWrappers ->
-                val maxsize = listOfPlaceWrappers.size
-                val output = StringBuilder()
-                output.append("<h4>Current Places</h4>")
-                output.append("<ol>")
-                for ((index, placeWrapper) in listOfPlaceWrappers.withIndex()) {
-                    output.append("<li>")
-                    output.append("<i>${index + 1}/$maxsize - </i>")
-                    output.append("<b>name:</b> ${placeWrapper.name} <br/>")
-                    output.append("<b>id:</b> ${placeWrapper.id} <br/>")
-                    output.append("</li>")
-                }
-                output.append("</ol>")
-                textDebugCurrentPlace.text = Html.fromHtml(output.toString())
+                val count = listOfPlaceWrappers.size
+                textDebugCurrentPlace.text = Html.fromHtml(StringBuilder().apply {
+                    append("<h3>Current Places</h3>")
+                    for ((index, placeWrapper) in listOfPlaceWrappers.withIndex()) {
+                        append("<i>${index + 1}/$count</i>▶")
+                        append("<b>name:</b> ${placeWrapper.name}")
+                        //append(", <b>id:</b> ${placeWrapper.id}")
+                        append("<br/>")
+                    }
+                }.toString())
             }
         )
     }

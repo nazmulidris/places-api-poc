@@ -67,7 +67,7 @@ class Tab3Fragment : BaseTabFragment() {
                     }
                     bitmap.value?.apply {
                         val size = this.bitmap?.byteCount?.div(1024) ?: "0"
-                        append("<b>bitmap:</b> $size KB<br/>")
+                        append("<b>bitmap:</b> $size KB")
                     }
                 }
             }.toString())
@@ -102,15 +102,16 @@ class Tab3Fragment : BaseTabFragment() {
             this,
             Observer { listOfAutocompletePreductions ->
                 val count = listOfAutocompletePreductions.size
-                textDebugAutocompletePrediction.text = Html.fromHtml(StringBuilder().apply {
-                    append("<h3>Autocomplete Predictions</h3>")
-                    for ((index, prediction) in listOfAutocompletePreductions.withIndex()) {
-                        append("<i>${index + 1}/$count</i>▶")
-                        append("<b>name:</b> ${prediction.primaryText}")
-                        //append(", <b>id:</b> ${prediction.placeId}")
-                        append("<br/>")
-                    }
-                }.toString())
+                if (count > 0)
+                    textDebugAutocompletePrediction.text = Html.fromHtml(StringBuilder().apply {
+                        append("<h3>Autocomplete Predictions</h3>")
+                        for ((index, prediction) in listOfAutocompletePreductions.withIndex()) {
+                            append("<i>${index + 1}/$count</i>▶")
+                            append("<b>name:</b> ${prediction.primaryText}")
+                            //append(", <b>id:</b> ${prediction.placeId}")
+                            append("<br/>")
+                        }
+                    }.toString())
             }
         )
     }
@@ -134,15 +135,16 @@ class Tab3Fragment : BaseTabFragment() {
             this,
             Observer { listOfPlaceWrappers ->
                 val count = listOfPlaceWrappers.size
-                textDebugCurrentPlace.text = Html.fromHtml(StringBuilder().apply {
-                    append("<h3>Current Places</h3>")
-                    for ((index, placeWrapper) in listOfPlaceWrappers.withIndex()) {
-                        append("<i>${index + 1}/$count</i>▶")
-                        append("<b>name:</b> ${placeWrapper.name}")
-                        //append(", <b>id:</b> ${placeWrapper.id}")
-                        append("<br/>")
-                    }
-                }.toString())
+                if (count > 0)
+                    textDebugCurrentPlace.text = Html.fromHtml(StringBuilder().apply {
+                        append("<h3>Current Places</h3>")
+                        for ((index, placeWrapper) in listOfPlaceWrappers.withIndex()) {
+                            append("<i>${index + 1}/$count</i>▶")
+                            append("<b>name:</b> ${placeWrapper.name}")
+                            //append(", <b>id:</b> ${placeWrapper.id}")
+                            append("<br/>")
+                        }
+                    }.toString())
             }
         )
     }

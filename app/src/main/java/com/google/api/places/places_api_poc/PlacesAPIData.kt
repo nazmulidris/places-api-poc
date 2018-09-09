@@ -16,6 +16,7 @@
 
 package com.google.api.places.places_api_poc
 
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import com.google.android.gms.location.places.Place
@@ -130,3 +131,5 @@ data class AutocompletePredictionData(val fullText: CharSequence,
                                       val secondaryText: CharSequence,
                                       val placeId: String?,
                                       val placeTypes: List<Int>?)
+
+data class BitmapWrapper(val bitmap: Bitmap? = null, val attribution: String? = null)

@@ -62,17 +62,17 @@ class PlaceDetailsSheetFragment : BottomSheetDialogFragment() {
     // Observe changes in LiveData (placeWrapperLiveData, bitmapWrapperLiveData).
     //
 
-    private lateinit var placesAPIViewModel: PlacesAPI
+    private lateinit var placesViewModel: PlacesAPI
     private fun setupViewModel() {
         // Load ViewModel.
         // 🛑 Note - You **must** pass activity scope, in order to get this ViewModel,
         // and if you pass the fragment instance, then you won't get the ViewModel that
         // was attached w/ the parent activity (DriverActivity).
-        placesAPIViewModel = ViewModelProviders.of(requireActivity()).get(PlacesAPI::class.java)
+        placesViewModel = ViewModelProviders.of(requireActivity()).get(PlacesAPI::class.java)
     }
 
     private fun setupBitmapWrapperLiveDataObserver() {
-        placesAPIViewModel.bitmapWrapperLiveData.observe(
+        placesViewModel.modalPlaceDetailsSheetLiveData.bitmap.observe(
             this,
             Observer { bitmapWrapper ->
                 renderPhoto(bitmapWrapper.bitmap)
@@ -81,7 +81,7 @@ class PlaceDetailsSheetFragment : BottomSheetDialogFragment() {
     }
 
     private fun setupPlaceWrapperLiveDataObserver() {
-        placesAPIViewModel.placeWrapperLiveData.observe(
+        placesViewModel.modalPlaceDetailsSheetLiveData.placeObservable().observe(
             this,
             Observer { placeWrapper ->
                 renderPlace(placeWrapper)
@@ -95,15 +95,16 @@ class PlaceDetailsSheetFragment : BottomSheetDialogFragment() {
     //
 
     private fun lookupPhoto(placeId: String) {
-        placesAPIViewModel.getPlacePhotos(placeId)
+        placesViewModel.getPlacePhotos.execute(placeId)
     }
 
     //
     // Render this View.
     //
 
-    private fun renderPhoto(bitmap: Bitmap) {
-        imagePlacePhoto.setImageBitmap(bitmap)
+    private fun renderPhoto(bitmap: Bitmap?) {
+        if (bitmap != null) imagePlacePhoto.setImageBitmap(bitmap)
+        else imagePlacePhoto.setImageDrawable(null)
     }
 
     private fun renderPlace(placeWrapper: PlaceWrapper) {

@@ -58,7 +58,7 @@ class Tab1Fragment : BaseTabFragment() {
                             android.Manifest.permission.ACCESS_FINE_LOCATION
 
                     override fun onPermissionGranted() {
-                        placesAPIViewModel.getCurrentPlace()
+                        placesViewModel.getCurrentPlace.execute()
                         "🚀️ Calling PlaceDetectionClient getCurrentPlace()".snack(
                             fragmentContainer)
                     }
@@ -81,7 +81,7 @@ private class Tab1RecyclerViewHandler(fragment: Tab1Fragment) {
         val dataAdapter = DataAdapter(fragment)
 
         // Attach LiveData observers for current place data (from Places API).
-        fragment.placesAPIViewModel.currentPlaceLiveData.observe(
+        fragment.placesViewModel.getCurrentPlace.liveData.observe(
             fragment,
             Observer { data ->
                 "🎉 observable reacting -> #places=${data.size}".log()
@@ -138,9 +138,8 @@ private class Tab1RecyclerViewHandler(fragment: Tab1Fragment) {
         fun bindToDataItem(place: PlaceWrapper) {
             rowView.text = place.name
             rowView.setOnClickListener {
-                fragment.placesAPIViewModel.also { model ->
-                    model.showPlaceDetailsSheetLiveData.value = true
-                    model.placeWrapperLiveData.value = place
+                fragment.placesViewModel.also { model ->
+                    model.modalPlaceDetailsSheetLiveData.setPlace(place)
                 }
             }
         }

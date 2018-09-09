@@ -29,6 +29,7 @@ class Tab3Fragment : BaseTabFragment() {
 
     private lateinit var fragmentContainer: CoordinatorLayout
     private lateinit var textDebugCurrentPlace: TextView
+    private lateinit var textDebugCurrentLocation: TextView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -37,12 +38,32 @@ class Tab3Fragment : BaseTabFragment() {
         with(layout) {
             fragmentContainer = findViewById(R.id.layout_tab3_root)
             textDebugCurrentPlace = findViewById(R.id.text_debug_current_place)
+            textDebugCurrentLocation = findViewById(R.id.text_debug_current_location)
         }
         return layout
     }
 
     override fun onFragmentCreate() {
-        placesAPIViewModel.currentPlaceLiveData.observe(
+        getCurrentPlace()
+        getCurrentLocation()
+    }
+
+    private fun getCurrentLocation() {
+        placesViewModel.getLastLocation.liveData.observe(
+            this,
+            Observer { location ->
+                val output = StringBuilder()
+                output.append("<h4>Current Location</h4>")
+                val url = getUrl(location.latitude, location.longitude)
+                output.append("$url<br/>")
+                output.append("${location}")
+                textDebugCurrentLocation.text = Html.fromHtml(output.toString())
+            }
+        )
+    }
+
+    private fun getCurrentPlace() {
+        placesViewModel.getCurrentPlace.liveData.observe(
             this,
             Observer { listOfPlaceWrappers ->
                 val maxsize = listOfPlaceWrappers.size
@@ -57,7 +78,6 @@ class Tab3Fragment : BaseTabFragment() {
                     output.append("</li>")
                 }
                 output.append("</ol>")
-
                 textDebugCurrentPlace.text = Html.fromHtml(output.toString())
             }
         )

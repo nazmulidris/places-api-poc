@@ -82,7 +82,7 @@ class Tab2RecyclerViewHandler(fragment: Tab2Fragment) {
         dataAdapter = DataAdapter(fragment)
 
         // Attach LiveData observers for autocomplete prediction data (from Places API).
-        fragment.placesAPIViewModel.autocompletePredictionLiveData.observe(
+        fragment.placesViewModel.autoCompletePredictions.liveData.observe(
             fragment,
             Observer { data ->
                 "🎉 observable reacting -> #autocompletePredictions=${data.size}".log()
@@ -145,7 +145,7 @@ class Tab2RecyclerViewHandler(fragment: Tab2Fragment) {
             rowView.text = data.primaryText
             rowView.setOnClickListener {
                 data.placeId?.let { placeId ->
-                    fragment.placesAPIViewModel.getPlaceById(placeId)
+                    fragment.placesViewModel.getPlaceByID.execute(placeId)
                 }
             }
         }
@@ -165,10 +165,11 @@ class TextChangeListener(val fragment: Tab2Fragment) : TextWatcher {
         val bounds = fragment.locationHandler.getBounds()
         if (bounds != null) {
             if (inputString.isBlank()) {
-                fragment.placesAPIViewModel.autocompletePredictionLiveData.value = mutableListOf()
+                fragment.placesViewModel.autoCompletePredictions.liveData.value = mutableListOf()
             } else {
-                fragment.placesAPIViewModel.getAutocompletePredictions(
-                    inputString.toString(), bounds)
+                fragment.placesViewModel.autoCompletePredictions.execute(
+                    inputString.toString(),
+                    bounds)
             }
         } else {
             "⚠️ Can't make request if location is null".toast(fragment.getParentActivity())
@@ -182,7 +183,7 @@ class LocationHandler(val fragment: Tab2Fragment) {
     }
 
     fun observeLocationLiveData() {
-        fragment.placesAPIViewModel.currentLocationLiveData.observe(
+        fragment.placesViewModel.getLastLocation.liveData.observe(
             fragment,
             Observer { location ->
                 val bounds = LatLngRange.getBounds(location)
@@ -199,8 +200,8 @@ class LocationHandler(val fragment: Tab2Fragment) {
                         Manifest.permission.ACCESS_FINE_LOCATION
 
                 override fun onPermissionGranted() {
-                    fragment.placesAPIViewModel.getLastLocation()
-                    "🚀️ Calling FusedLocationProvider lastLocation()".snack(
+                    fragment.placesViewModel.getLastLocation.execute()
+                    "🚀️ Calling GetLastLocation lastLocation()".snack(
                         fragment.fragmentContainer)
                 }
 
@@ -212,7 +213,7 @@ class LocationHandler(val fragment: Tab2Fragment) {
     }
 
     fun getBounds(): LatLngBounds? {
-        val location = fragment.placesAPIViewModel.currentLocationLiveData.value
+        val location = fragment.placesViewModel.getLastLocation.liveData.value
         return if (location != null) {
             LatLngRange.getBounds(location)
         } else {
@@ -220,7 +221,4 @@ class LocationHandler(val fragment: Tab2Fragment) {
         }
     }
 
-    private fun getUrl(lat: Double, lon: Double): String {
-        return "https://maps.google.com/maps?q=$lat,$lon"
-    }
 }

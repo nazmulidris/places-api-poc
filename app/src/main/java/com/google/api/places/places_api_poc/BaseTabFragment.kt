@@ -23,7 +23,7 @@ import androidx.lifecycle.ViewModelProviders
 open class BaseTabFragment : Fragment() {
 
     // Access shared ViewModel
-    lateinit var placesAPIViewModel: PlacesAPI
+    lateinit var placesViewModel: PlacesAPI
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,7 +35,7 @@ open class BaseTabFragment : Fragment() {
         // 🛑 Note - You **must** pass activity scope, in order to get this ViewModel,
         // and if you pass the fragment instance, then you won't get the ViewModel that
         // was attached w/ the parent activity (DriverActivity).
-        placesAPIViewModel = ViewModelProviders.of(requireActivity()).get(PlacesAPI::class.java)
+        placesViewModel = ViewModelProviders.of(requireActivity()).get(PlacesAPI::class.java)
     }
 
     // Access parent activity (DriverActivity).

@@ -83,6 +83,9 @@ class LatLngRange {
 
 }
 
+fun getUrl(lat: Double, lon: Double): String {
+    return "https://maps.google.com/maps?q=$lat,$lon"
+}
 
 //
 // Extension functions.

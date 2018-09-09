@@ -137,7 +137,7 @@ class DriverActivity : AppCompatActivity() {
     // Handle showing the PlaceDetailsSheetFragment (modal/dialog).
     private fun setupModalPlaceDetailSheetHandler() {
 
-        placesAPIViewModel.showPlaceDetailsSheetLiveData.observe(
+        placesAPIViewModel.modalPlaceDetailsSheetLiveData.sheetVisibleObservable().observe(
             this,
             Observer { showFlag ->
                 if (showFlag) {

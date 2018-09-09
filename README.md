@@ -248,3 +248,4 @@ Notes on the code above:
 ## ImageViews
 - [ImageView ScaleType](https://robots.thoughtbot.com/android-imageview-scaletype-a-visual-guide)
 - [Bitmaps and Bundles](https://stackoverflow.com/a/33797090/2085356)
+- [Cleaning Bitmap](https://stackoverflow.com/a/5606291/2085356)

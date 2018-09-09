@@ -32,6 +32,13 @@ This project shows how to exercise the Google Places API surface.
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
+# App in action
+
+<img 
+  width="50%"
+  src="https://raw.githubusercontent.com/nazmulidris/places-api-poc/master/docs/places-api-poc-video.gif"
+/>
+
 # API keys
 
 ## 1. Get API key from Google API console

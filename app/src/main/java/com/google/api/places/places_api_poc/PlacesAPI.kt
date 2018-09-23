@@ -27,9 +27,10 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.places.*
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.tasks.OnCompleteListener
+import com.google.api.places.places_api_poc.daggger.DaggerActivityComponent
+import com.google.api.places.places_api_poc.daggger.ExecutorWrapper
 import com.google.api.places.places_api_poc.daggger.MyApplication
 import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
 import javax.inject.Inject
 
 
@@ -44,6 +45,10 @@ class PlacesAPI(val app: Application) : AndroidViewModel(app), LifecycleObserver
     // Fused Location Provider Client.
     @Inject
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+
+    // Background Executor.
+    @Inject
+    lateinit var executorWrapper: ExecutorWrapper
 
     // Find Last Location.
     lateinit var getLastLocation: GetLastLocation
@@ -66,9 +71,6 @@ class PlacesAPI(val app: Application) : AndroidViewModel(app), LifecycleObserver
     // Modal "Place Details Sheet" Data.
     val modalPlaceDetailsSheetLiveData = ModalPlaceDetailsSheetLiveData()
 
-    // Background Executor.
-    private val executorWrapper = ExecutorWrapper()
-
     //
     // Activity lifecycle.
     //
@@ -76,13 +78,22 @@ class PlacesAPI(val app: Application) : AndroidViewModel(app), LifecycleObserver
     // Lifecycle hooks.
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     fun connect() {
-        "ON_CREATE ⇢ PlacesAPIClients.connect() ✅".log()
+        "ON_CREATE ⇢ PlacesAPI.connect() ✅".log()
 
-        (app as MyApplication).applicationComponent.injectFieldsInto(this)
+        // Dagger 2 component creation.
+        with((app as MyApplication).applicationComponent) {
+            DaggerActivityComponent.builder()
+                    .applicationComponent(this)
+                    .build()
+                    .inject(this@PlacesAPI)
+        }
+
         "💥 connect() - got GetDataClient, PlaceDetectionClient, FusedLocationProviderClient".log()
 
-        "ON_CREATE ⇢ Create executor, API wrappers ✅".log()
+        "ON_CREATE ⇢ Create Executor ✅".log()
         executorWrapper.create()
+
+        "ON_CREATE ⇢ Create API wrappers ✅".log()
         getCurrentPlace = GetCurrentPlace(executorWrapper.executor,
                                           app,
                                           currentPlaceClient)
@@ -106,27 +117,11 @@ class PlacesAPI(val app: Application) : AndroidViewModel(app), LifecycleObserver
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun cleanup() {
-        "ON_DESTROY ⇢ PlacesAPIClients cleanup ✅".log()
+        "ON_DESTROY ⇢ PlacesAPI cleanup ✅".log()
         executorWrapper.destroy()
         "🚿 cleanup() - complete!".log()
     }
 
-}
-
-//
-// ExecutorWrapper
-//
-
-class ExecutorWrapper {
-    lateinit var executor: ExecutorService
-
-    fun create() {
-        executor = Executors.newCachedThreadPool()
-    }
-
-    fun destroy() {
-        executor.shutdown()
-    }
 }
 
 //

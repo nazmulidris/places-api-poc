@@ -16,12 +16,55 @@
 
 package com.google.api.places.places_api_poc.daggger
 
-import com.google.api.places.places_api_poc.PlacesAPI
+import android.app.Application
+import android.content.Context
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.places.GeoDataClient
+import com.google.android.gms.location.places.PlaceDetectionClient
+import com.google.android.gms.location.places.Places
 import dagger.Component
+import dagger.Module
+import dagger.Provides
 import javax.inject.Singleton
 
 @Singleton
 @Component(modules = [ApplicationModule::class, GMSClientsModule::class])
 interface ApplicationComponent {
-    fun injectFieldsInto(placesAPI: PlacesAPI)
+    // Expose objects created by modules to any other components dependent on this component.
+    fun geoDataClient(): GeoDataClient
+    fun fusedLocationProviderClient(): FusedLocationProviderClient
+    fun placeDetectionClient(): PlaceDetectionClient
+    fun context(): Context
+}
+
+@Module
+class ApplicationModule(private val application: Application) {
+    @Singleton
+    @Provides
+    fun provideContext(): Context {
+        return application
+    }
+}
+
+@Module
+class GMSClientsModule {
+    @Singleton
+    @Provides
+    fun providesPlaceDetectionClient(context: Context): PlaceDetectionClient {
+        return Places.getPlaceDetectionClient(context)
+    }
+
+    @Singleton
+    @Provides
+    fun providesGeoDataClient(context: Context): GeoDataClient {
+        return Places.getGeoDataClient(context)
+    }
+
+    @Singleton
+    @Provides
+    fun providesLocation(context: Context): FusedLocationProviderClient {
+        return LocationServices.getFusedLocationProviderClient(
+                context)
+    }
 }

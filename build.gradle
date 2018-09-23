@@ -18,7 +18,7 @@
 
 buildscript {
     ext {
-        // Used in app's build.gradle.
+        // Also used in app's build.gradle.
         kotlin_version = '1.2.51'
     }
     repositories {

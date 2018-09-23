@@ -32,9 +32,10 @@ class MyApplication : Application() {
     // ActivityComponent.
     var activityComponent: ActivityComponent? = null
 
-    fun createActivityComponent(): ActivityComponent? {
-        activityComponent = applicationComponent.set(ExecutorModule())
-        return activityComponent
+    fun createActivityComponent(): ActivityComponent {
+        return (applicationComponent.set(ExecutorModule())).apply {
+            activityComponent = this
+        }
     }
 
     fun destroyActivityComponent() {

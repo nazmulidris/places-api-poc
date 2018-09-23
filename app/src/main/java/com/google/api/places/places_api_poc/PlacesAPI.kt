@@ -81,7 +81,7 @@ class PlacesAPI(val app: Application) : AndroidViewModel(app), LifecycleObserver
 
         // Dagger 2 component creation.
         with((app as MyApplication)) {
-            createActivityComponent()?.inject(this@PlacesAPI)
+            createActivityComponent().inject(this@PlacesAPI)
         }
 
         "💥 connect() - got GetDataClient, PlaceDetectionClient, FusedLocationProviderClient".log()

@@ -33,9 +33,10 @@ class MyApplication : Application() {
     var activityComponent: ActivityComponent? = null
 
     fun createActivityComponent(): ActivityComponent {
-        return (applicationComponent.set(ExecutorModule())).apply {
-            activityComponent = this
+        if (activityComponent == null) {
+            activityComponent = applicationComponent.set(ExecutorModule())
         }
+        return activityComponent!!
     }
 
     fun destroyActivityComponent() {

@@ -24,22 +24,26 @@ import android.graphics.Bitmap
 import android.location.Location
 import androidx.lifecycle.*
 import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.places.*
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.tasks.OnCompleteListener
+import com.google.api.places.places_api_poc.daggger.MyApplication
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import javax.inject.Inject
 
 
-class PlacesAPI(val context: Application) : AndroidViewModel(context), LifecycleObserver {
+class PlacesAPI(val app: Application) : AndroidViewModel(app), LifecycleObserver {
 
     // Places API Clients.
-    private lateinit var currentPlaceClient: PlaceDetectionClient
-    private lateinit var geoDataClient: GeoDataClient
+    @Inject
+    lateinit var currentPlaceClient: PlaceDetectionClient
+    @Inject
+    lateinit var geoDataClient: GeoDataClient
 
     // Fused Location Provider Client.
-    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    @Inject
+    lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
     // Find Last Location.
     lateinit var getLastLocation: GetLastLocation
@@ -73,18 +77,14 @@ class PlacesAPI(val context: Application) : AndroidViewModel(context), Lifecycle
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     fun connect() {
         "ON_CREATE ⇢ PlacesAPIClients.connect() ✅".log()
-        geoDataClient = Places.getGeoDataClient(context)
-        currentPlaceClient = Places.getPlaceDetectionClient(context)
-        "💥 connect() - got GetDataClient and PlaceDetectionClient".log()
 
-        "ON_CREATE ⇢ FusedLocationProviderClient.connect() ✅".log()
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context)
-        "💥 connect() - got FusedLocationProviderClient".log()
+        (app as MyApplication).applicationComponent.injectFieldsInto(this)
+        "💥 connect() - got GetDataClient, PlaceDetectionClient, FusedLocationProviderClient".log()
 
         "ON_CREATE ⇢ Create executor, API wrappers ✅".log()
         executorWrapper.create()
         getCurrentPlace = GetCurrentPlace(executorWrapper.executor,
-                                          context,
+                                          app,
                                           currentPlaceClient)
         getPlaceByID = GetPlaceByID(executorWrapper.executor,
                                     geoDataClient,
@@ -93,7 +93,7 @@ class PlacesAPI(val context: Application) : AndroidViewModel(context), Lifecycle
                                                           geoDataClient)
         getLastLocation = GetLastLocation(executorWrapper.executor,
                                           fusedLocationProviderClient,
-                                          context)
+                                          app)
         getPhoto = GetPhoto(executorWrapper.executor,
                             geoDataClient,
                             modalPlaceDetailsSheetLiveData)
@@ -142,21 +142,21 @@ class GetPhoto(private val executor: ExecutorService,
         "PlacesAPI ⇢ GeoDataClient.getPhoto() ✅".log()
         geoDataClient.getPhoto(photoMetadata).let { requestTask ->
             requestTask.addOnCompleteListener(
-                executor,
-                OnCompleteListener { responseTask ->
-                    if (responseTask.isSuccessful) {
-                        processPhoto(responseTask.result.bitmap, attribution)
-                    } else {
-                        "⚠️ Task failed with exception ${responseTask.exception}".log()
+                    executor,
+                    OnCompleteListener { responseTask ->
+                        if (responseTask.isSuccessful) {
+                            processPhoto(responseTask.result.bitmap, attribution)
+                        } else {
+                            "⚠️ Task failed with exception ${responseTask.exception}".log()
+                        }
                     }
-                }
             )
         }
     }
 
     private fun processPhoto(bitmap: Bitmap, attribution: CharSequence) {
         modalPlaceDetailsSheetLiveData.bitmap.postValue(
-            BitmapWrapper(bitmap, attribution.toString())
+                BitmapWrapper(bitmap, attribution.toString())
         )
     }
 
@@ -175,14 +175,14 @@ class GetPlacePhotos(private val executor: ExecutorService,
         // Run this in background thread.
         geoDataClient.getPlacePhotos(placeId).let { requestTask ->
             requestTask.addOnCompleteListener(
-                executor,
-                OnCompleteListener { responseTask ->
-                    if (responseTask.isSuccessful) {
-                        processPhotosMetadata(responseTask.result)
-                    } else {
-                        "⚠️ Task failed with exception ${responseTask.exception}".log()
+                    executor,
+                    OnCompleteListener { responseTask ->
+                        if (responseTask.isSuccessful) {
+                            processPhotosMetadata(responseTask.result)
+                        } else {
+                            "⚠️ Task failed with exception ${responseTask.exception}".log()
+                        }
                     }
-                }
             )
         }
 
@@ -231,14 +231,14 @@ class GetLastLocation(private val executor: ExecutorService,
             currentLocationClient.lastLocation.let { requestTask ->
                 // Run this in background thread.
                 requestTask.addOnCompleteListener(
-                    executor,
-                    OnCompleteListener { responseTask ->
-                        if (responseTask.isSuccessful && responseTask.result != null) {
-                            processCurrentLocation(responseTask.result)
-                        } else {
-                            "⚠️ Task failed with exception ${responseTask.exception}".log()
+                        executor,
+                        OnCompleteListener { responseTask ->
+                            if (responseTask.isSuccessful && responseTask.result != null) {
+                                processCurrentLocation(responseTask.result)
+                            } else {
+                                "⚠️ Task failed with exception ${responseTask.exception}".log()
+                            }
                         }
-                    }
                 )
             }
         }
@@ -272,15 +272,15 @@ class AutoCompletePredictions(private val executor: ExecutorService,
                 .let { requestTask ->
                     // Run this in background thread.
                     requestTask.addOnCompleteListener(
-                        executor,
-                        OnCompleteListener { responseTask ->
-                            if (responseTask.isSuccessful) {
-                                processAutocompletePrediction(responseTask.result)
-                                responseTask.result.release()
-                            } else {
-                                "⚠️ Task failed with exception ${responseTask.exception}".log()
+                            executor,
+                            OnCompleteListener { responseTask ->
+                                if (responseTask.isSuccessful) {
+                                    processAutocompletePrediction(responseTask.result)
+                                    responseTask.result.release()
+                                } else {
+                                    "⚠️ Task failed with exception ${responseTask.exception}".log()
+                                }
                             }
-                        }
                     )
                 }
     }
@@ -299,11 +299,11 @@ class AutoCompletePredictions(private val executor: ExecutorService,
         for (index in 0 until count) {
             val item = buffer.get(index)
             outputList.add(AutocompletePredictionData(
-                placeId = item.placeId,
-                placeTypes = item.placeTypes,
-                fullText = item.getFullText(null),
-                primaryText = item.getPrimaryText(null),
-                secondaryText = item.getSecondaryText(null)
+                    placeId = item.placeId,
+                    placeTypes = item.placeTypes,
+                    fullText = item.getFullText(null),
+                    primaryText = item.getPrimaryText(null),
+                    secondaryText = item.getSecondaryText(null)
             ))
         }
 
@@ -330,15 +330,15 @@ class GetPlaceByID(private val executor: ExecutorService,
         geoDataClient.getPlaceById(placeId).let { requestTask ->
             // Run this in background thread.
             requestTask.addOnCompleteListener(
-                executor,
-                OnCompleteListener { responseTask ->
-                    if (responseTask.isSuccessful) {
-                        processPlace(responseTask.result)
-                        responseTask.result.release()
-                    } else {
-                        "⚠️ Task failed with exception ${responseTask.exception}".log()
+                    executor,
+                    OnCompleteListener { responseTask ->
+                        if (responseTask.isSuccessful) {
+                            processPlace(responseTask.result)
+                            responseTask.result.release()
+                        } else {
+                            "⚠️ Task failed with exception ${responseTask.exception}".log()
+                        }
                     }
-                }
             )
         }
     }
@@ -409,15 +409,15 @@ class GetCurrentPlace(private val executor: ExecutorService,
             currentPlaceClient.getCurrentPlace(null).let { requestTask ->
                 // Run this in background thread.
                 requestTask.addOnCompleteListener(
-                    executor,
-                    OnCompleteListener { responseTask ->
-                        if (responseTask.isSuccessful) {
-                            processPlacelikelihoodBuffer(responseTask.result)
-                            responseTask.result.release()
-                        } else {
-                            "⚠️ Task failed with exception ${responseTask.exception}".log()
-                        }
-                    })
+                        executor,
+                        OnCompleteListener { responseTask ->
+                            if (responseTask.isSuccessful) {
+                                processPlacelikelihoodBuffer(responseTask.result)
+                                responseTask.result.release()
+                            } else {
+                                "⚠️ Task failed with exception ${responseTask.exception}".log()
+                            }
+                        })
             }
         }
     }

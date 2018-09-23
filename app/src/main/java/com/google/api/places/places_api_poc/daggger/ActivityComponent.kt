@@ -17,9 +17,9 @@
 package com.google.api.places.places_api_poc.daggger
 
 import com.google.api.places.places_api_poc.PlacesAPI
-import dagger.Component
 import dagger.Module
 import dagger.Provides
+import dagger.Subcomponent
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import javax.inject.Scope
@@ -29,8 +29,7 @@ import javax.inject.Scope
 annotation class ActivityScope
 
 @ActivityScope
-@Component(dependencies = [ApplicationComponent::class],
-           modules = [ExecutorModule::class])
+@Subcomponent(modules = [ExecutorModule::class])
 interface ActivityComponent {
     fun inject(placesAPI: PlacesAPI)
 }

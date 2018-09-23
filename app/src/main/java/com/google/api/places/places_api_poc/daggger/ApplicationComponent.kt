@@ -31,11 +31,7 @@ import javax.inject.Singleton
 @Singleton
 @Component(modules = [ApplicationModule::class, GMSClientsModule::class])
 interface ApplicationComponent {
-    // Expose objects created by modules to any other components dependent on this component.
-    fun geoDataClient(): GeoDataClient
-    fun fusedLocationProviderClient(): FusedLocationProviderClient
-    fun placeDetectionClient(): PlaceDetectionClient
-    fun context(): Context
+    fun set(executorModule: ExecutorModule): ActivityComponent
 }
 
 @Module

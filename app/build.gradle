@@ -17,8 +17,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
-// Dagger 2
-apply plugin: 'kotlin-kapt'
 
 android {
     ext.sdk_version = 28
@@ -65,7 +63,10 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.5'
 }
 
-// Dagger 2 - https://github.com/google/dagger#android-gradle
+// Dagger 2
+// Dagger 2 and Kotlin docs - https://kotlinlang.org/docs/tutorials/android-frameworks.html
+// Dagger 2 and Android (Java) - https://kotlinlang.org/docs/tutorials/android-frameworks.html
+apply plugin: 'kotlin-kapt'
 ext {
     dagger2_version = '2.17'
 }

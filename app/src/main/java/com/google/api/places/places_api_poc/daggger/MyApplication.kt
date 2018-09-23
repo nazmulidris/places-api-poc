@@ -19,7 +19,7 @@ package com.google.api.places.places_api_poc.daggger
 import android.app.Application
 
 class MyApplication : Application() {
-    // ApplicationComponent.
+    // ApplicationComponent (@Singleton scope / Global).
     lateinit var applicationComponent: ApplicationComponent
 
     override fun onCreate() {
@@ -29,7 +29,7 @@ class MyApplication : Application() {
                 .build()
     }
 
-    // ActivityComponent.
+    // ActivityComponent (@ActivityScope / Local singleton).
     var activityComponent: ActivityComponent? = null
 
     fun createActivityComponent(): ActivityComponent {

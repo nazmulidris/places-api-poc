@@ -34,7 +34,7 @@ class MyApplication : Application() {
 
     fun createActivityComponent(): ActivityComponent {
         if (activityComponent == null) {
-            activityComponent = applicationComponent.set(ExecutorModule())
+            activityComponent = applicationComponent.plus(ExecutorModule())
         }
         return activityComponent!!
     }

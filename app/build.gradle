@@ -17,6 +17,8 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+// Dagger 2
+apply plugin: 'kotlin-kapt'
 
 android {
     ext.sdk_version = 28
@@ -70,13 +72,13 @@ ext {
 dependencies {
     // Basic Dagger 2 (required)
     implementation "com.google.dagger:dagger:$dagger2_version"
-    annotationProcessor "com.google.dagger:dagger-compiler:$dagger2_version"
+    kapt "com.google.dagger:dagger-compiler:$dagger2_version"
     /*
     // dagger.android package (optional)
     implementation "com.google.dagger:dagger-android:$dagger2_version"
-    annotationProcessor "com.google.dagger:dagger-android-processor:$dagger2_version"
+    kapt "com.google.dagger:dagger-android-processor:$dagger2_version"
 
     // Support library support (optional)
-    implementation "com.google.dagger:dagger-android-support:$dagger2_version" // support libraries
+    kapt "com.google.dagger:dagger-android-support:$dagger2_version" // support libraries
     */
 }

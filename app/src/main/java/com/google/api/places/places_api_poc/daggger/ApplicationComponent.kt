@@ -31,7 +31,7 @@ import javax.inject.Singleton
 @Singleton
 @Component(modules = [ApplicationModule::class, GMSClientsModule::class])
 interface ApplicationComponent {
-    fun plus(executorModule: ExecutorModule): ActivityComponent
+    fun plus(executorModule: ExecutorModule, liveDataModule: LiveDataModule): ActivityComponent
 }
 
 @Module

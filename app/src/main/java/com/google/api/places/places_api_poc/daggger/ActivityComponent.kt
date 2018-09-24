@@ -16,7 +16,11 @@
 
 package com.google.api.places.places_api_poc.daggger
 
+import androidx.lifecycle.MutableLiveData
+import com.google.api.places.places_api_poc.PlaceWrapper
 import com.google.api.places.places_api_poc.PlacesAPI
+import com.google.api.places.places_api_poc.Tab1Fragment
+import com.google.api.places.places_api_poc.Tab3Fragment
 import dagger.Module
 import dagger.Provides
 import dagger.Subcomponent
@@ -29,9 +33,20 @@ import javax.inject.Scope
 annotation class ActivityScope
 
 @ActivityScope
-@Subcomponent(modules = [ExecutorModule::class])
+@Subcomponent(modules = [ExecutorModule::class, LiveDataModule::class])
 interface ActivityComponent {
     fun inject(placesAPI: PlacesAPI)
+    fun inject(tab1Fragment: Tab1Fragment)
+    fun inject(tab3Fragment: Tab3Fragment)
+}
+
+@Module
+class LiveDataModule {
+    @Provides
+    @ActivityScope
+    fun providesGetCurrentPlaceLiveData(): MutableLiveData<List<PlaceWrapper>> {
+        return MutableLiveData<List<PlaceWrapper>>()
+    }
 }
 
 @Module

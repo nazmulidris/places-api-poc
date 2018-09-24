@@ -54,6 +54,8 @@ class PlacesAPI(val app: Application) : AndroidViewModel(app), LifecycleObserver
 
     // Find Current Place.
     lateinit var getCurrentPlace: GetCurrentPlace
+    @Inject
+    lateinit var getCurrentPlaceLiveData: MutableLiveData<List<PlaceWrapper>>
 
     // Fetch Place by ID.
     lateinit var getPlaceByID: GetPlaceByID
@@ -92,7 +94,8 @@ class PlacesAPI(val app: Application) : AndroidViewModel(app), LifecycleObserver
         "ON_CREATE ⇢ Create API wrappers ✅".log()
         getCurrentPlace = GetCurrentPlace(executorWrapper.executor,
                                           app,
-                                          currentPlaceClient)
+                                          currentPlaceClient,
+                                          getCurrentPlaceLiveData)
         getPlaceByID = GetPlaceByID(executorWrapper.executor,
                                     geoDataClient,
                                     modalPlaceDetailsSheetLiveData)
@@ -388,9 +391,8 @@ data class ModalPlaceDetailsSheetLiveData(
 
 class GetCurrentPlace(private val executor: ExecutorService,
                       private val context: Context,
-                      private val currentPlaceClient: PlaceDetectionClient) {
-
-    val liveData = MutableLiveData<List<PlaceWrapper>>()
+                      private val currentPlaceClient: PlaceDetectionClient,
+                      private val liveData: MutableLiveData<List<PlaceWrapper>>) {
 
     /**
      * This function won't execute if FINE_ACCESS_LOCATION permission is not granted.

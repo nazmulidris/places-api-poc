@@ -22,17 +22,22 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.api.places.places_api_poc.daggger.MyApplication
+import javax.inject.Inject
 
 class Tab1Fragment : BaseTabFragment() {
 
     private lateinit var fab: FloatingActionButton
     internal lateinit var recyclerView: RecyclerView
     private lateinit var fragmentContainer: CoordinatorLayout
+    @Inject
+    lateinit var getCurrentPlaceLiveData: MutableLiveData<List<PlaceWrapper>>
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -47,46 +52,52 @@ class Tab1Fragment : BaseTabFragment() {
     }
 
     override fun onFragmentCreate() {
+        // This injects an object into getCurrentPlaceLiveData
+        with(requireActivity().application as MyApplication) {
+            activityComponent?.inject(this@Tab1Fragment)
+        }
+
         // Setup RecyclerView.
-        Tab1RecyclerViewHandler(this)
+        Tab1RecyclerViewHandler(this, getCurrentPlaceLiveData)
 
         // Attach a behavior to the FAB.
         fab.setOnClickListener { viewClicked ->
             getParentActivity().executeTaskOnPermissionGranted(
-                object : DriverActivity.PermissionDependentTask {
-                    override fun getRequiredPermission() =
-                            android.Manifest.permission.ACCESS_FINE_LOCATION
+                    object : DriverActivity.PermissionDependentTask {
+                        override fun getRequiredPermission() =
+                                android.Manifest.permission.ACCESS_FINE_LOCATION
 
-                    override fun onPermissionGranted() {
-                        placesViewModel.getCurrentPlace.execute()
-                        "🚀️ Calling PlaceDetectionClient getCurrentPlace()".snack(
-                            fragmentContainer)
-                    }
+                        override fun onPermissionGranted() {
+                            placesViewModel.getCurrentPlace.execute()
+                            "🚀️ Calling PlaceDetectionClient getCurrentPlace()".snack(
+                                    fragmentContainer)
+                        }
 
-                    override fun onPermissionRevoked() {
-                        "🛑 This app will not function without ${getRequiredPermission()}"
-                                .snack(fragmentContainer)
-                    }
-                })
+                        override fun onPermissionRevoked() {
+                            "🛑 This app will not function without ${getRequiredPermission()}"
+                                    .snack(fragmentContainer)
+                        }
+                    })
         }
 
     }
 
 }
 
-private class Tab1RecyclerViewHandler(fragment: Tab1Fragment) {
+private class Tab1RecyclerViewHandler(fragment: Tab1Fragment,
+                                      getCurrentPlaceLiveData: MutableLiveData<List<PlaceWrapper>>) {
 
     init {
         // Create the RecyclerView Adapter.
         val dataAdapter = DataAdapter(fragment)
 
         // Attach LiveData observers for current place data (from Places API).
-        fragment.placesViewModel.getCurrentPlace.liveData.observe(
-            fragment,
-            Observer { data ->
-                "🎉 observable reacting -> #places=${data.size}".log()
-                dataAdapter.loadData(data)
-            })
+        getCurrentPlaceLiveData.observe(
+                fragment,
+                Observer { data ->
+                    "🎉 observable reacting -> #places=${data.size}".log()
+                    dataAdapter.loadData(data)
+                })
 
         // Setup RecyclerView.
         with(fragment.recyclerView) {
@@ -118,7 +129,7 @@ private class Tab1RecyclerViewHandler(fragment: Tab1Fragment) {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RowViewHolder {
             val activity = fragment.getParentActivity()
             val inflatedView = activity.layoutInflater.inflate(
-                R.layout.item_row_place, parent, false)
+                    R.layout.item_row_place, parent, false)
             return Tab1RecyclerViewHandler.RowViewHolder(fragment, inflatedView)
         }
 

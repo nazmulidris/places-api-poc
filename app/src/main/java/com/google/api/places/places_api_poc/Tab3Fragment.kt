@@ -23,7 +23,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import com.google.api.places.places_api_poc.daggger.MyApplication
+import javax.inject.Inject
 
 class Tab3Fragment : BaseTabFragment() {
 
@@ -32,6 +35,8 @@ class Tab3Fragment : BaseTabFragment() {
     private lateinit var textDebugCurrentLocation: TextView
     private lateinit var textDebugModalData: TextView
     private lateinit var textDebugAutocompletePrediction: TextView
+    @Inject
+    lateinit var getCurrentPlaceLiveData: MutableLiveData<List<PlaceWrapper>>
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -48,6 +53,11 @@ class Tab3Fragment : BaseTabFragment() {
     }
 
     override fun onFragmentCreate() {
+        // This injects an object into getCurrentPlaceLiveData
+        with(requireActivity().application as MyApplication) {
+            activityComponent?.inject(this@Tab3Fragment)
+        }
+
         getCurrentPlace()
         getCurrentLocation()
         getAutocompletePredictions()
@@ -131,7 +141,7 @@ class Tab3Fragment : BaseTabFragment() {
     }
 
     private fun getCurrentPlace() {
-        placesViewModel.getCurrentPlace.liveData.observe(
+        getCurrentPlaceLiveData.observe(
             this,
             Observer { listOfPlaceWrappers ->
                 val count = listOfPlaceWrappers.size

@@ -45,6 +45,7 @@
             <TextView
                 android:id="@+id/text_place_details_body"
                 style="@style/TextAppearance.MaterialComponents.Body1"
+                android:textIsSelectable="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 

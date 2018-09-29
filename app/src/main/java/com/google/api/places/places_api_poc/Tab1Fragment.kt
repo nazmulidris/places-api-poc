@@ -28,7 +28,6 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.api.places.places_api_poc.daggger.MyApplication
 import javax.inject.Inject
 
 class Tab1Fragment : BaseTabFragment() {
@@ -53,9 +52,7 @@ class Tab1Fragment : BaseTabFragment() {
 
     override fun onFragmentCreate() {
         // This injects an object into getCurrentPlaceLiveData
-        with(requireActivity().application as MyApplication) {
-            activityComponent?.inject(this@Tab1Fragment)
-        }
+        getMyApplication().activityComponent?.inject(this@Tab1Fragment)
 
         // Setup RecyclerView.
         Tab1RecyclerViewHandler(this, getCurrentPlaceLiveData)

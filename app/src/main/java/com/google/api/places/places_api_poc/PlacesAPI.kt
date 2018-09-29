@@ -28,7 +28,6 @@ import com.google.android.gms.location.places.*
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.api.places.places_api_poc.daggger.ExecutorWrapper
-import com.google.api.places.places_api_poc.daggger.MyApplication
 import java.util.concurrent.ExecutorService
 import javax.inject.Inject
 
@@ -82,9 +81,9 @@ class PlacesAPI(val app: Application) : AndroidViewModel(app), LifecycleObserver
         "ON_CREATE ⇢ PlacesAPI.connect() ✅".log()
 
         // Dagger 2 component creation.
-        with((app as MyApplication)) {
-            createActivityComponent().inject(this@PlacesAPI)
-        }
+        app.getMyApplication()
+                .createActivityComponent()
+                .inject(this@PlacesAPI)
 
         "💥 connect() - got GetDataClient, PlaceDetectionClient, FusedLocationProviderClient".log()
 
@@ -119,9 +118,7 @@ class PlacesAPI(val app: Application) : AndroidViewModel(app), LifecycleObserver
         "ON_DESTROY ⇢ PlacesAPI cleanup ✅".log()
         executorWrapper.destroy()
         "🚿 cleanup() - complete!".log()
-        with((app as MyApplication)) {
-            destroyActivityComponent()
-        }
+        app.getMyApplication().destroyActivityComponent()
     }
 
 }

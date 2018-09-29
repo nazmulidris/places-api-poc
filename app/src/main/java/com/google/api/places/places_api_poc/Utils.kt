@@ -16,6 +16,7 @@
 
 package com.google.api.places.places_api_poc
 
+import android.app.Application
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -27,6 +28,7 @@ import android.widget.Toast
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.material.snackbar.Snackbar
+import com.google.api.places.places_api_poc.daggger.MyApplication
 import java.io.ByteArrayOutputStream
 
 //
@@ -96,3 +98,8 @@ fun String.log() = Log.i("places-api-poc", this)
 fun String.snack(view: View) = Snackbar.make(view, this, Snackbar.LENGTH_SHORT).show()
 
 fun String.toast(context: Context) = Toast.makeText(context, this, Toast.LENGTH_SHORT).show()
+
+fun Application.getMyApplication(): MyApplication = this as MyApplication
+
+fun BaseTabFragment.getMyApplication(): MyApplication =
+        this.requireActivity().application as MyApplication

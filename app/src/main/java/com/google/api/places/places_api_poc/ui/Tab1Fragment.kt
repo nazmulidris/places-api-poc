@@ -22,7 +22,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -30,6 +29,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.api.places.places_api_poc.R
 import com.google.api.places.places_api_poc.daggger.ModalPlaceDetailsSheetLiveData
+import com.google.api.places.places_api_poc.daggger.PlacesLiveData
 import com.google.api.places.places_api_poc.misc.getMyApplication
 import com.google.api.places.places_api_poc.misc.log
 import com.google.api.places.places_api_poc.misc.snack
@@ -42,7 +42,7 @@ class Tab1Fragment : BaseTabFragment() {
     internal lateinit var recyclerView: RecyclerView
     private lateinit var fragmentContainer: CoordinatorLayout
     @Inject
-    lateinit var getCurrentPlaceLiveData: MutableLiveData<List<PlaceWrapper>>
+    lateinit var getCurrentPlacesLiveData: PlacesLiveData
     @Inject
     lateinit var modalPlaceDetailsSheetLiveData: ModalPlaceDetailsSheetLiveData
 
@@ -59,12 +59,12 @@ class Tab1Fragment : BaseTabFragment() {
     }
 
     override fun onFragmentCreate() {
-        // Inject objects into getCurrentPlaceLiveData, modalPlaceDetailsSheetLiveData fields.
-        getMyApplication().activityComponent?.inject(this@Tab1Fragment)
+        // Inject objects into fields.
+        getMyApplication().activityComponent?.inject(this)
 
         // Setup RecyclerView.
         Tab1RecyclerViewHandler(this,
-                                                                        getCurrentPlaceLiveData)
+                                getCurrentPlacesLiveData)
 
         // Attach a behavior to the FAB.
         fab.setOnClickListener { viewClicked ->
@@ -91,7 +91,7 @@ class Tab1Fragment : BaseTabFragment() {
 }
 
 private class Tab1RecyclerViewHandler(fragment: Tab1Fragment,
-                                      getCurrentPlaceLiveData: MutableLiveData<List<PlaceWrapper>>) {
+                                      getCurrentPlaceLiveData: PlacesLiveData) {
 
     init {
         // Create the RecyclerView Adapter.

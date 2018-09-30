@@ -16,13 +16,12 @@
 
 package com.google.api.places.places_api_poc.daggger
 
+import android.location.Location
 import androidx.lifecycle.MutableLiveData
+import com.google.api.places.places_api_poc.model.AutocompletePredictionData
 import com.google.api.places.places_api_poc.model.PlaceWrapper
 import com.google.api.places.places_api_poc.model.PlacesAPI
-import com.google.api.places.places_api_poc.ui.DriverActivity
-import com.google.api.places.places_api_poc.ui.PlaceDetailsSheetFragment
-import com.google.api.places.places_api_poc.ui.Tab1Fragment
-import com.google.api.places.places_api_poc.ui.Tab3Fragment
+import com.google.api.places.places_api_poc.ui.*
 import dagger.Module
 import dagger.Provides
 import dagger.Subcomponent
@@ -42,19 +41,30 @@ interface ActivityComponent {
     fun inject(fragment: Tab3Fragment)
     fun inject(bottomSheetDialogFragment: PlaceDetailsSheetFragment)
     fun inject(activity: DriverActivity)
+    fun inject(fragment: Tab2Fragment)
 }
+
+typealias PlacesLiveData = MutableLiveData<List<PlaceWrapper>>
+typealias AutocompletePredictionsLiveData = MutableLiveData<List<AutocompletePredictionData>>
+typealias LocationLiveData = MutableLiveData<Location>
 
 @Module
 class LiveDataModule {
     @Provides
     @ActivityScope
-    fun providesGetCurrentPlaceLiveData(): MutableLiveData<List<PlaceWrapper>> =
-            MutableLiveData()
+    fun providesGetCurrentPlaceLiveData() = PlacesLiveData()
 
     @Provides
     @ActivityScope
-    fun providesModalPlaceDetailsSheetLiveData(): ModalPlaceDetailsSheetLiveData =
-            ModalPlaceDetailsSheetLiveData()
+    fun providesModalPlaceDetailsSheetLiveData() = ModalPlaceDetailsSheetLiveData()
+
+    @Provides
+    @ActivityScope
+    fun providesAutocompletePredictionsLiveData() = AutocompletePredictionsLiveData()
+
+    @Provides
+    @ActivityScope
+    fun providesGetLastLocationLiveData() = LocationLiveData()
 }
 
 @Module

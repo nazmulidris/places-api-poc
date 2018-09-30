@@ -23,13 +23,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.google.api.places.places_api_poc.R
+import com.google.api.places.places_api_poc.daggger.AutocompletePredictionsLiveData
+import com.google.api.places.places_api_poc.daggger.LocationLiveData
 import com.google.api.places.places_api_poc.daggger.ModalPlaceDetailsSheetLiveData
+import com.google.api.places.places_api_poc.daggger.PlacesLiveData
 import com.google.api.places.places_api_poc.misc.getMyApplication
 import com.google.api.places.places_api_poc.misc.getUrl
-import com.google.api.places.places_api_poc.model.PlaceWrapper
 import javax.inject.Inject
 
 class Tab3Fragment : BaseTabFragment() {
@@ -40,9 +41,13 @@ class Tab3Fragment : BaseTabFragment() {
     private lateinit var textDebugModalData: TextView
     private lateinit var textDebugAutocompletePrediction: TextView
     @Inject
-    lateinit var getCurrentPlaceLiveData: MutableLiveData<List<PlaceWrapper>>
+    lateinit var getCurrentPlacesLiveData: PlacesLiveData
     @Inject
     lateinit var modalPlaceDetailsSheetLiveData: ModalPlaceDetailsSheetLiveData
+    @Inject
+    lateinit var autocompletePredictionsLiveData: AutocompletePredictionsLiveData
+    @Inject
+    lateinit var locationLiveData: LocationLiveData
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -59,8 +64,8 @@ class Tab3Fragment : BaseTabFragment() {
     }
 
     override fun onFragmentCreate() {
-        // Inject objects into getCurrentPlaceLiveData, modalPlaceDetailsSheetLiveData.
-        getMyApplication().activityComponent?.inject(this@Tab3Fragment)
+        // Inject objects into fields.
+        getMyApplication().activityComponent?.inject(this)
 
         getCurrentPlace()
         getCurrentLocation()
@@ -112,7 +117,7 @@ class Tab3Fragment : BaseTabFragment() {
 
 
     private fun getAutocompletePredictions() {
-        placesViewModel.autoCompletePredictions.liveData.observe(
+        autocompletePredictionsLiveData.observe(
                 this,
                 Observer { listOfAutocompletePreductions ->
                     val count = listOfAutocompletePreductions.size
@@ -131,13 +136,13 @@ class Tab3Fragment : BaseTabFragment() {
     }
 
     private fun getCurrentLocation() {
-        placesViewModel.getLastLocation.liveData.observe(
+        locationLiveData.observe(
                 this,
                 Observer { location ->
                     textDebugCurrentLocation.text = Html.fromHtml(StringBuilder().apply {
                         append("<h3>Current Location</h3>")
                         val url = getUrl(location.latitude,
-                                                                                   location.longitude)
+                                         location.longitude)
                         append("$url")
                         //append("${location}")
                     }.toString())
@@ -146,7 +151,7 @@ class Tab3Fragment : BaseTabFragment() {
     }
 
     private fun getCurrentPlace() {
-        getCurrentPlaceLiveData.observe(
+        getCurrentPlacesLiveData.observe(
                 this,
                 Observer { listOfPlaceWrappers ->
                     val count = listOfPlaceWrappers.size

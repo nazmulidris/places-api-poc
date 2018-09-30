@@ -55,8 +55,8 @@ class DriverActivity : AppCompatActivity() {
             // Permission is not granted ☹. Ask the user for the run time permission 🙏.
             "🔒 ${task.getRequiredPermission()} not granted 🛑, request it 🙏️".log()
             requestPermission(this,
-                                                                        task.getRequiredPermission(),
-                                                                        PERMISSION_ID)
+                              task.getRequiredPermission(),
+                              PERMISSION_ID)
             if (pendingTask == null) pendingTask = task
         } else {
             // Permission is granted 🙌. Run the task function.
@@ -154,7 +154,7 @@ class DriverActivity : AppCompatActivity() {
     // Handle showing the PlaceDetailsSheetFragment (modal/dialog).
     private fun setupModalPlaceDetailSheetHandler() {
 
-        // Inject objects into the modalPlaceDetailsSheetLiveData field.
+        // Inject objects into fields.
         getMyApplication().activityComponent?.inject(this)
 
         modalPlaceDetailsSheetLiveData.sheetVisibleObservable().observe(

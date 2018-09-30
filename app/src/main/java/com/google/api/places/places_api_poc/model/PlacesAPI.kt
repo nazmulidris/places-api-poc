@@ -22,13 +22,15 @@ import android.app.Application
 import android.content.Context
 import android.graphics.Bitmap
 import android.location.Location
-import androidx.lifecycle.*
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.places.*
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.tasks.OnCompleteListener
-import com.google.api.places.places_api_poc.daggger.ExecutorWrapper
-import com.google.api.places.places_api_poc.daggger.ModalPlaceDetailsSheetLiveData
+import com.google.api.places.places_api_poc.daggger.*
 import com.google.api.places.places_api_poc.misc.getMyApplication
 import com.google.api.places.places_api_poc.misc.isPermissionGranted
 import com.google.api.places.places_api_poc.misc.log
@@ -58,13 +60,13 @@ class PlacesAPI(val app: Application) : AndroidViewModel(app), LifecycleObserver
     // Find Current Place.
     lateinit var getCurrentPlace: GetCurrentPlace
     @Inject
-    lateinit var getCurrentPlaceLiveData: MutableLiveData<List<PlaceWrapper>>
+    lateinit var getCurrentPlacesLiveData: PlacesLiveData
 
     // Fetch Place by ID.
     lateinit var getPlaceByID: GetPlaceByID
 
     // Fetch Autocomplete Predictions.
-    lateinit var autoCompletePredictions: AutoCompletePredictions
+    lateinit var autocompletePredictions: AutocompletePredictions
 
     // Get Place Photos
     lateinit var getPlacePhotos: GetPlacePhotos
@@ -75,6 +77,14 @@ class PlacesAPI(val app: Application) : AndroidViewModel(app), LifecycleObserver
     // Modal "Place Details Sheet" Data.
     @Inject
     lateinit var modalPlaceDetailsSheetLiveData: ModalPlaceDetailsSheetLiveData
+
+    // Autocomplete predictions Data.
+    @Inject
+    lateinit var autocompletePredictionsLiveData: AutocompletePredictionsLiveData
+
+    // Get last location Data.
+    @Inject
+    lateinit var locationLiveData: LocationLiveData
 
     /**
      * When this object is constructed, setup the Dagger 2 subcomponent (@ActivityScope).
@@ -105,24 +115,25 @@ class PlacesAPI(val app: Application) : AndroidViewModel(app), LifecycleObserver
 
         "ON_CREATE ⇢ Create API wrappers ✅".log()
         getCurrentPlace = GetCurrentPlace(executorWrapper.executor,
-                                                                                     app,
-                                                                                     currentPlaceClient,
-                                                                                     getCurrentPlaceLiveData)
+                                          app,
+                                          currentPlaceClient,
+                                          getCurrentPlacesLiveData)
         getPlaceByID = GetPlaceByID(executorWrapper.executor,
-                                                                               geoDataClient,
-                                                                               modalPlaceDetailsSheetLiveData)
-        autoCompletePredictions = AutoCompletePredictions(
-                executorWrapper.executor,
-                geoDataClient)
+                                    geoDataClient,
+                                    modalPlaceDetailsSheetLiveData)
+        autocompletePredictions = AutocompletePredictions(executorWrapper.executor,
+                                                          geoDataClient,
+                                                          autocompletePredictionsLiveData)
         getLastLocation = GetLastLocation(executorWrapper.executor,
-                                                                                     fusedLocationProviderClient,
-                                                                                     app)
+                                          fusedLocationProviderClient,
+                                          app,
+                                          locationLiveData)
         getPhoto = GetPhoto(executorWrapper.executor,
-                                                                       geoDataClient,
-                                                                       modalPlaceDetailsSheetLiveData)
+                            geoDataClient,
+                            modalPlaceDetailsSheetLiveData)
         getPlacePhotos = GetPlacePhotos(executorWrapper.executor,
-                                                                                   geoDataClient,
-                                                                                   getPhoto)
+                                        geoDataClient,
+                                        getPhoto)
         "💥 connect() - complete!".log()
 
     }
@@ -165,7 +176,7 @@ class GetPhoto(private val executor: ExecutorService,
     private fun processPhoto(bitmap: Bitmap, attribution: CharSequence) {
         modalPlaceDetailsSheetLiveData.bitmap.postValue(
                 BitmapWrapper(bitmap,
-                                                                         attribution.toString())
+                              attribution.toString())
         )
     }
 
@@ -226,9 +237,8 @@ class GetPlacePhotos(private val executor: ExecutorService,
 
 class GetLastLocation(private val executor: ExecutorService,
                       private val currentLocationClient: FusedLocationProviderClient,
-                      private val context: Application) {
-
-    val liveData = MutableLiveData<Location>()
+                      private val context: Application,
+                      private val liveData: LocationLiveData) {
 
     /**
      * This function won't execute if FINE_ACCESS_LOCATION permission is not granted.
@@ -236,7 +246,7 @@ class GetLastLocation(private val executor: ExecutorService,
     @SuppressLint("MissingPermission")
     fun execute() {
         if (isPermissionGranted(context,
-                                                                          ACCESS_FINE_LOCATION)) {
+                                ACCESS_FINE_LOCATION)) {
             "PlacesAPI ⇢ FusedLocationProviderClient.lastLocation() ✅".log()
             currentLocationClient.lastLocation.let { requestTask ->
                 // Run this in background thread.
@@ -265,10 +275,9 @@ class GetLastLocation(private val executor: ExecutorService,
 // Place Autocomplete.
 //
 
-class AutoCompletePredictions(private val executor: ExecutorService,
-                              private val geoDataClient: GeoDataClient) {
-
-    val liveData = MutableLiveData<List<AutocompletePredictionData>>()
+class AutocompletePredictions(private val executor: ExecutorService,
+                              private val geoDataClient: GeoDataClient,
+                              private val liveData: AutocompletePredictionsLiveData) {
 
     private val defaultFilter = AutocompleteFilter.Builder()
             .setTypeFilter(AutocompleteFilter.TYPE_FILTER_NONE)
@@ -369,7 +378,7 @@ class GetPlaceByID(private val executor: ExecutorService,
 class GetCurrentPlace(private val executor: ExecutorService,
                       private val context: Context,
                       private val currentPlaceClient: PlaceDetectionClient,
-                      private val liveData: MutableLiveData<List<PlaceWrapper>>) {
+                      private val liveData: PlacesLiveData) {
 
     /**
      * This function won't execute if FINE_ACCESS_LOCATION permission is not granted.
@@ -377,7 +386,7 @@ class GetCurrentPlace(private val executor: ExecutorService,
     @SuppressLint("MissingPermission")
     fun execute() {
         if (isPermissionGranted(context,
-                                                                          ACCESS_FINE_LOCATION)) {
+                                ACCESS_FINE_LOCATION)) {
             // Permission is granted 🙌.
             "PlacesAPI ⇢ PlaceDetectionClient.getCurrentPlace() ✅".log()
             currentPlaceClient.getCurrentPlace(null).let { requestTask ->

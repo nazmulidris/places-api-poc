@@ -22,7 +22,7 @@
     android:id="@+id/layout_app_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".DriverActivity">
+    tools:context=".ui.DriverActivity">
 
     <FrameLayout
         android:id="@+id/layout_app_fragment"

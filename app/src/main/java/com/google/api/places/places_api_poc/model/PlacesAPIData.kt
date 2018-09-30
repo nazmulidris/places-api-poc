@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.google.api.places.places_api_poc
+package com.google.api.places.places_api_poc.model
 
 import android.graphics.Bitmap
 import android.net.Uri

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.google.api.places.places_api_poc
+package com.google.api.places.places_api_poc.ui
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -28,7 +28,12 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.api.places.places_api_poc.R
 import com.google.api.places.places_api_poc.daggger.ModalPlaceDetailsSheetLiveData
+import com.google.api.places.places_api_poc.misc.getMyApplication
+import com.google.api.places.places_api_poc.misc.log
+import com.google.api.places.places_api_poc.model.PlaceWrapper
+import com.google.api.places.places_api_poc.misc.snack
 import javax.inject.Inject
 
 class Tab1Fragment : BaseTabFragment() {
@@ -58,7 +63,8 @@ class Tab1Fragment : BaseTabFragment() {
         getMyApplication().activityComponent?.inject(this@Tab1Fragment)
 
         // Setup RecyclerView.
-        Tab1RecyclerViewHandler(this, getCurrentPlaceLiveData)
+        Tab1RecyclerViewHandler(this,
+                                                                        getCurrentPlaceLiveData)
 
         // Attach a behavior to the FAB.
         fab.setOnClickListener { viewClicked ->
@@ -89,7 +95,8 @@ private class Tab1RecyclerViewHandler(fragment: Tab1Fragment,
 
     init {
         // Create the RecyclerView Adapter.
-        val dataAdapter = DataAdapter(fragment)
+        val dataAdapter = DataAdapter(
+                fragment)
 
         // Attach LiveData observers for current place data (from Places API).
         getCurrentPlaceLiveData.observe(
@@ -130,7 +137,9 @@ private class Tab1RecyclerViewHandler(fragment: Tab1Fragment,
             val activity = fragment.getParentActivity()
             val inflatedView = activity.layoutInflater.inflate(
                     R.layout.item_row_place, parent, false)
-            return Tab1RecyclerViewHandler.RowViewHolder(fragment, inflatedView)
+            return RowViewHolder(
+                    fragment,
+                    inflatedView)
         }
 
         override fun onBindViewHolder(holder: RowViewHolder, position: Int) {

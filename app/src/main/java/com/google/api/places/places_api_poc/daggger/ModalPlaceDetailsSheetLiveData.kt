@@ -17,8 +17,8 @@
 package com.google.api.places.places_api_poc.daggger
 
 import androidx.lifecycle.MutableLiveData
-import com.google.api.places.places_api_poc.BitmapWrapper
-import com.google.api.places.places_api_poc.PlaceWrapper
+import com.google.api.places.places_api_poc.model.BitmapWrapper
+import com.google.api.places.places_api_poc.model.PlaceWrapper
 
 //
 // Modal "Place Details Sheet" Data.

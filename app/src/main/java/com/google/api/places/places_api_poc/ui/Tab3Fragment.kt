@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.google.api.places.places_api_poc
+package com.google.api.places.places_api_poc.ui
 
 import android.os.Bundle
 import android.text.Html
@@ -25,7 +25,11 @@ import android.widget.TextView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import com.google.api.places.places_api_poc.R
 import com.google.api.places.places_api_poc.daggger.ModalPlaceDetailsSheetLiveData
+import com.google.api.places.places_api_poc.misc.getMyApplication
+import com.google.api.places.places_api_poc.misc.getUrl
+import com.google.api.places.places_api_poc.model.PlaceWrapper
 import javax.inject.Inject
 
 class Tab3Fragment : BaseTabFragment() {
@@ -132,7 +136,8 @@ class Tab3Fragment : BaseTabFragment() {
                 Observer { location ->
                     textDebugCurrentLocation.text = Html.fromHtml(StringBuilder().apply {
                         append("<h3>Current Location</h3>")
-                        val url = getUrl(location.latitude, location.longitude)
+                        val url = getUrl(location.latitude,
+                                                                                   location.longitude)
                         append("$url")
                         //append("${location}")
                     }.toString())

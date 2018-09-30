@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.google.api.places.places_api_poc
+package com.google.api.places.places_api_poc.ui
 
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -23,7 +23,13 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.api.places.places_api_poc.R
 import com.google.api.places.places_api_poc.daggger.ModalPlaceDetailsSheetLiveData
+import com.google.api.places.places_api_poc.misc.getMyApplication
+import com.google.api.places.places_api_poc.misc.isPermissionDenied
+import com.google.api.places.places_api_poc.misc.log
+import com.google.api.places.places_api_poc.misc.requestPermission
+import com.google.api.places.places_api_poc.model.PlacesAPI
 import javax.inject.Inject
 
 class DriverActivity : AppCompatActivity() {
@@ -44,10 +50,13 @@ class DriverActivity : AppCompatActivity() {
     private var pendingTask: PermissionDependentTask? = null
 
     fun executeTaskOnPermissionGranted(task: PermissionDependentTask) {
-        if (isPermissionDenied(this, task.getRequiredPermission())) {
+        if (isPermissionDenied(this,
+                               task.getRequiredPermission())) {
             // Permission is not granted ☹. Ask the user for the run time permission 🙏.
             "🔒 ${task.getRequiredPermission()} not granted 🛑, request it 🙏️".log()
-            requestPermission(this, task.getRequiredPermission(), PERMISSION_ID)
+            requestPermission(this,
+                                                                        task.getRequiredPermission(),
+                                                                        PERMISSION_ID)
             if (pendingTask == null) pendingTask = task
         } else {
             // Permission is granted 🙌. Run the task function.
@@ -110,9 +119,12 @@ class DriverActivity : AppCompatActivity() {
 
     private val fragmentMap: Map<Int, Fragment> =
             mutableMapOf<Int, Fragment>().apply {
-                put(R.id.navigation_tab1, Tab1Fragment())
-                put(R.id.navigation_tab2, Tab2Fragment())
-                put(R.id.navigation_tab3, Tab3Fragment())
+                put(R.id.navigation_tab1,
+                    Tab1Fragment())
+                put(R.id.navigation_tab2,
+                    Tab2Fragment())
+                put(R.id.navigation_tab3,
+                    Tab3Fragment())
             }.toMap()
 
     private fun switchFragment(id: Int) {

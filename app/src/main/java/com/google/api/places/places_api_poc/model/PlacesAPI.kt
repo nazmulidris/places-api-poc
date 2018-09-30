@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.google.api.places.places_api_poc
+package com.google.api.places.places_api_poc.model
 
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.annotation.SuppressLint
@@ -29,6 +29,9 @@ import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.api.places.places_api_poc.daggger.ExecutorWrapper
 import com.google.api.places.places_api_poc.daggger.ModalPlaceDetailsSheetLiveData
+import com.google.api.places.places_api_poc.misc.getMyApplication
+import com.google.api.places.places_api_poc.misc.isPermissionGranted
+import com.google.api.places.places_api_poc.misc.log
 import java.util.concurrent.ExecutorService
 import javax.inject.Inject
 
@@ -102,23 +105,24 @@ class PlacesAPI(val app: Application) : AndroidViewModel(app), LifecycleObserver
 
         "ON_CREATE ⇢ Create API wrappers ✅".log()
         getCurrentPlace = GetCurrentPlace(executorWrapper.executor,
-                                          app,
-                                          currentPlaceClient,
-                                          getCurrentPlaceLiveData)
+                                                                                     app,
+                                                                                     currentPlaceClient,
+                                                                                     getCurrentPlaceLiveData)
         getPlaceByID = GetPlaceByID(executorWrapper.executor,
-                                    geoDataClient,
-                                    modalPlaceDetailsSheetLiveData)
-        autoCompletePredictions = AutoCompletePredictions(executorWrapper.executor,
-                                                          geoDataClient)
+                                                                               geoDataClient,
+                                                                               modalPlaceDetailsSheetLiveData)
+        autoCompletePredictions = AutoCompletePredictions(
+                executorWrapper.executor,
+                geoDataClient)
         getLastLocation = GetLastLocation(executorWrapper.executor,
-                                          fusedLocationProviderClient,
-                                          app)
+                                                                                     fusedLocationProviderClient,
+                                                                                     app)
         getPhoto = GetPhoto(executorWrapper.executor,
-                            geoDataClient,
-                            modalPlaceDetailsSheetLiveData)
+                                                                       geoDataClient,
+                                                                       modalPlaceDetailsSheetLiveData)
         getPlacePhotos = GetPlacePhotos(executorWrapper.executor,
-                                        geoDataClient,
-                                        getPhoto)
+                                                                                   geoDataClient,
+                                                                                   getPhoto)
         "💥 connect() - complete!".log()
 
     }
@@ -160,7 +164,8 @@ class GetPhoto(private val executor: ExecutorService,
 
     private fun processPhoto(bitmap: Bitmap, attribution: CharSequence) {
         modalPlaceDetailsSheetLiveData.bitmap.postValue(
-                BitmapWrapper(bitmap, attribution.toString())
+                BitmapWrapper(bitmap,
+                                                                         attribution.toString())
         )
     }
 
@@ -230,7 +235,8 @@ class GetLastLocation(private val executor: ExecutorService,
      */
     @SuppressLint("MissingPermission")
     fun execute() {
-        if (isPermissionGranted(context, ACCESS_FINE_LOCATION)) {
+        if (isPermissionGranted(context,
+                                                                          ACCESS_FINE_LOCATION)) {
             "PlacesAPI ⇢ FusedLocationProviderClient.lastLocation() ✅".log()
             currentLocationClient.lastLocation.let { requestTask ->
                 // Run this in background thread.
@@ -350,7 +356,8 @@ class GetPlaceByID(private val executor: ExecutorService,
     // This runs in a background thread.
     private fun processPlace(placeBufferResponse: PlaceBufferResponse) {
         val place = placeBufferResponse.get(0)
-        modalPlaceDetailsSheetData.postPlace(PlaceWrapper(place))
+        modalPlaceDetailsSheetData.postPlace(PlaceWrapper(
+                place))
     }
 
 }
@@ -369,7 +376,8 @@ class GetCurrentPlace(private val executor: ExecutorService,
      */
     @SuppressLint("MissingPermission")
     fun execute() {
-        if (isPermissionGranted(context, ACCESS_FINE_LOCATION)) {
+        if (isPermissionGranted(context,
+                                                                          ACCESS_FINE_LOCATION)) {
             // Permission is granted 🙌.
             "PlacesAPI ⇢ PlaceDetectionClient.getCurrentPlace() ✅".log()
             currentPlaceClient.getCurrentPlace(null).let { requestTask ->
@@ -396,7 +404,8 @@ class GetCurrentPlace(private val executor: ExecutorService,
         val outputList = mutableListOf<PlaceWrapper>()
         val count = likeyPlaces.count
         for (index in 0 until count) {
-            outputList.add(PlaceWrapper(likeyPlaces.get(index)))
+            outputList.add(PlaceWrapper(likeyPlaces.get(
+                    index)))
         }
 
         // Dump the list of PlaceWrapper objects to logcat.

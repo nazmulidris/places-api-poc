@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.google.api.places.places_api_poc
+package com.google.api.places.places_api_poc.misc
 
 import android.content.Context
 import android.content.pm.PackageManager

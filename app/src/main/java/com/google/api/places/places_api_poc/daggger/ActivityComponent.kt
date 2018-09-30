@@ -17,7 +17,12 @@
 package com.google.api.places.places_api_poc.daggger
 
 import androidx.lifecycle.MutableLiveData
-import com.google.api.places.places_api_poc.*
+import com.google.api.places.places_api_poc.model.PlaceWrapper
+import com.google.api.places.places_api_poc.model.PlacesAPI
+import com.google.api.places.places_api_poc.ui.DriverActivity
+import com.google.api.places.places_api_poc.ui.PlaceDetailsSheetFragment
+import com.google.api.places.places_api_poc.ui.Tab1Fragment
+import com.google.api.places.places_api_poc.ui.Tab3Fragment
 import dagger.Module
 import dagger.Provides
 import dagger.Subcomponent
@@ -43,15 +48,13 @@ interface ActivityComponent {
 class LiveDataModule {
     @Provides
     @ActivityScope
-    fun providesGetCurrentPlaceLiveData(): MutableLiveData<List<PlaceWrapper>> {
-        return MutableLiveData<List<PlaceWrapper>>()
-    }
+    fun providesGetCurrentPlaceLiveData(): MutableLiveData<List<PlaceWrapper>> =
+            MutableLiveData()
 
     @Provides
     @ActivityScope
-    fun providesModalPlaceDetailsSheetLiveData(): ModalPlaceDetailsSheetLiveData {
-        return ModalPlaceDetailsSheetLiveData()
-    }
+    fun providesModalPlaceDetailsSheetLiveData(): ModalPlaceDetailsSheetLiveData =
+            ModalPlaceDetailsSheetLiveData()
 }
 
 @Module

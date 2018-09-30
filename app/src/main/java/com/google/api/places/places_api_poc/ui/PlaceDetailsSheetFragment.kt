@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.google.api.places.places_api_poc
+package com.google.api.places.places_api_poc.ui
 
 import android.graphics.Bitmap
 import android.os.Bundle
@@ -27,7 +27,11 @@ import android.widget.TextView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.api.places.places_api_poc.R
 import com.google.api.places.places_api_poc.daggger.ModalPlaceDetailsSheetLiveData
+import com.google.api.places.places_api_poc.misc.getMyApplication
+import com.google.api.places.places_api_poc.model.PlaceWrapper
+import com.google.api.places.places_api_poc.model.PlacesAPI
 import javax.inject.Inject
 
 class PlaceDetailsSheetFragment : BottomSheetDialogFragment() {

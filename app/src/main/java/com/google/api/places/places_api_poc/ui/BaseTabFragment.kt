@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package com.google.api.places.places_api_poc
+package com.google.api.places.places_api_poc.ui
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
+import com.google.api.places.places_api_poc.model.PlacesAPI
 
 open class BaseTabFragment : Fragment() {
 

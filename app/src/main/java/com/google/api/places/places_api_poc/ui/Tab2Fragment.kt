@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.google.api.places.places_api_poc
+package com.google.api.places.places_api_poc.ui
 
 import android.Manifest
 import android.os.Bundle
@@ -31,6 +31,9 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.maps.model.LatLngBounds
+import com.google.api.places.places_api_poc.*
+import com.google.api.places.places_api_poc.misc.*
+import com.google.api.places.places_api_poc.model.AutocompletePredictionData
 
 class Tab2Fragment : BaseTabFragment() {
 
@@ -79,7 +82,8 @@ class Tab2RecyclerViewHandler(fragment: Tab2Fragment) {
 
     init {
         // Create the RecyclerView Adapter.
-        dataAdapter = DataAdapter(fragment)
+        dataAdapter = DataAdapter(
+                fragment)
 
         // Attach LiveData observers for autocomplete prediction data (from Places API).
         fragment.placesViewModel.autoCompletePredictions.liveData.observe(
@@ -124,8 +128,10 @@ class Tab2RecyclerViewHandler(fragment: Tab2Fragment) {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RowViewHolder {
             val activity = fragment.getParentActivity()
             val inflatedView = activity.layoutInflater.inflate(
-                R.layout.item_row_place, parent, false)
-            return Tab2RecyclerViewHandler.RowViewHolder(fragment, inflatedView)
+                    R.layout.item_row_place, parent, false)
+            return RowViewHolder(
+                    fragment,
+                    inflatedView)
         }
 
         override fun onBindViewHolder(holder: RowViewHolder, position: Int) {
@@ -186,10 +192,13 @@ class LocationHandler(val fragment: Tab2Fragment) {
         fragment.placesViewModel.getLastLocation.liveData.observe(
             fragment,
             Observer { location ->
-                val bounds = LatLngRange.getBounds(location)
+                val bounds = LatLngRange.getBounds(
+                        location)
                 "📌 Current Location = $location".log()
-                "NorthEast: ${getUrl(bounds.northeast.latitude, bounds.northeast.longitude)}".log()
-                "SouthWest: ${getUrl(bounds.southwest.latitude, bounds.southwest.longitude)}".log()
+                "NorthEast: ${getUrl(bounds.northeast.latitude,
+                                     bounds.northeast.longitude)}".log()
+                "SouthWest: ${getUrl(bounds.southwest.latitude,
+                                     bounds.southwest.longitude)}".log()
             })
     }
 

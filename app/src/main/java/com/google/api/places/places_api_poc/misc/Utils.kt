@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.google.api.places.places_api_poc
+package com.google.api.places.places_api_poc.misc
 
 import android.app.Application
 import android.content.Context
@@ -30,6 +30,8 @@ import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.Snackbar
 import com.google.api.places.places_api_poc.daggger.MyApplication
+import com.google.api.places.places_api_poc.ui.BaseTabFragment
+import com.google.api.places.places_api_poc.ui.DriverActivity
 import java.io.ByteArrayOutputStream
 
 //

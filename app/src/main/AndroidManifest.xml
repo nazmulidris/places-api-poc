@@ -33,7 +33,7 @@
                 android:value="@string/places_api_key"/>
 
         <activity
-                android:name=".DriverActivity"
+                android:name=".ui.DriverActivity"
                 android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

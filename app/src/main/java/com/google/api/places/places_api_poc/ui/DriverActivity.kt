@@ -154,7 +154,7 @@ class DriverActivity : AppCompatActivity() {
     // Handle showing the PlaceDetailsSheetFragment (modal/dialog).
     private fun setupModalPlaceDetailSheetHandler() {
 
-        // This injects the modalPlaceDetailsSheetLiveData object
+        // Inject objects into the modalPlaceDetailsSheetLiveData field.
         getMyApplication().activityComponent?.inject(this)
 
         modalPlaceDetailsSheetLiveData.sheetVisibleObservable().observe(

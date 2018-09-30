@@ -32,8 +32,8 @@ import com.google.api.places.places_api_poc.R
 import com.google.api.places.places_api_poc.daggger.ModalPlaceDetailsSheetLiveData
 import com.google.api.places.places_api_poc.misc.getMyApplication
 import com.google.api.places.places_api_poc.misc.log
-import com.google.api.places.places_api_poc.model.PlaceWrapper
 import com.google.api.places.places_api_poc.misc.snack
+import com.google.api.places.places_api_poc.model.PlaceWrapper
 import javax.inject.Inject
 
 class Tab1Fragment : BaseTabFragment() {
@@ -59,7 +59,7 @@ class Tab1Fragment : BaseTabFragment() {
     }
 
     override fun onFragmentCreate() {
-        // This injects objects into getCurrentPlaceLiveData, modalPlaceDetailsSheetLiveData
+        // Inject objects into getCurrentPlaceLiveData, modalPlaceDetailsSheetLiveData fields.
         getMyApplication().activityComponent?.inject(this@Tab1Fragment)
 
         // Setup RecyclerView.

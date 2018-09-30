@@ -23,7 +23,7 @@ import com.google.api.places.places_api_poc.model.PlacesAPI
 
 open class BaseTabFragment : Fragment() {
 
-    // Access shared ViewModel
+    // Access shared ViewModel.
     lateinit var placesViewModel: PlacesAPI
 
     override fun onCreate(savedInstanceState: Bundle?) {

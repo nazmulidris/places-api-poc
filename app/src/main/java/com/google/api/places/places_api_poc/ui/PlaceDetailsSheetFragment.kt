@@ -62,7 +62,7 @@ class PlaceDetailsSheetFragment : BottomSheetDialogFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        // This injects an object into modalPlaceDetailsSheetLiveData
+        // Inject object into modalPlaceDetailsSheetLiveData field.
         getMyApplication().activityComponent?.inject(this)
 
         setupViewModel()

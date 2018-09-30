@@ -59,7 +59,7 @@ class Tab3Fragment : BaseTabFragment() {
     }
 
     override fun onFragmentCreate() {
-        // This injects objects into getCurrentPlaceLiveData, modalPlaceDetailsSheetLiveData
+        // Inject objects into getCurrentPlaceLiveData, modalPlaceDetailsSheetLiveData.
         getMyApplication().activityComponent?.inject(this@Tab3Fragment)
 
         getCurrentPlace()

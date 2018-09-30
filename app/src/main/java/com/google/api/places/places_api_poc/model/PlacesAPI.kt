@@ -30,7 +30,11 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.places.*
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.tasks.OnCompleteListener
-import com.google.api.places.places_api_poc.daggger.*
+import com.google.api.places.places_api_poc.daggger.AutocompletePredictionsLiveData
+import com.google.api.places.places_api_poc.daggger.LocationLiveData
+import com.google.api.places.places_api_poc.daggger.ModalPlaceDetailsSheetLiveData
+import com.google.api.places.places_api_poc.daggger.PlacesLiveData
+import com.google.api.places.places_api_poc.misc.ExecutorWrapper
 import com.google.api.places.places_api_poc.misc.getMyApplication
 import com.google.api.places.places_api_poc.misc.isPermissionGranted
 import com.google.api.places.places_api_poc.misc.log
@@ -96,7 +100,7 @@ class PlacesAPI(val app: Application) : AndroidViewModel(app), LifecycleObserver
         // Dagger 2 subcomponent creation.
         app.getMyApplication()
                 .createActivityComponent()
-                .inject(this@PlacesAPI)
+                .inject(this)
     }
 
     //

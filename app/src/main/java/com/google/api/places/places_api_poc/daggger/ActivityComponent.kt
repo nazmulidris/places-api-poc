@@ -18,6 +18,7 @@ package com.google.api.places.places_api_poc.daggger
 
 import android.location.Location
 import androidx.lifecycle.MutableLiveData
+import com.google.api.places.places_api_poc.misc.ExecutorWrapper
 import com.google.api.places.places_api_poc.model.AutocompletePredictionData
 import com.google.api.places.places_api_poc.model.PlaceWrapper
 import com.google.api.places.places_api_poc.model.PlacesAPI
@@ -25,8 +26,6 @@ import com.google.api.places.places_api_poc.ui.*
 import dagger.Module
 import dagger.Provides
 import dagger.Subcomponent
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
 import javax.inject.Scope
 
 @Scope
@@ -39,9 +38,9 @@ interface ActivityComponent {
     fun inject(api: PlacesAPI)
     fun inject(fragment: Tab1Fragment)
     fun inject(fragment: Tab3Fragment)
+    fun inject(fragment: Tab2Fragment)
     fun inject(bottomSheetDialogFragment: PlaceDetailsSheetFragment)
     fun inject(activity: DriverActivity)
-    fun inject(fragment: Tab2Fragment)
 }
 
 typealias PlacesLiveData = MutableLiveData<List<PlaceWrapper>>
@@ -76,14 +75,3 @@ class ExecutorModule {
     }
 }
 
-class ExecutorWrapper {
-    lateinit var executor: ExecutorService
-
-    fun create() {
-        executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors())
-    }
-
-    fun destroy() {
-        executor.shutdown()
-    }
-}

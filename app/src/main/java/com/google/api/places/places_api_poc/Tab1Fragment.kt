@@ -28,6 +28,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.api.places.places_api_poc.daggger.ModalPlaceDetailsSheetLiveData
 import javax.inject.Inject
 
 class Tab1Fragment : BaseTabFragment() {
@@ -37,6 +38,8 @@ class Tab1Fragment : BaseTabFragment() {
     private lateinit var fragmentContainer: CoordinatorLayout
     @Inject
     lateinit var getCurrentPlaceLiveData: MutableLiveData<List<PlaceWrapper>>
+    @Inject
+    lateinit var modalPlaceDetailsSheetLiveData: ModalPlaceDetailsSheetLiveData
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -51,7 +54,7 @@ class Tab1Fragment : BaseTabFragment() {
     }
 
     override fun onFragmentCreate() {
-        // This injects an object into getCurrentPlaceLiveData
+        // This injects objects into getCurrentPlaceLiveData, modalPlaceDetailsSheetLiveData
         getMyApplication().activityComponent?.inject(this@Tab1Fragment)
 
         // Setup RecyclerView.
@@ -146,9 +149,7 @@ private class Tab1RecyclerViewHandler(fragment: Tab1Fragment,
         fun bindToDataItem(place: PlaceWrapper) {
             rowView.text = place.name
             rowView.setOnClickListener {
-                fragment.placesViewModel.also { model ->
-                    model.modalPlaceDetailsSheetLiveData.setPlace(place)
-                }
+                fragment.modalPlaceDetailsSheetLiveData.setPlace(place)
             }
         }
 

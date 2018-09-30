@@ -27,12 +27,16 @@ import android.widget.TextView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.api.places.places_api_poc.daggger.ModalPlaceDetailsSheetLiveData
+import javax.inject.Inject
 
 class PlaceDetailsSheetFragment : BottomSheetDialogFragment() {
 
     private lateinit var textBody: TextView
     private lateinit var textHeader: TextView
     private lateinit var imagePlacePhoto: ImageView
+    @Inject
+    lateinit var modalPlaceDetailsSheetLiveData: ModalPlaceDetailsSheetLiveData
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -53,6 +57,10 @@ class PlaceDetailsSheetFragment : BottomSheetDialogFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
+        // This injects an object into modalPlaceDetailsSheetLiveData
+        getMyApplication().activityComponent?.inject(this)
+
         setupViewModel()
         setupPlaceWrapperLiveDataObserver()
         setupBitmapWrapperLiveDataObserver()
@@ -72,21 +80,21 @@ class PlaceDetailsSheetFragment : BottomSheetDialogFragment() {
     }
 
     private fun setupBitmapWrapperLiveDataObserver() {
-        placesViewModel.modalPlaceDetailsSheetLiveData.bitmap.observe(
-            this,
-            Observer { bitmapWrapper ->
-                renderPhoto(bitmapWrapper.bitmap)
-            }
+        modalPlaceDetailsSheetLiveData.bitmap.observe(
+                this,
+                Observer { bitmapWrapper ->
+                    renderPhoto(bitmapWrapper.bitmap)
+                }
         )
     }
 
     private fun setupPlaceWrapperLiveDataObserver() {
-        placesViewModel.modalPlaceDetailsSheetLiveData.placeObservable().observe(
-            this,
-            Observer { placeWrapper ->
-                renderPlace(placeWrapper)
-                lookupPhoto(placeId = placeWrapper.id)
-            }
+        modalPlaceDetailsSheetLiveData.placeObservable().observe(
+                this,
+                Observer { placeWrapper ->
+                    renderPlace(placeWrapper)
+                    lookupPhoto(placeId = placeWrapper.id)
+                }
         )
     }
 

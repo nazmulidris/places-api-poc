@@ -25,6 +25,7 @@ import android.widget.TextView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import com.google.api.places.places_api_poc.daggger.ModalPlaceDetailsSheetLiveData
 import javax.inject.Inject
 
 class Tab3Fragment : BaseTabFragment() {
@@ -36,6 +37,8 @@ class Tab3Fragment : BaseTabFragment() {
     private lateinit var textDebugAutocompletePrediction: TextView
     @Inject
     lateinit var getCurrentPlaceLiveData: MutableLiveData<List<PlaceWrapper>>
+    @Inject
+    lateinit var modalPlaceDetailsSheetLiveData: ModalPlaceDetailsSheetLiveData
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -52,7 +55,7 @@ class Tab3Fragment : BaseTabFragment() {
     }
 
     override fun onFragmentCreate() {
-        // This injects an object into getCurrentPlaceLiveData
+        // This injects objects into getCurrentPlaceLiveData, modalPlaceDetailsSheetLiveData
         getMyApplication().activityComponent?.inject(this@Tab3Fragment)
 
         getCurrentPlace()
@@ -65,7 +68,7 @@ class Tab3Fragment : BaseTabFragment() {
         fun render() {
             textDebugModalData.text = Html.fromHtml(StringBuilder().apply {
                 append("<h3>Modal Place Detail Sheet Data</h3>")
-                with(placesViewModel.modalPlaceDetailsSheetLiveData) {
+                with(modalPlaceDetailsSheetLiveData) {
                     placeObservable().value?.apply {
                         append("<b>place:</b> ${name}<br/>")
                     }
@@ -80,21 +83,21 @@ class Tab3Fragment : BaseTabFragment() {
             }.toString())
         }
 
-        placesViewModel.modalPlaceDetailsSheetLiveData.placeObservable().observe(
+        modalPlaceDetailsSheetLiveData.placeObservable().observe(
                 this,
                 Observer { place ->
                     render()
                 }
         )
 
-        placesViewModel.modalPlaceDetailsSheetLiveData.sheetVisibleObservable().observe(
+        modalPlaceDetailsSheetLiveData.sheetVisibleObservable().observe(
                 this,
                 Observer { visibility ->
                     render()
                 }
         )
 
-        placesViewModel.modalPlaceDetailsSheetLiveData.bitmap.observe(
+        modalPlaceDetailsSheetLiveData.bitmap.observe(
                 this,
                 Observer { bitmap ->
                     render()

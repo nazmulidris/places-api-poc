@@ -28,6 +28,7 @@ import com.google.android.gms.location.places.*
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.api.places.places_api_poc.daggger.ExecutorWrapper
+import com.google.api.places.places_api_poc.daggger.ModalPlaceDetailsSheetLiveData
 import java.util.concurrent.ExecutorService
 import javax.inject.Inject
 
@@ -69,7 +70,21 @@ class PlacesAPI(val app: Application) : AndroidViewModel(app), LifecycleObserver
     lateinit var getPhoto: GetPhoto
 
     // Modal "Place Details Sheet" Data.
-    val modalPlaceDetailsSheetLiveData = ModalPlaceDetailsSheetLiveData()
+    @Inject
+    lateinit var modalPlaceDetailsSheetLiveData: ModalPlaceDetailsSheetLiveData
+
+    /**
+     * When this object is constructed, setup the Dagger 2 subcomponent (@ActivityScope).
+     * This can't be done in connect(), as the DriverActivity needs this to be setup as
+     * soon as the ViewModel object is created (which eliminates any race conditions w/
+     * Activity lifecycle, and lifecycle observer lifecycle (that's observing an Activity).
+     */
+    init {
+        // Dagger 2 subcomponent creation.
+        app.getMyApplication()
+                .createActivityComponent()
+                .inject(this@PlacesAPI)
+    }
 
     //
     // Activity lifecycle.
@@ -79,11 +94,6 @@ class PlacesAPI(val app: Application) : AndroidViewModel(app), LifecycleObserver
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     fun connect() {
         "ON_CREATE ⇢ PlacesAPI.connect() ✅".log()
-
-        // Dagger 2 component creation.
-        app.getMyApplication()
-                .createActivityComponent()
-                .inject(this@PlacesAPI)
 
         "💥 connect() - got GetDataClient, PlaceDetectionClient, FusedLocationProviderClient".log()
 
@@ -343,43 +353,6 @@ class GetPlaceByID(private val executor: ExecutorService,
         modalPlaceDetailsSheetData.postPlace(PlaceWrapper(place))
     }
 
-}
-
-//
-// Modal "Place Details Sheet" Data.
-//
-
-data class ModalPlaceDetailsSheetLiveData(
-        val bitmap: MutableLiveData<BitmapWrapper> = MutableLiveData(),
-        /** [place] is private, because it's changes [bitmap] & [sheetVisible]. */
-        private val place: MutableLiveData<PlaceWrapper> = MutableLiveData(),
-        /** [sheetVisible] is private, because it depends on [place]. */
-        private val sheetVisible: MutableLiveData<Boolean> = MutableLiveData()) {
-    /** This is called from the main thread. When a new place is set, then bitmap
-     * is cleared, and the visibility is set to true, so that the place details sheet
-     * will appear. This is driven by [DriverActivity].*/
-    fun setPlace(value: PlaceWrapper) {
-        place.value = value
-        bitmap.value = BitmapWrapper()
-        sheetVisible.value = true
-    }
-
-    /** This is called from a background thread. When a new place is set, then bitmap
-     * is cleared, and the visibility is set to true, so that the place details sheet
-     * will appear. This is driven by [DriverActivity] */
-    fun postPlace(value: PlaceWrapper) {
-        place.postValue(value)
-        bitmap.postValue(BitmapWrapper())
-        sheetVisible.postValue(true)
-    }
-
-    fun placeObservable(): MutableLiveData<PlaceWrapper> {
-        return place
-    }
-
-    fun sheetVisibleObservable(): MutableLiveData<Boolean> {
-        return sheetVisible
-    }
 }
 
 //

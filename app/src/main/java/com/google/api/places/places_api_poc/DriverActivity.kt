@@ -23,6 +23,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.api.places.places_api_poc.daggger.ModalPlaceDetailsSheetLiveData
+import javax.inject.Inject
 
 class DriverActivity : AppCompatActivity() {
 
@@ -134,21 +136,27 @@ class DriverActivity : AppCompatActivity() {
                 } else return@OnNavigationItemSelectedListener false
             }
 
+    @Inject
+    lateinit var modalPlaceDetailsSheetLiveData: ModalPlaceDetailsSheetLiveData
+
     // Handle showing the PlaceDetailsSheetFragment (modal/dialog).
     private fun setupModalPlaceDetailSheetHandler() {
 
-        placesAPIViewModel.modalPlaceDetailsSheetLiveData.sheetVisibleObservable().observe(
-            this,
-            Observer { showFlag ->
-                if (showFlag) {
-                    PlaceDetailsSheetFragment()
-                            .show(this.supportFragmentManager,
-                                  PlaceDetailsSheetFragment::javaClass.name)
+        // This injects the modalPlaceDetailsSheetLiveData object
+        getMyApplication().activityComponent?.inject(this)
 
-                } else {
-                    // Don't do anything.
+        modalPlaceDetailsSheetLiveData.sheetVisibleObservable().observe(
+                this,
+                Observer { showFlag ->
+                    if (showFlag) {
+                        PlaceDetailsSheetFragment()
+                                .show(this.supportFragmentManager,
+                                      PlaceDetailsSheetFragment::javaClass.name)
+
+                    } else {
+                        // Don't do anything.
+                    }
                 }
-            }
         )
 
     }

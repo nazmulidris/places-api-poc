@@ -18,26 +18,8 @@ package com.google.api.places.places_api_poc.ui
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
-import com.google.api.places.places_api_poc.model.PlacesAPI
 
 open class BaseTabFragment : Fragment() {
-
-    // Access shared ViewModel.
-    lateinit var placesViewModel: PlacesAPI
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setupViewModel()
-    }
-
-    private fun setupViewModel() {
-        // Load ViewModel.
-        // 🛑 Note - You **must** pass activity scope, in order to get this ViewModel,
-        // and if you pass the fragment instance, then you won't get the ViewModel that
-        // was attached w/ the parent activity (DriverActivity).
-        placesViewModel = ViewModelProviders.of(requireActivity()).get(PlacesAPI::class.java)
-    }
 
     // Access parent activity (DriverActivity).
     fun getParentActivity(): DriverActivity {

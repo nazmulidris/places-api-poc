@@ -29,13 +29,16 @@ import dagger.Provides
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [ApplicationModule::class, GMSClientsModule::class])
+@Component(modules = arrayOf(ApplicationModule::class,
+                             GMSClientsModule::class))
 interface ApplicationComponent {
-    fun plus(executorModule: ExecutorModule, liveDataModule: LiveDataModule): ActivityComponent
+    fun plus(executorModule: ExecutorModule,
+             liveDataModule: LiveDataModule,
+             servicesModule: ServicesModule): ActivityComponent
 }
 
 @Module
-class ApplicationModule(private val application: Application) {
+class ApplicationModule constructor(private val application: Application) {
     @Singleton
     @Provides
     fun provideContext(): Context {

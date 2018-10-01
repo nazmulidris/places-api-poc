@@ -25,13 +25,12 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.api.places.places_api_poc.R
-import com.google.api.places.places_api_poc.daggger.ModalPlaceDetailsSheetLiveData
+import com.google.api.places.places_api_poc.daggger.PlaceDetailsSheetLiveData
 import com.google.api.places.places_api_poc.misc.getMyApplication
 import com.google.api.places.places_api_poc.model.PlaceWrapper
-import com.google.api.places.places_api_poc.model.PlacesAPI
+import com.google.api.places.places_api_poc.service.GetPlacePhotosService
 import javax.inject.Inject
 
 class PlaceDetailsSheetFragment : BottomSheetDialogFragment() {
@@ -40,7 +39,9 @@ class PlaceDetailsSheetFragment : BottomSheetDialogFragment() {
     private lateinit var textHeader: TextView
     private lateinit var imagePlacePhoto: ImageView
     @Inject
-    lateinit var modalPlaceDetailsSheetLiveData: ModalPlaceDetailsSheetLiveData
+    lateinit var liveDataPlaceDetailsSheet: PlaceDetailsSheetLiveData
+    @Inject
+    lateinit var serviceGetPlacePhotos: GetPlacePhotosService
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -65,7 +66,6 @@ class PlaceDetailsSheetFragment : BottomSheetDialogFragment() {
         // Inject object into modalPlaceDetailsSheetLiveData field.
         getMyApplication().activityComponent?.inject(this)
 
-        setupViewModel()
         setupPlaceWrapperLiveDataObserver()
         setupBitmapWrapperLiveDataObserver()
     }
@@ -74,17 +74,8 @@ class PlaceDetailsSheetFragment : BottomSheetDialogFragment() {
     // Observe changes in LiveData (placeWrapperLiveData, bitmapWrapperLiveData).
     //
 
-    private lateinit var placesViewModel: PlacesAPI
-    private fun setupViewModel() {
-        // Load ViewModel.
-        // 🛑 Note - You **must** pass activity scope, in order to get this ViewModel,
-        // and if you pass the fragment instance, then you won't get the ViewModel that
-        // was attached w/ the parent activity (DriverActivity).
-        placesViewModel = ViewModelProviders.of(requireActivity()).get(PlacesAPI::class.java)
-    }
-
     private fun setupBitmapWrapperLiveDataObserver() {
-        modalPlaceDetailsSheetLiveData.bitmap.observe(
+        liveDataPlaceDetailsSheet.bitmap.observe(
                 this,
                 Observer { bitmapWrapper ->
                     renderPhoto(bitmapWrapper.bitmap)
@@ -93,7 +84,7 @@ class PlaceDetailsSheetFragment : BottomSheetDialogFragment() {
     }
 
     private fun setupPlaceWrapperLiveDataObserver() {
-        modalPlaceDetailsSheetLiveData.placeObservable().observe(
+        liveDataPlaceDetailsSheet.placeObservable().observe(
                 this,
                 Observer { placeWrapper ->
                     renderPlace(placeWrapper)
@@ -107,7 +98,7 @@ class PlaceDetailsSheetFragment : BottomSheetDialogFragment() {
     //
 
     private fun lookupPhoto(placeId: String) {
-        placesViewModel.getPlacePhotos.execute(placeId)
+        serviceGetPlacePhotos.execute(placeId)
     }
 
     //

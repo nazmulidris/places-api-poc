@@ -28,12 +28,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.api.places.places_api_poc.R
-import com.google.api.places.places_api_poc.daggger.ModalPlaceDetailsSheetLiveData
+import com.google.api.places.places_api_poc.daggger.PlaceDetailsSheetLiveData
 import com.google.api.places.places_api_poc.daggger.PlacesLiveData
 import com.google.api.places.places_api_poc.misc.getMyApplication
 import com.google.api.places.places_api_poc.misc.log
 import com.google.api.places.places_api_poc.misc.snack
 import com.google.api.places.places_api_poc.model.PlaceWrapper
+import com.google.api.places.places_api_poc.service.GetCurrentPlaceService
 import javax.inject.Inject
 
 class Tab1Fragment : BaseTabFragment() {
@@ -42,9 +43,11 @@ class Tab1Fragment : BaseTabFragment() {
     internal lateinit var recyclerView: RecyclerView
     private lateinit var fragmentContainer: CoordinatorLayout
     @Inject
-    lateinit var getCurrentPlacesLiveData: PlacesLiveData
+    lateinit var liveDataGetCurrentPlaces: PlacesLiveData
     @Inject
-    lateinit var modalPlaceDetailsSheetLiveData: ModalPlaceDetailsSheetLiveData
+    lateinit var liveDataPlaceDetailsSheet: PlaceDetailsSheetLiveData
+    @Inject
+    lateinit var serviceGetCurrentPlace: GetCurrentPlaceService
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -64,7 +67,7 @@ class Tab1Fragment : BaseTabFragment() {
 
         // Setup RecyclerView.
         Tab1RecyclerViewHandler(this,
-                                getCurrentPlacesLiveData)
+                                liveDataGetCurrentPlaces)
 
         // Attach a behavior to the FAB.
         fab.setOnClickListener { viewClicked ->
@@ -74,7 +77,7 @@ class Tab1Fragment : BaseTabFragment() {
                                 android.Manifest.permission.ACCESS_FINE_LOCATION
 
                         override fun onPermissionGranted() {
-                            placesViewModel.getCurrentPlace.execute()
+                            serviceGetCurrentPlace.execute()
                             "🚀️ Calling PlaceDetectionClient getCurrentPlace()".snack(
                                     fragmentContainer)
                         }
@@ -158,7 +161,7 @@ private class Tab1RecyclerViewHandler(fragment: Tab1Fragment,
         fun bindToDataItem(place: PlaceWrapper) {
             rowView.text = place.name
             rowView.setOnClickListener {
-                fragment.modalPlaceDetailsSheetLiveData.setPlace(place)
+                fragment.liveDataPlaceDetailsSheet.setPlace(place)
             }
         }
 

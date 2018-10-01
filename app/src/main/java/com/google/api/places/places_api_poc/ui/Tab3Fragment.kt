@@ -27,7 +27,7 @@ import androidx.lifecycle.Observer
 import com.google.api.places.places_api_poc.R
 import com.google.api.places.places_api_poc.daggger.AutocompletePredictionsLiveData
 import com.google.api.places.places_api_poc.daggger.LocationLiveData
-import com.google.api.places.places_api_poc.daggger.ModalPlaceDetailsSheetLiveData
+import com.google.api.places.places_api_poc.daggger.PlaceDetailsSheetLiveData
 import com.google.api.places.places_api_poc.daggger.PlacesLiveData
 import com.google.api.places.places_api_poc.misc.getMyApplication
 import com.google.api.places.places_api_poc.misc.getUrl
@@ -41,13 +41,13 @@ class Tab3Fragment : BaseTabFragment() {
     private lateinit var textDebugModalData: TextView
     private lateinit var textDebugAutocompletePrediction: TextView
     @Inject
-    lateinit var getCurrentPlacesLiveData: PlacesLiveData
+    lateinit var liveDataPlaces: PlacesLiveData
     @Inject
-    lateinit var modalPlaceDetailsSheetLiveData: ModalPlaceDetailsSheetLiveData
+    lateinit var liveDataPlaceDetailsSheet: PlaceDetailsSheetLiveData
     @Inject
-    lateinit var autocompletePredictionsLiveData: AutocompletePredictionsLiveData
+    lateinit var liveDataAutocompletePredictions: AutocompletePredictionsLiveData
     @Inject
-    lateinit var locationLiveData: LocationLiveData
+    lateinit var liveDataLocation: LocationLiveData
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -77,7 +77,7 @@ class Tab3Fragment : BaseTabFragment() {
         fun render() {
             textDebugModalData.text = Html.fromHtml(StringBuilder().apply {
                 append("<h3>Modal Place Detail Sheet Data</h3>")
-                with(modalPlaceDetailsSheetLiveData) {
+                with(liveDataPlaceDetailsSheet) {
                     placeObservable().value?.apply {
                         append("<b>place:</b> ${name}<br/>")
                     }
@@ -92,21 +92,21 @@ class Tab3Fragment : BaseTabFragment() {
             }.toString())
         }
 
-        modalPlaceDetailsSheetLiveData.placeObservable().observe(
+        liveDataPlaceDetailsSheet.placeObservable().observe(
                 this,
                 Observer { place ->
                     render()
                 }
         )
 
-        modalPlaceDetailsSheetLiveData.sheetVisibleObservable().observe(
+        liveDataPlaceDetailsSheet.sheetVisibleObservable().observe(
                 this,
                 Observer { visibility ->
                     render()
                 }
         )
 
-        modalPlaceDetailsSheetLiveData.bitmap.observe(
+        liveDataPlaceDetailsSheet.bitmap.observe(
                 this,
                 Observer { bitmap ->
                     render()
@@ -117,7 +117,7 @@ class Tab3Fragment : BaseTabFragment() {
 
 
     private fun getAutocompletePredictions() {
-        autocompletePredictionsLiveData.observe(
+        liveDataAutocompletePredictions.observe(
                 this,
                 Observer { listOfAutocompletePreductions ->
                     val count = listOfAutocompletePreductions.size
@@ -136,7 +136,7 @@ class Tab3Fragment : BaseTabFragment() {
     }
 
     private fun getCurrentLocation() {
-        locationLiveData.observe(
+        liveDataLocation.observe(
                 this,
                 Observer { location ->
                     textDebugCurrentLocation.text = Html.fromHtml(StringBuilder().apply {
@@ -151,7 +151,7 @@ class Tab3Fragment : BaseTabFragment() {
     }
 
     private fun getCurrentPlace() {
-        getCurrentPlacesLiveData.observe(
+        liveDataPlaces.observe(
                 this,
                 Observer { listOfPlaceWrappers ->
                     val count = listOfPlaceWrappers.size

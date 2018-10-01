@@ -24,7 +24,7 @@ import com.google.api.places.places_api_poc.model.PlaceWrapper
 // Modal "Place Details Sheet" Data.
 //
 
-data class ModalPlaceDetailsSheetLiveData(
+data class PlaceDetailsSheetLiveData(
         val bitmap: MutableLiveData<BitmapWrapper> = MutableLiveData(),
         /** [place] is private, because it's changes [bitmap] & [sheetVisible]. */
         private val place: MutableLiveData<PlaceWrapper> = MutableLiveData(),

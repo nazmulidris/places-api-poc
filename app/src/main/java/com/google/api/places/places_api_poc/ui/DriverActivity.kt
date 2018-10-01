@@ -24,7 +24,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.api.places.places_api_poc.R
-import com.google.api.places.places_api_poc.daggger.ModalPlaceDetailsSheetLiveData
+import com.google.api.places.places_api_poc.daggger.PlaceDetailsSheetLiveData
 import com.google.api.places.places_api_poc.misc.getMyApplication
 import com.google.api.places.places_api_poc.misc.isPermissionDenied
 import com.google.api.places.places_api_poc.misc.log
@@ -149,7 +149,7 @@ class DriverActivity : AppCompatActivity() {
             }
 
     @Inject
-    lateinit var modalPlaceDetailsSheetLiveData: ModalPlaceDetailsSheetLiveData
+    lateinit var modalPlaceDetailsSheetLiveData: PlaceDetailsSheetLiveData
 
     // Handle showing the PlaceDetailsSheetFragment (modal/dialog).
     private fun setupModalPlaceDetailSheetHandler() {

@@ -16,12 +16,17 @@
 
 package com.google.api.places.places_api_poc.daggger
 
+import android.content.Context
 import android.location.Location
 import androidx.lifecycle.MutableLiveData
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.places.GeoDataClient
+import com.google.android.gms.location.places.PlaceDetectionClient
 import com.google.api.places.places_api_poc.misc.ExecutorWrapper
 import com.google.api.places.places_api_poc.model.AutocompletePredictionData
 import com.google.api.places.places_api_poc.model.PlaceWrapper
 import com.google.api.places.places_api_poc.model.PlacesAPI
+import com.google.api.places.places_api_poc.service.*
 import com.google.api.places.places_api_poc.ui.*
 import dagger.Module
 import dagger.Provides
@@ -33,7 +38,9 @@ import javax.inject.Scope
 annotation class ActivityScope
 
 @ActivityScope
-@Subcomponent(modules = [ExecutorModule::class, LiveDataModule::class])
+@Subcomponent(modules = arrayOf(ExecutorModule::class,
+                                LiveDataModule::class,
+                                ServicesModule::class))
 interface ActivityComponent {
     fun inject(api: PlacesAPI)
     fun inject(fragment: Tab1Fragment)
@@ -55,7 +62,7 @@ class LiveDataModule {
 
     @Provides
     @ActivityScope
-    fun providesModalPlaceDetailsSheetLiveData() = ModalPlaceDetailsSheetLiveData()
+    fun providesModalPlaceDetailsSheetLiveData() = PlaceDetailsSheetLiveData()
 
     @Provides
     @ActivityScope
@@ -75,3 +82,51 @@ class ExecutorModule {
     }
 }
 
+@Module
+class ServicesModule {
+
+    @Provides
+    @ActivityScope
+    fun provideGetPlaceByIDService(wrapper: ExecutorWrapper,
+                                   client: GeoDataClient,
+                                   data: PlaceDetailsSheetLiveData) =
+            GetPlaceByIDService(wrapper, client, data)
+
+    @Provides
+    @ActivityScope
+    fun provideGetAutocompletePredictionsService(wrapper: ExecutorWrapper,
+                                                 client: GeoDataClient,
+                                                 data: AutocompletePredictionsLiveData) =
+            GetAutocompletePredictionsService(wrapper, client, data)
+
+    @Provides
+    @ActivityScope
+    fun provideGetLastLocationService(wrapper: ExecutorWrapper,
+                                      client: FusedLocationProviderClient,
+                                      context: Context,
+                                      data: LocationLiveData) =
+            GetLastLocationService(wrapper, client, context, data)
+
+    @Provides
+    @ActivityScope
+    fun provideGetCurrentPlaceService(wrapper: ExecutorWrapper,
+                                      context: Context,
+                                      client: PlaceDetectionClient,
+                                      data: PlacesLiveData) =
+            GetCurrentPlaceService(wrapper, context, client, data)
+
+    @Provides
+    @ActivityScope
+    fun provideGetPhotoService(wrapper: ExecutorWrapper,
+                               client: GeoDataClient,
+                               data: PlaceDetailsSheetLiveData) =
+            GetPhotoService(wrapper, client, data)
+
+    @Provides
+    @ActivityScope
+    fun provideGetPlacePhotosService(wrapper: ExecutorWrapper,
+                                     client: GeoDataClient,
+                                     getPhotoService: GetPhotoService) =
+            GetPlacePhotosService(wrapper, client, getPhotoService)
+
+}

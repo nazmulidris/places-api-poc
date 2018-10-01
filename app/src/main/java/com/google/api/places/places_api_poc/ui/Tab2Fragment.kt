@@ -36,6 +36,9 @@ import com.google.api.places.places_api_poc.daggger.AutocompletePredictionsLiveD
 import com.google.api.places.places_api_poc.daggger.LocationLiveData
 import com.google.api.places.places_api_poc.misc.*
 import com.google.api.places.places_api_poc.model.AutocompletePredictionData
+import com.google.api.places.places_api_poc.service.GetAutocompletePredictionsService
+import com.google.api.places.places_api_poc.service.GetLastLocationService
+import com.google.api.places.places_api_poc.service.GetPlaceByIDService
 import javax.inject.Inject
 
 class Tab2Fragment : BaseTabFragment() {
@@ -44,9 +47,15 @@ class Tab2Fragment : BaseTabFragment() {
     internal lateinit var fragmentContainer: CoordinatorLayout
     internal lateinit var recyclerView: RecyclerView
     @Inject
-    lateinit var autocompletePredictionsLiveData: AutocompletePredictionsLiveData
+    lateinit var liveDataAutocompletePredictions: AutocompletePredictionsLiveData
     @Inject
-    lateinit var locationLiveData: LocationLiveData
+    lateinit var liveDataLocation: LocationLiveData
+    @Inject
+    lateinit var serviceGetPlaceByID: GetPlaceByIDService
+    @Inject
+    lateinit var serviceAutocompletePredictions: GetAutocompletePredictionsService
+    @Inject
+    lateinit var serviceGetLastLocation: GetLastLocationService
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -95,7 +104,7 @@ class Tab2RecyclerViewHandler(fragment: Tab2Fragment) {
         dataAdapter = DataAdapter(fragment)
 
         // Attach LiveData observers for autocomplete prediction data (from Places API).
-        fragment.autocompletePredictionsLiveData.observe(
+        fragment.liveDataAutocompletePredictions.observe(
                 fragment,
                 Observer { data ->
                     "🎉 observable reacting -> #autocompletePredictions=${data.size}".log()
@@ -160,7 +169,7 @@ class Tab2RecyclerViewHandler(fragment: Tab2Fragment) {
             rowView.text = data.primaryText
             rowView.setOnClickListener {
                 data.placeId?.let { placeId ->
-                    fragment.placesViewModel.getPlaceByID.execute(placeId)
+                    fragment.serviceGetPlaceByID.execute(placeId)
                 }
             }
         }
@@ -180,9 +189,9 @@ class TextChangeListener(val fragment: Tab2Fragment) : TextWatcher {
         val bounds = fragment.locationHandler.getBounds()
         if (bounds != null) {
             if (inputString.isBlank()) {
-                fragment.autocompletePredictionsLiveData.value = mutableListOf()
+                fragment.liveDataAutocompletePredictions.value = mutableListOf()
             } else {
-                fragment.placesViewModel.autocompletePredictions.execute(
+                fragment.serviceAutocompletePredictions.execute(
                         inputString.toString(),
                         bounds)
             }
@@ -198,7 +207,7 @@ class LocationHandler(val fragment: Tab2Fragment) {
     }
 
     fun observeLocationLiveData() {
-        fragment.locationLiveData.observe(
+        fragment.liveDataLocation.observe(
                 fragment,
                 Observer { location ->
                     val bounds = LatLngRange.getBounds(
@@ -218,7 +227,7 @@ class LocationHandler(val fragment: Tab2Fragment) {
                             Manifest.permission.ACCESS_FINE_LOCATION
 
                     override fun onPermissionGranted() {
-                        fragment.placesViewModel.getLastLocation.execute()
+                        fragment.serviceGetLastLocation.execute()
                         "🚀️ Calling GetLastLocation lastLocation()".snack(
                                 fragment.fragmentContainer)
                     }
@@ -231,7 +240,7 @@ class LocationHandler(val fragment: Tab2Fragment) {
     }
 
     fun getBounds(): LatLngBounds? {
-        val location = fragment.locationLiveData.value
+        val location = fragment.liveDataLocation.value
         return if (location != null) {
             LatLngRange.getBounds(location)
         } else {

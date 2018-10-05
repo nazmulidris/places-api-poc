@@ -76,9 +76,9 @@ class LatLngRange {
             val radiusDegrees = range.decimalDegrees
             val center = LatLng(location.latitude, location.longitude)
             val northEast = LatLng(center.latitude + radiusDegrees,
-                                   center.longitude + radiusDegrees)
+                    center.longitude + radiusDegrees)
             val southWest = LatLng(center.latitude - radiusDegrees,
-                                   center.longitude - radiusDegrees)
+                    center.longitude - radiusDegrees)
             return LatLngBounds.builder()
                     .include(northEast)
                     .include(southWest)
@@ -96,18 +96,18 @@ fun getUrl(lat: Double, lon: Double): String {
 // Extension functions.
 //
 
-fun String.log() = Log.i("places-api-poc", this)
+inline fun String.log() = Log.i("places-api-poc", this)
 
-fun String.snack(view: View) = Snackbar.make(view, this, Snackbar.LENGTH_SHORT).show()
+inline fun String.snack(view: View) = Snackbar.make(view, this, Snackbar.LENGTH_SHORT).show()
 
-fun String.toast(context: Context) = Toast.makeText(context, this, Toast.LENGTH_SHORT).show()
+inline fun String.toast(context: Context) = Toast.makeText(context, this, Toast.LENGTH_SHORT).show()
 
-fun BottomSheetDialogFragment.getMyApplication(): MyApplication =
+inline fun BottomSheetDialogFragment.getMyApplication(): MyApplication =
         this.requireActivity().application as MyApplication
 
-fun DriverActivity.getMyApplication(): MyApplication = this.application as MyApplication
+inline fun DriverActivity.getMyApplication(): MyApplication = this.application as MyApplication
 
-fun Application.getMyApplication(): MyApplication = this as MyApplication
+inline fun Application.getMyApplication(): MyApplication = this as MyApplication
 
-fun BaseTabFragment.getMyApplication(): MyApplication =
+inline fun BaseTabFragment.getMyApplication(): MyApplication =
         this.requireActivity().application as MyApplication

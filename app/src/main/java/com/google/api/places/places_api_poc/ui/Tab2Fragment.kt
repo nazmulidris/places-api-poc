@@ -25,12 +25,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.material.snackbar.Snackbar
 import com.google.api.places.places_api_poc.R
 import com.google.api.places.places_api_poc.daggger.AutocompletePredictionsLiveData
 import com.google.api.places.places_api_poc.daggger.LocationLiveData
@@ -196,7 +198,10 @@ class TextChangeListener(val fragment: Tab2Fragment) : TextWatcher {
                         bounds)
             }
         } else {
-            "⚠️ Can't make request if location is null".toast(fragment.getParentActivity())
+            toast(fragment.getParentActivity()) {
+                setText(R.string.message_cant_make_autocomplete_request_if_location_is_null)
+                duration = Toast.LENGTH_LONG
+            }
         }
     }
 }
@@ -228,13 +233,19 @@ class LocationHandler(val fragment: Tab2Fragment) {
 
                     override fun onPermissionGranted() {
                         fragment.serviceGetLastLocation.execute()
-                        "🚀️ Calling GetLastLocation lastLocation()".snack(
-                                fragment.fragmentContainer)
+                        snack(fragment.fragmentContainer) {
+                            setText(R.string.message_making_api_call_GetLastLocation)
+                            duration = Snackbar.LENGTH_SHORT
+                        }
                     }
 
                     override fun onPermissionRevoked() {
-                        "🛑 This app will not function without ${getRequiredPermission()}"
-                                .snack(fragment.fragmentContainer)
+                        snack(fragment.fragmentContainer) {
+                            setText(fragment.resources.getString(
+                                    R.string.message_permission_missing_for_api_call,
+                                    getRequiredPermission()))
+                            duration = Snackbar.LENGTH_LONG
+                        }
                     }
                 })
     }

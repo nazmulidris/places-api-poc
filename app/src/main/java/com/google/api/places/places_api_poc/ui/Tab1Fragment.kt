@@ -27,6 +27,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.Snackbar
 import com.google.api.places.places_api_poc.R
 import com.google.api.places.places_api_poc.daggger.PlaceDetailsSheetLiveData
 import com.google.api.places.places_api_poc.daggger.PlacesLiveData
@@ -78,13 +79,21 @@ class Tab1Fragment : BaseTabFragment() {
 
                         override fun onPermissionGranted() {
                             serviceGetCurrentPlace.execute()
-                            "🚀️ Calling PlaceDetectionClient getCurrentPlace()".snack(
-                                    fragmentContainer)
+
+                            snack(fragmentContainer) {
+                                setText(R.string.message_making_api_call_getCurrentPlace)
+                                duration = Snackbar.LENGTH_SHORT
+                            }
+
                         }
 
                         override fun onPermissionRevoked() {
-                            "🛑 This app will not function without ${getRequiredPermission()}"
-                                    .snack(fragmentContainer)
+                            snack(fragmentContainer) {
+                                setText(resources.getString(
+                                        R.string.message_permission_missing_for_api_call,
+                                        getRequiredPermission()))
+                                duration = Snackbar.LENGTH_LONG
+                            }
                         }
                     })
         }

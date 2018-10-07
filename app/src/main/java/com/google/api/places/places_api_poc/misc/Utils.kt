@@ -76,9 +76,9 @@ class LatLngRange {
             val radiusDegrees = range.decimalDegrees
             val center = LatLng(location.latitude, location.longitude)
             val northEast = LatLng(center.latitude + radiusDegrees,
-                    center.longitude + radiusDegrees)
+                                   center.longitude + radiusDegrees)
             val southWest = LatLng(center.latitude - radiusDegrees,
-                    center.longitude - radiusDegrees)
+                                   center.longitude - radiusDegrees)
             return LatLngBounds.builder()
                     .include(northEast)
                     .include(southWest)
@@ -98,9 +98,23 @@ fun getUrl(lat: Double, lon: Double): String {
 
 inline fun String.log() = Log.i("places-api-poc", this)
 
-inline fun String.snack(view: View) = Snackbar.make(view, this, Snackbar.LENGTH_SHORT).show()
+inline fun snack(view: View,
+                 text: String = "",
+                 duration: Int = Snackbar.LENGTH_SHORT,
+                 functor: Snackbar.() -> Unit) {
+    val snackbar: Snackbar = Snackbar.make(view, text, duration)
+    snackbar.functor()
+    snackbar.show()
+}
 
-inline fun String.toast(context: Context) = Toast.makeText(context, this, Toast.LENGTH_SHORT).show()
+inline fun toast(context: Context,
+                 text: String = "",
+                 duration: Int = Toast.LENGTH_SHORT,
+                 functor: Toast.() -> Unit) {
+    val toast: Toast = Toast.makeText(context, text, duration)
+    toast.functor()
+    toast.show()
+}
 
 inline fun BottomSheetDialogFragment.getMyApplication(): MyApplication =
         this.requireActivity().application as MyApplication

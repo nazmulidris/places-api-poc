@@ -16,14 +16,27 @@
 
 <resources>
     <!-- Global -->
-    <string name="app_name">Places API Tester</string>
+    <string translatable="false" name="app_name">Places API Tester</string>
 
     <!-- Places API configuration -->
-    <string name="places_api_key">AIzaSyDMffQ1RgvYFDAQlXymZZubfoS-lHXHjjU</string>
+    <string translatable="false" name="places_api_key">AIzaSyDMffQ1RgvYFDAQlXymZZubfoS-lHXHjjU</string>
 
     <!-- Driver Activity and Tab Fragments -->
-    <string name="title_activity_driver">DriverActivity</string>
-    <string name="title_tab1">Current Place</string>
-    <string name="title_tab2">Autocomplete</string>
-    <string name="title_tab3">Debug</string>
+    <string translatable="false" name="title_activity_driver">DriverActivity</string>
+    <string translatable="false" name="title_tab1">Current Place</string>
+    <string translatable="false" name="title_tab2">Autocomplete</string>
+    <string translatable="false" name="title_tab3">Debug</string>
+    <string translatable="false" name="message_making_api_call_getCurrentPlace">
+        "🚀️ Calling PlaceDetectionClient getCurrentPlace()"
+    </string>
+    <string translatable="false" name="message_permission_missing_for_api_call">
+        "🛑 This app will not function without %1$s"
+    </string>
+    <string translatable="false" name="message_making_api_call_GetLastLocation">
+        "🚀️ Calling GetLastLocation lastLocation()"
+    </string>
+    <string name="message_cant_make_autocomplete_request_if_location_is_null">
+        "⚠️ Can\'t make request if location is null"
+    </string>
+
 </resources>

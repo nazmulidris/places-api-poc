@@ -96,7 +96,7 @@ fun getUrl(lat: Double, lon: Double): String {
 // Extension functions.
 //
 
-inline fun String.log() = Log.i("places-api-poc", this)
+fun String.log() = Log.i("places-api-poc", this)
 
 inline fun snack(view: View,
                  text: String = "",
@@ -116,12 +116,12 @@ inline fun toast(context: Context,
     toast.show()
 }
 
-inline fun BottomSheetDialogFragment.getMyApplication(): MyApplication =
+fun BottomSheetDialogFragment.getMyApplication(): MyApplication =
         this.requireActivity().application as MyApplication
 
-inline fun DriverActivity.getMyApplication(): MyApplication = this.application as MyApplication
+fun DriverActivity.getMyApplication(): MyApplication = this.application as MyApplication
 
-inline fun Application.getMyApplication(): MyApplication = this as MyApplication
+fun Application.getMyApplication(): MyApplication = this as MyApplication
 
-inline fun BaseTabFragment.getMyApplication(): MyApplication =
+fun BaseTabFragment.getMyApplication(): MyApplication =
         this.requireActivity().application as MyApplication

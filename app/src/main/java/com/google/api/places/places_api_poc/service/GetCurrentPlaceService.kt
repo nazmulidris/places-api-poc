@@ -58,17 +58,6 @@ constructor(private val executorWrapper: ExecutorWrapper,
                                         "⚠️ Task failed with exception $exception".log()
                                     }
                             )
-
-/*
-                            if (responseTask.isSuccessful) {
-                                if (responseTask.result != null){
-                                    processPlacelikelihoodBuffer(responseTask.result!!)
-                                    responseTask.result!!.release()
-                                }
-                            } else {
-                                "⚠️ Task failed with exception ${responseTask.exception}".log()
-                            }
-*/
                         })
             }
         }

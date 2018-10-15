@@ -55,13 +55,6 @@ constructor(private val executorWrapper: ExecutorWrapper,
                                         "⚠️ Task failed with exception $exception".log()
                                     }
                             )
-/*
-                            if (responseTask.isSuccessful && responseTask.result != null) {
-                                processCurrentLocation(responseTask.result!!)
-                            } else {
-                                "⚠️ Task failed with exception ${responseTask.exception}".log()
-                            }
-*/
                         }
                 )
             }

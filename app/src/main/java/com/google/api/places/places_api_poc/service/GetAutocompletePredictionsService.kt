@@ -56,16 +56,6 @@ constructor(private val executorWrapper: ExecutorWrapper,
 
                                         }
                                 )
-/*
-                                if (responseTask.isSuccessful) {
-                                    if (responseTask.result != null) {
-                                        processAutocompletePrediction(responseTask.result!!)
-                                        responseTask.result!!.release()
-                                    }
-                                } else {
-                                    "⚠️ Task failed with exception ${responseTask.exception}".log()
-                                }
-*/
                             }
                     )
                 }

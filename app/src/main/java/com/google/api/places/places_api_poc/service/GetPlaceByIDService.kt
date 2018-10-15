@@ -47,14 +47,6 @@ constructor(private val wrapper: ExecutorWrapper,
                                     "⚠️ Task failed with exception $exception".log()
                                 }
                         )
-/*
-                        if (responseTask.isSuccessful && responseTask!=null) {
-                            processPlace(responseTask.result!!)
-                            responseTask.result!!.release()
-                        } else {
-                            "⚠️ Task failed with exception ${responseTask.exception}".log()
-                        }
-*/
                     }
             )
         }

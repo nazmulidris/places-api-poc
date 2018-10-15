@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
+
 /*
  * Copyright 2018 Nazmul Idris. All rights reserved.
  *
@@ -16,50 +18,50 @@
 
 plugins {
     id("com.android.application")
-    id("kotlin-android")
-    id("kotlin-android-extensions")
-    id("kotlin-kapt") // Dagger 2
+    kotlin("android")
+    kotlin("android.extensions")
+    kotlin("kapt")
 }
 
 android {
-    compileSdkVersion = Versions.compile_sdk
+    compileSdkVersion(Versions.compile_sdk)
     defaultConfig {
-        applicationId "com.google.api.places.places_api_poc"
-        minSdkVersion Versions.compile_sdk
-        targetSdkVersion Versions.target_sdk
-        versionCode 1
-        versionName "1.0"
+        applicationId = "com.google.api.places.places_api_poc"
+        minSdkVersion(Versions.compile_sdk)
+        targetSdkVersion(Versions.target_sdk)
+        versionCode=1
+        versionName="1.0"
         vectorDrawables.useSupportLibrary = true
     }
 }
 
 // Kotlin
 dependencies {
-    implementation Deps.kotlin_stdlib
+    implementation(Deps.kotlin_stdlib)
 }
 
 // Add Architecture Components (ViewModel, LiveData)
 dependencies {
-    implementation Deps.arch_comp
-    kapt Deps.arch_comp_annotation
+    implementation(Deps.arch_comp)
+    kapt(Deps.arch_comp_annotation)
 }
 
 // Design
 dependencies {
-    implementation Deps.material_design
-    implementation Deps.vector_drawable
-    implementation Deps.recycler_view
+    implementation(Deps.material_design)
+    implementation(Deps.vector_drawable)
+    implementation(Deps.recycler_view)
 }
 
 // GMS APIs (Places API, Fused Location Provider).
 dependencies {
-    implementation Deps.gms_places
-    implementation Deps.gms_location
+    implementation(Deps.gms_places)
+    implementation(Deps.gms_location)
 }
 
 // GSON
 dependencies {
-    implementation Deps.gson
+    implementation(Deps.gson)
 }
 
 // Dagger 2
@@ -67,6 +69,6 @@ dependencies {
 // Dagger 2 and Android (Java) - https://kotlinlang.org/docs/tutorials/android-frameworks.html
 dependencies {
     // Basic Dagger 2 (required)
-    implementation Deps.dagger2
-    kapt Deps.dagger2_annotation
+    implementation(Deps.dagger2)
+    kapt(Deps.dagger2_annotation)
 }

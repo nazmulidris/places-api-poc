@@ -26,6 +26,7 @@ import com.google.api.places.places_api_poc.daggger.LocationLiveData
 import com.google.api.places.places_api_poc.misc.ExecutorWrapper
 import com.google.api.places.places_api_poc.misc.isPermissionGranted
 import com.google.api.places.places_api_poc.misc.log
+import com.google.api.places.places_api_poc.misc.safelyProcess
 
 class GetLastLocationService
 constructor(private val executorWrapper: ExecutorWrapper,
@@ -46,11 +47,21 @@ constructor(private val executorWrapper: ExecutorWrapper,
                 requestTask.addOnCompleteListener(
                         executorWrapper.executor,
                         OnCompleteListener { responseTask ->
+                            responseTask.safelyProcess(
+                                    {
+                                        processCurrentLocation(this)
+                                    },
+                                    {
+                                        "⚠️ Task failed with exception $exception".log()
+                                    }
+                            )
+/*
                             if (responseTask.isSuccessful && responseTask.result != null) {
-                                processCurrentLocation(responseTask.result)
+                                processCurrentLocation(responseTask.result!!)
                             } else {
                                 "⚠️ Task failed with exception ${responseTask.exception}".log()
                             }
+*/
                         }
                 )
             }

@@ -26,6 +26,7 @@ import com.google.api.places.places_api_poc.daggger.PlacesLiveData
 import com.google.api.places.places_api_poc.misc.ExecutorWrapper
 import com.google.api.places.places_api_poc.misc.isPermissionGranted
 import com.google.api.places.places_api_poc.misc.log
+import com.google.api.places.places_api_poc.misc.safelyProcess
 import com.google.api.places.places_api_poc.model.PlaceWrapper
 
 class GetCurrentPlaceService
@@ -48,12 +49,26 @@ constructor(private val executorWrapper: ExecutorWrapper,
                 requestTask.addOnCompleteListener(
                         executorWrapper.executor,
                         OnCompleteListener { responseTask ->
+                            responseTask.safelyProcess(
+                                    {
+                                        processPlacelikelihoodBuffer(this)
+                                        release()
+                                    },
+                                    {
+                                        "⚠️ Task failed with exception $exception".log()
+                                    }
+                            )
+
+/*
                             if (responseTask.isSuccessful) {
-                                processPlacelikelihoodBuffer(responseTask.result)
-                                responseTask.result.release()
+                                if (responseTask.result != null){
+                                    processPlacelikelihoodBuffer(responseTask.result!!)
+                                    responseTask.result!!.release()
+                                }
                             } else {
                                 "⚠️ Task failed with exception ${responseTask.exception}".log()
                             }
+*/
                         })
             }
         }

@@ -27,6 +27,7 @@ import android.view.View
 import android.widget.Toast
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.gms.tasks.Task
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.Snackbar
 import com.google.api.places.places_api_poc.daggger.MyApplication
@@ -125,3 +126,12 @@ fun Application.getMyApplication(): MyApplication = this as MyApplication
 
 fun BaseTabFragment.getMyApplication(): MyApplication =
         this.requireActivity().application as MyApplication
+
+fun <T> Task<T>.safelyProcess(onSuccessFunctor: T.() -> Unit,
+                              onFailFunctor: Task<T>.() -> Unit) {
+    if (isSuccessful && result != null) {
+        result!!.onSuccessFunctor()
+    } else {
+        onFailFunctor()
+    }
+}

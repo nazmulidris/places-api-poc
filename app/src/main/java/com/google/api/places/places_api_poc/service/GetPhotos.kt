@@ -24,6 +24,7 @@ import com.google.android.gms.tasks.OnCompleteListener
 import com.google.api.places.places_api_poc.daggger.PlaceDetailsSheetLiveData
 import com.google.api.places.places_api_poc.misc.ExecutorWrapper
 import com.google.api.places.places_api_poc.misc.log
+import com.google.api.places.places_api_poc.misc.safelyProcess
 import com.google.api.places.places_api_poc.model.BitmapWrapper
 
 class GetPhotoService
@@ -38,11 +39,20 @@ constructor(private val executorWrapper: ExecutorWrapper,
             requestTask.addOnCompleteListener(
                     executorWrapper.executor,
                     OnCompleteListener { responseTask ->
-                        if (responseTask.isSuccessful) {
-                            processPhoto(responseTask.result.bitmap, attribution)
+                        responseTask.safelyProcess(
+                                {
+                                    processPhoto(bitmap, attribution)
+                                },
+                                {
+                                    "⚠️ Task failed with exception $exception".log()
+                                })
+/*
+                        if (responseTask.isSuccessful && responseTask.result != null) {
+                            processPhoto(responseTask.result!!.bitmap, attribution)
                         } else {
                             "⚠️ Task failed with exception ${responseTask.exception}".log()
                         }
+*/
                     }
             )
         }
@@ -69,11 +79,22 @@ constructor(private val executorWrapper: ExecutorWrapper,
             requestTask.addOnCompleteListener(
                     executorWrapper.executor,
                     OnCompleteListener { responseTask ->
-                        if (responseTask.isSuccessful) {
-                            processPhotosMetadata(responseTask.result)
+                        responseTask.safelyProcess(
+                                {
+                                    processPhotosMetadata(this)
+                                },
+                                {
+                                    "⚠️ Task failed with exception $exception".log()
+                                }
+                        )
+
+/*
+                        if (responseTask.isSuccessful && responseTask.result != null) {
+                            processPhotosMetadata(responseTask.result!!)
                         } else {
                             "⚠️ Task failed with exception ${responseTask.exception}".log()
                         }
+*/
                     }
             )
         }

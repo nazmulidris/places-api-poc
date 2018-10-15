@@ -24,6 +24,7 @@ import com.google.android.gms.tasks.OnCompleteListener
 import com.google.api.places.places_api_poc.daggger.AutocompletePredictionsLiveData
 import com.google.api.places.places_api_poc.misc.ExecutorWrapper
 import com.google.api.places.places_api_poc.misc.log
+import com.google.api.places.places_api_poc.misc.safelyProcess
 import com.google.api.places.places_api_poc.model.AutocompletePredictionData
 
 class GetAutocompletePredictionsService
@@ -45,12 +46,26 @@ constructor(private val executorWrapper: ExecutorWrapper,
                     requestTask.addOnCompleteListener(
                             executorWrapper.executor,
                             OnCompleteListener { responseTask ->
+                                responseTask.safelyProcess(
+                                        {
+                                            processAutocompletePrediction(this)
+                                            release()
+                                        },
+                                        {
+                                            "⚠️ Task failed with exception $exception".log()
+
+                                        }
+                                )
+/*
                                 if (responseTask.isSuccessful) {
-                                    processAutocompletePrediction(responseTask.result)
-                                    responseTask.result.release()
+                                    if (responseTask.result != null) {
+                                        processAutocompletePrediction(responseTask.result!!)
+                                        responseTask.result!!.release()
+                                    }
                                 } else {
                                     "⚠️ Task failed with exception ${responseTask.exception}".log()
                                 }
+*/
                             }
                     )
                 }

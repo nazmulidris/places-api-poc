@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
+plugins {
+    id("com.android.application")
+    id("kotlin-android")
+    id("kotlin-android-extensions")
+    id("kotlin-kapt") // Dagger 2
+}
 
 android {
-    ext.sdk_version = 28
-    compileSdkVersion "$sdk_version".toInteger()
+    compileSdkVersion = Versions.compile_sdk
     defaultConfig {
         applicationId "com.google.api.places.places_api_poc"
-        minSdkVersion 16
-        targetSdkVersion "$sdk_version".toInteger()
+        minSdkVersion Versions.compile_sdk
+        targetSdkVersion Versions.target_sdk
         versionCode 1
         versionName "1.0"
         vectorDrawables.useSupportLibrary = true
@@ -33,51 +35,38 @@ android {
 
 // Kotlin
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation Deps.kotlin_stdlib
 }
 
 // Add Architecture Components (ViewModel, LiveData)
 dependencies {
-    ext.arch_comp_version = '2.0.0'
-    implementation "androidx.lifecycle:lifecycle-extensions:$arch_comp_version"
-    annotationProcessor "androidx.lifecycle:lifecycle-compiler:$arch_comp_version"
+    implementation Deps.arch_comp
+    kapt Deps.arch_comp_annotation
 }
 
 // Design
 dependencies {
-    ext.design_version = '1.0.0'
-    implementation "com.google.android.material:material:$design_version"
-    implementation "androidx.vectordrawable:vectordrawable:$design_version"
-    implementation "androidx.recyclerview:recyclerview:$design_version"
+    implementation Deps.material_design
+    implementation Deps.vector_drawable
+    implementation Deps.recycler_view
 }
 
 // GMS APIs (Places API, Fused Location Provider).
 dependencies {
-    ext.gms_api_version = '15.0.1'
-    implementation "com.google.android.gms:play-services-places:$gms_api_version"
-    implementation "com.google.android.gms:play-services-location:$gms_api_version"
+    implementation Deps.gms_places
+    implementation Deps.gms_location
 }
 
 // GSON
 dependencies {
-    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation Deps.gson
 }
 
 // Dagger 2
 // Dagger 2 and Kotlin docs - https://kotlinlang.org/docs/tutorials/android-frameworks.html
 // Dagger 2 and Android (Java) - https://kotlinlang.org/docs/tutorials/android-frameworks.html
-apply plugin: 'kotlin-kapt'
 dependencies {
-    ext.dagger2_version = '2.17'
     // Basic Dagger 2 (required)
-    implementation "com.google.dagger:dagger:$dagger2_version"
-    kapt "com.google.dagger:dagger-compiler:$dagger2_version"
-    /*
-    // dagger.android package (optional)
-    implementation "com.google.dagger:dagger-android:$dagger2_version"
-    kapt "com.google.dagger:dagger-android-processor:$dagger2_version"
-
-    // Support library support (optional)
-    kapt "com.google.dagger:dagger-android-support:$dagger2_version"
-    */
+    implementation Deps.dagger2
+    kapt Deps.dagger2_annotation
 }

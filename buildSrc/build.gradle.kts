@@ -14,29 +14,11 @@
  * limitations under the License.
  */
 
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
-
-buildscript {
-    repositories {
-        google()
-        jcenter()
-    }
-    dependencies {
-        classpath Deps.gradle
-        classpath Deps.kotlin
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
-    }
+plugins {
+  `kotlin-dsl`
 }
 
-allprojects {
-    repositories {
-        google()
-        jcenter()
-    }
-}
-
-task clean(type: Delete) {
-    delete rootProject.buildDir
+// More info: https://docs.gradle.org/4.10.1/userguide/kotlin_dsl.html#sec:kotlin-dsl_plugin
+repositories {
+  jcenter()
 }

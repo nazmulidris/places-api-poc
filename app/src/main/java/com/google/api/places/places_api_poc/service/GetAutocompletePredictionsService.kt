@@ -74,13 +74,29 @@ constructor(private val executorWrapper: ExecutorWrapper,
 
         for (index in 0 until count) {
             val item = buffer.get(index)
-            outputList.add(AutocompletePredictionData(
-                    placeId = item.placeId,
-                    placeTypes = item.placeTypes,
-                    fullText = item.getFullText(null),
-                    primaryText = item.getPrimaryText(null),
-                    secondaryText = item.getSecondaryText(null)
-            ))
+            try {
+                val place = AutocompletePredictionData(
+                        placeId = item.placeId,
+                        placeTypes = item.placeTypes,
+                        fullText = item.getFullText(null),
+                        primaryText = item.getPrimaryText(null),
+                        secondaryText = item.getSecondaryText(null)
+                )
+                outputList.add(place)
+            } catch (e: Exception) {
+                // Some place data violates the contract that the full, primary, and secondary
+                // text fields should be non-null.
+                with(StringBuilder()) {
+                    append("exception: ${e.cause}")
+                    append("\nmessage: ${e.message}")
+                    append("\nplaceId: ${item.placeId}")
+                    append("\nfullText: ${item.placeId}")
+                    append("\nprimaryText: ${item.getPrimaryText(null)}")
+                    append("\nsecondaryText: ${item.getSecondaryText(null)}")
+                    append("\nplaceTypes: ${item.placeTypes}")
+                }.toString().log()
+
+            }
         }
 
         // Dump the list of AutocompletePrediction objects to logcat.

@@ -81,11 +81,9 @@ class PlaceWrapper(place: Place, confidence: Float = 1f) {
                 map["rating"] = rating
                 map["priceLevel"] = priceLevel
                 map["attributions"] = attributions
-                placeObject = this
             }
         }
     }
-    lateinit var placeObject: Place
     val likelihood: Float by map
     val id: String by map
     val placeTypes: List<Int> by map
@@ -99,6 +97,10 @@ class PlaceWrapper(place: Place, confidence: Float = 1f) {
     val rating: Float by map
     val priceLevel: Int by map
     val attributions: String? by map
+
+    override fun toString(): String {
+        return map.toString()
+    }
 }
 
 data class AutocompletePredictionData(val fullText: CharSequence,

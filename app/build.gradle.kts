@@ -41,18 +41,18 @@ android {
     }
 }
 
-// Kotlin
+// Kotlin.
 dependencies {
     implementation(Deps.kotlin_stdlib_jdk8)
 }
 
-// Add Architecture Components (ViewModel, LiveData)
+// Add Architecture Components (ViewModel, LiveData).
 dependencies {
     implementation(Deps.arch_comp)
     kapt(Deps.arch_comp_annotation)
 }
 
-// Design
+// Design.
 dependencies {
     implementation(Deps.material_design)
     implementation(Deps.vector_drawable)
@@ -65,30 +65,34 @@ dependencies {
     implementation(Deps.gms_location)
 }
 
-// GSON
+// GSON.
 dependencies {
     implementation(Deps.gson)
 }
 
-// Dagger 2
+// Dagger 2.
 run{
     // Dagger 2 and Kotlin docs - https://kotlinlang.org/docs/tutorials/android-frameworks.html
     // Dagger 2 and Android (Java) - https://kotlinlang.org/docs/tutorials/android-frameworks.html
     dependencies {
-        // Basic Dagger 2 (required)
+        // Basic Dagger 2 (required).
         implementation(Deps.dagger2)
         kapt(Deps.dagger2_annotation)
     }
 }
 
-// Testing w/ JUnit5
+// Testing w/ JUnit5 & AssertJ.
 run {
 
-    // Add JUnit5 dependencies
     dependencies {
-        testImplementation(Deps.junit5_jupiter)
-        testRuntimeOnly(Deps.junit5_jupiter_runtime)
-        testImplementation(Deps.junit5_jupiter_params)
+        // Add JUnit5 dependencies.
+        testImplementation(TestingDeps.junit5_jupiter)
+        testRuntimeOnly(TestingDeps.junit5_jupiter_runtime)
+        testImplementation(TestingDeps.junit5_jupiter_params)
+        // Add AssertJ dependencies.
+        testImplementation(TestingDeps.assertj)
+        // Add Kotlin stdlib dependency.
+        testImplementation(Deps.kotlin_stdlib_jdk8)
     }
 
     // Need this to use Java8 in order to use certain features of JUnit5 (such as calling static
@@ -97,12 +101,12 @@ run {
     // More info : https://github.com/mannodermaus/android-junit5/wiki/Getting-Started
     // More info : https://stackoverflow.com/a/45994990/2085356
 
-    // For Kotlin sources
+    // For Kotlin sources.
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         kotlinOptions.jvmTarget = "1.8"
     }
 
-    // For Java sources
+    // For Java sources.
     java {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8

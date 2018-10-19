@@ -61,8 +61,17 @@ object Deps {
 
     val dagger2 = "com.google.dagger:dagger:${versions.dagger2}"
     val dagger2_annotation = "com.google.dagger:dagger-compiler:${versions.dagger2}"
+}
+
+object TestingDeps {
+    data class Versions(val assertj: String = "3.11.1",
+                        val junit5: String = "5.2.0")
+
+    val versions = Versions()
 
     val junit5_jupiter = "org.junit.jupiter:junit-jupiter-api:${versions.junit5}"
     val junit5_jupiter_runtime = "org.junit.jupiter:junit-jupiter-engine:${versions.junit5}"
     val junit5_jupiter_params = "org.junit.jupiter:junit-jupiter-params:${versions.junit5}"
+
+    val assertj = "org.assertj:assertj-core:${versions.assertj}"
 }

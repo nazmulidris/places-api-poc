@@ -1,7 +1,3 @@
-import de.mannodermaus.gradle.plugins.junit5.AndroidJUnitPlatformExtension
-import de.mannodermaus.gradle.plugins.junit5.AndroidJUnitPlatformPlugin
-import de.mannodermaus.gradle.plugins.junit5.tasks.AndroidJUnit5JacocoReport
-
 /*
  * Copyright 2018 Nazmul Idris. All rights reserved.
  *
@@ -25,6 +21,7 @@ plugins {
     kotlin("kapt")
     id("de.mannodermaus.android-junit5")
 }
+
 
 android {
     compileSdkVersion(Versions.compile_sdk)

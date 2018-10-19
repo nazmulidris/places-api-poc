@@ -49,9 +49,13 @@ fun bitmapToBundle(bitmap: Bitmap): Bundle {
     }
 }
 
-fun bundleToBitmap(bundle: Bundle, key: String): Bitmap {
-    val byteArray = bundle.getByteArray(key)
-    return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+fun bundleToBitmap(bundle: Bundle, key: String): Bitmap? {
+    val byteArray: ByteArray? = bundle.getByteArray(key)
+    return if (byteArray != null) {
+        BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+    } else {
+        null
+    }
 }
 
 

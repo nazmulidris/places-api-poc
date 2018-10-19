@@ -36,6 +36,12 @@ android {
         versionName = "1.0"
         vectorDrawables.useSupportLibrary = true
     }
+    // More info : https://stackoverflow.com/a/46440810/2085356
+    // More info : https://github.com/gradle/kotlin-dsl/issues/443
+    sourceSets{
+        getByName("main").java.srcDir("src/main/kotlin")
+        getByName("test").java.srcDir("src/test/kotlin")
+    }
 }
 
 // Kotlin

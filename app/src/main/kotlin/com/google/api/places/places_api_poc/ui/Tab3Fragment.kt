@@ -94,21 +94,21 @@ class Tab3Fragment : BaseTabFragment() {
 
         liveDataPlaceDetailsSheet.placeObservable().observe(
                 this,
-                Observer { place ->
+                Observer { _ ->
                     render()
                 }
         )
 
         liveDataPlaceDetailsSheet.sheetVisibleObservable().observe(
                 this,
-                Observer { visibility ->
+                Observer { _ ->
                     render()
                 }
         )
 
         liveDataPlaceDetailsSheet.bitmap.observe(
                 this,
-                Observer { bitmap ->
+                Observer { _ ->
                     render()
                 }
         )

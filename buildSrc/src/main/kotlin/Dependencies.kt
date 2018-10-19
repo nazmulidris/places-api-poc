@@ -15,13 +15,13 @@
  */
 
 object GradlePlugins {
-    data class Versions(val gradle: String = "gradle:3.3.0-alpha13",
+    data class Versions(val gradle: String = "3.3.0-beta01",
                         val kotlin: String = "1.2.71",
                         val junit5: String = "1.2.0.0")
 
     val versions = Versions()
 
-    val gradle = "com.android.tools.build:${versions.gradle}"
+    val gradle = "com.android.tools.build:gradle:${versions.gradle}"
 
     val kotlin = "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}"
 

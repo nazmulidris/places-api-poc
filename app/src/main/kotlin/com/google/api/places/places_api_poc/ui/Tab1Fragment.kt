@@ -71,7 +71,7 @@ class Tab1Fragment : BaseTabFragment() {
                                 liveDataGetCurrentPlaces)
 
         // Attach a behavior to the FAB.
-        fab.setOnClickListener { viewClicked ->
+        fab.setOnClickListener { _ ->
             getParentActivity().executeTaskOnPermissionGranted(
                     object : DriverActivity.PermissionDependentTask {
                         override fun getRequiredPermission() =

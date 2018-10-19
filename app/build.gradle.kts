@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
-
 /*
  * Copyright 2018 Nazmul Idris. All rights reserved.
  *
@@ -21,6 +19,7 @@ plugins {
     kotlin("android")
     kotlin("android.extensions")
     kotlin("kapt")
+    id("de.mannodermaus.android-junit5")
 }
 
 android {
@@ -29,8 +28,8 @@ android {
         applicationId = "com.google.api.places.places_api_poc"
         minSdkVersion(Versions.compile_sdk)
         targetSdkVersion(Versions.target_sdk)
-        versionCode=1
-        versionName="1.0"
+        versionCode = 1
+        versionName = "1.0"
         vectorDrawables.useSupportLibrary = true
     }
 }
@@ -71,4 +70,23 @@ dependencies {
     // Basic Dagger 2 (required)
     implementation(Deps.dagger2)
     kapt(Deps.dagger2_annotation)
+}
+
+// Testing w/ JUnit5
+dependencies {
+    testImplementation(Deps.junit5_jupiter)
+    testRuntimeOnly(Deps.junit5_jupiter_runtime)
+    testImplementation(Deps.junit5_jupiter_params)
+}
+
+// We need this to use certain features of JUnit5 (such as calling static methods on interfaces)
+// More info : https://github.com/mannodermaus/android-junit5/wiki/Getting-Started
+// More info : https://stackoverflow.com/a/45994990/2085356
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>{
+    kotlinOptions.jvmTarget = "1.8"
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 }

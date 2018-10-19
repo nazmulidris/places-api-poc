@@ -14,43 +14,54 @@
  * limitations under the License.
  */
 
-object Versions {
-    val gradle = "gradle:3.3.0-alpha13"
-    val kotlin = "1.2.71"
+object GradlePlugins {
+    data class Versions(val gradle: String = "gradle:3.3.0-alpha13",
+                        val kotlin: String = "1.2.71",
+                        val junit5: String = "1.2.0.0")
 
+    val versions = Versions()
+
+    val gradle = "com.android.tools.build:${versions.gradle}"
+
+    val kotlin = "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}"
+
+    val junit5 = "de.mannodermaus.gradle.plugins:android-junit5:${versions.junit5}"
+}
+
+object Versions {
     val compile_sdk = 28
     val target_sdk = 28
     val min_sdk = 16
-
-    val arch_comp = "2.0.0"
-
-    val design = "1.0.0"
-
-    val gms = "16.0.0"
-
-    val gson = "2.8.5"
-
-    val dagger2 = "2.17"
 }
 
 object Deps {
-    val gradle = "com.android.tools.build:${Versions.gradle}"
+    data class Versions(val arch_comp: String = "2.0.0",
+                        val design: String = "1.0.0",
+                        val gson: String = "2.8.5",
+                        val gms: String = "16.0.0",
+                        val dagger2: String = "2.17",
+                        val junit5: String = "5.2.0")
 
-    val kotlin = "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.kotlin}"
-    val kotlin_stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${Versions.kotlin}"
+    val versions = Versions()
 
-    val arch_comp = "androidx.lifecycle:lifecycle-extensions:${Versions.arch_comp}"
-    val arch_comp_annotation = "androidx.lifecycle:lifecycle-compiler:${Versions.arch_comp}"
+    val kotlin_stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${GradlePlugins.versions.kotlin}"
 
-    val material_design = "com.google.android.material:material:${Versions.design}"
-    val vector_drawable = "androidx.vectordrawable:vectordrawable:${Versions.design}"
-    val recycler_view = "androidx.recyclerview:recyclerview:${Versions.design}"
+    val arch_comp = "androidx.lifecycle:lifecycle-extensions:${versions.arch_comp}"
+    val arch_comp_annotation = "androidx.lifecycle:lifecycle-compiler:${versions.arch_comp}"
 
-    val gms_places = "com.google.android.gms:play-services-places:${Versions.gms}"
-    val gms_location = "com.google.android.gms:play-services-location:${Versions.gms}"
+    val material_design = "com.google.android.material:material:${versions.design}"
+    val vector_drawable = "androidx.vectordrawable:vectordrawable:${versions.design}"
+    val recycler_view = "androidx.recyclerview:recyclerview:${versions.design}"
 
-    val gson = "com.google.code.gson:gson:${Versions.gson}"
+    val gms_places = "com.google.android.gms:play-services-places:${versions.gms}"
+    val gms_location = "com.google.android.gms:play-services-location:${versions.gms}"
 
-    val dagger2 = "com.google.dagger:dagger:${Versions.dagger2}"
-    val dagger2_annotation = "com.google.dagger:dagger-compiler:${Versions.dagger2}"
+    val gson = "com.google.code.gson:gson:${versions.gson}"
+
+    val dagger2 = "com.google.dagger:dagger:${versions.dagger2}"
+    val dagger2_annotation = "com.google.dagger:dagger-compiler:${versions.dagger2}"
+
+    val junit5_jupiter = "org.junit.jupiter:junit-jupiter-api:${versions.junit5}"
+    val junit5_jupiter_runtime = "org.junit.jupiter:junit-jupiter-engine:${versions.junit5}"
+    val junit5_jupiter_params = "org.junit.jupiter:junit-jupiter-params:${versions.junit5}"
 }

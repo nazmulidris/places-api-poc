@@ -44,7 +44,7 @@ object Deps {
 
     val versions = Versions()
 
-    val kotlin_stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${GradlePlugins.versions.kotlin}"
+    val kotlin_stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${GradlePlugins.versions.kotlin}"
 
     val arch_comp = "androidx.lifecycle:lifecycle-extensions:${versions.arch_comp}"
     val arch_comp_annotation = "androidx.lifecycle:lifecycle-compiler:${versions.arch_comp}"

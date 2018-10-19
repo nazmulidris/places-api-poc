@@ -1,3 +1,7 @@
+import de.mannodermaus.gradle.plugins.junit5.AndroidJUnitPlatformExtension
+import de.mannodermaus.gradle.plugins.junit5.AndroidJUnitPlatformPlugin
+import de.mannodermaus.gradle.plugins.junit5.tasks.AndroidJUnit5JacocoReport
+
 /*
  * Copyright 2018 Nazmul Idris. All rights reserved.
  *
@@ -73,20 +77,30 @@ dependencies {
 }
 
 // Testing w/ JUnit5
-dependencies {
-    testImplementation(Deps.junit5_jupiter)
-    testRuntimeOnly(Deps.junit5_jupiter_runtime)
-    testImplementation(Deps.junit5_jupiter_params)
-}
 
-// We need this to use certain features of JUnit5 (such as calling static methods on interfaces)
-// More info : https://github.com/mannodermaus/android-junit5/wiki/Getting-Started
-// More info : https://stackoverflow.com/a/45994990/2085356
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>{
-    kotlinOptions.jvmTarget = "1.8"
-}
+run {
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    // Add JUnit5 dependencies
+    dependencies {
+        testImplementation(Deps.junit5_jupiter)
+        testRuntimeOnly(Deps.junit5_jupiter_runtime)
+        testImplementation(Deps.junit5_jupiter_params)
+    }
+
+    // Need this to use Java8 in order to use certain features of JUnit5 (such as calling static
+    // methods on interfaces).
+
+    // More info : https://github.com/mannodermaus/android-junit5/wiki/Getting-Started
+    // More info : https://stackoverflow.com/a/45994990/2085356
+
+    // For Kotlin sources
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+        kotlinOptions.jvmTarget = "1.8"
+    }
+
+    // For Java sources
+    java {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
 }

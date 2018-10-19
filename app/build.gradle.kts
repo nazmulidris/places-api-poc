@@ -35,7 +35,7 @@ android {
     }
     // More info : https://stackoverflow.com/a/46440810/2085356
     // More info : https://github.com/gradle/kotlin-dsl/issues/443
-    sourceSets{
+    sourceSets {
         getByName("main").java.srcDir("src/main/kotlin")
         getByName("test").java.srcDir("src/test/kotlin")
     }
@@ -71,7 +71,7 @@ dependencies {
 }
 
 // Dagger 2.
-run{
+run {
     // Dagger 2 and Kotlin docs - https://kotlinlang.org/docs/tutorials/android-frameworks.html
     // Dagger 2 and Android (Java) - https://kotlinlang.org/docs/tutorials/android-frameworks.html
     dependencies {
@@ -91,8 +91,6 @@ run {
         testImplementation(TestingDeps.junit5_jupiter_params)
         // Add AssertJ dependencies.
         testImplementation(TestingDeps.assertj)
-        // Add Kotlin stdlib dependency.
-        testImplementation(Deps.kotlin_stdlib_jdk8)
     }
 
     // Need this to use Java8 in order to use certain features of JUnit5 (such as calling static

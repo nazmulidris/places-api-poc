@@ -43,7 +43,7 @@ android {
 
 // Kotlin
 dependencies {
-    implementation(Deps.kotlin_stdlib)
+    implementation(Deps.kotlin_stdlib_jdk8)
 }
 
 // Add Architecture Components (ViewModel, LiveData)
@@ -71,16 +71,17 @@ dependencies {
 }
 
 // Dagger 2
-// Dagger 2 and Kotlin docs - https://kotlinlang.org/docs/tutorials/android-frameworks.html
-// Dagger 2 and Android (Java) - https://kotlinlang.org/docs/tutorials/android-frameworks.html
-dependencies {
-    // Basic Dagger 2 (required)
-    implementation(Deps.dagger2)
-    kapt(Deps.dagger2_annotation)
+run{
+    // Dagger 2 and Kotlin docs - https://kotlinlang.org/docs/tutorials/android-frameworks.html
+    // Dagger 2 and Android (Java) - https://kotlinlang.org/docs/tutorials/android-frameworks.html
+    dependencies {
+        // Basic Dagger 2 (required)
+        implementation(Deps.dagger2)
+        kapt(Deps.dagger2_annotation)
+    }
 }
 
 // Testing w/ JUnit5
-
 run {
 
     // Add JUnit5 dependencies

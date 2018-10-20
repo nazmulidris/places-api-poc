@@ -46,13 +46,6 @@ constructor(private val executorWrapper: ExecutorWrapper,
                                 {
                                     "⚠️ Task failed with exception $exception".log()
                                 })
-/*
-                        if (responseTask.isSuccessful && responseTask.result != null) {
-                            processPhoto(responseTask.result!!.bitmap, attribution)
-                        } else {
-                            "⚠️ Task failed with exception ${responseTask.exception}".log()
-                        }
-*/
                     }
             )
         }

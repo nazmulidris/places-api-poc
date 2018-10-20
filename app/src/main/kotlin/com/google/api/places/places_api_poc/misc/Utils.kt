@@ -70,8 +70,8 @@ class LatLngRange {
         LargeCityOoDistrict(0.1),
         TownOrVillage(0.01),
         NeighborhoodOrStreet(0.001),
-        IndvidualStreetOrLandParcel(0.0001),
-        DoorEntranceOrIndvidualTree(0.00001),
+        IndividualStreetOrLandParcel(0.0001),
+        DoorEntranceOrIndividualTree(0.00001),
         IndividualHumans(0.000001)
     }
 
@@ -93,9 +93,7 @@ class LatLngRange {
 
 }
 
-fun getUrl(lat: Double, lon: Double): String {
-    return "https://maps.google.com/maps?q=$lat,$lon"
-}
+fun getUrl(lat: Double, lon: Double) = "https://maps.google.com/maps?q=$lat,$lon"
 
 //
 // Extension functions.

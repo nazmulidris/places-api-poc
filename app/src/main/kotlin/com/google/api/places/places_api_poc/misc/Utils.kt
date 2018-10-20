@@ -107,18 +107,20 @@ inline fun snack(view: View,
                  text: String = "",
                  duration: Int = Snackbar.LENGTH_SHORT,
                  functor: Snackbar.() -> Unit) {
-    val snackbar: Snackbar = Snackbar.make(view, text, duration)
-    snackbar.functor()
-    snackbar.show()
+    with(Snackbar.make(view, text, duration)) {
+        functor()
+        show()
+    }
 }
 
 inline fun toast(context: Context,
                  text: String = "",
                  duration: Int = Toast.LENGTH_SHORT,
                  functor: Toast.() -> Unit) {
-    val toast: Toast = Toast.makeText(context, text, duration)
-    toast.functor()
-    toast.show()
+    with(Toast.makeText(context, text, duration)) {
+        functor()
+        show()
+    }
 }
 
 fun BottomSheetDialogFragment.getMyApplication(): MyApplication =

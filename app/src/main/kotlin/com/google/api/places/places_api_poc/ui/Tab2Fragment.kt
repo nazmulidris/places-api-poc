@@ -17,6 +17,7 @@
 package com.google.api.places.places_api_poc.ui
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -170,7 +171,7 @@ class Tab2RecyclerViewHandler(fragment: Tab2Fragment) {
         fun bindToDataItem(data: AutocompletePredictionData) {
             rowView.text = data.primaryText
             rowView.setOnClickListener {
-                data.placeId?.let { placeId ->
+                data.placeId.let { placeId ->
                     fragment.serviceGetPlaceByID.execute(placeId)
                 }
             }
@@ -227,7 +228,7 @@ class LocationHandler(val fragment: Tab2Fragment) {
 
     fun getLocation() {
         fragment.getParentActivity().executeTaskOnPermissionGranted(
-                object : DriverActivity.PermissionDependentTask {
+                object : PermissionDependentTask {
                     override fun getRequiredPermission() =
                             Manifest.permission.ACCESS_FINE_LOCATION
 
@@ -235,10 +236,10 @@ class LocationHandler(val fragment: Tab2Fragment) {
                         fragment.serviceGetLastLocation.execute()
                         snack(fragment.fragmentContainer) {
                             setText(R.string.message_making_api_call_GetLastLocation)
-                            duration = Snackbar.LENGTH_SHORT
                         }
                     }
 
+                    @SuppressLint("WrongConstant")
                     override fun onPermissionRevoked() {
                         snack(fragment.fragmentContainer) {
                             setText(fragment.resources.getString(

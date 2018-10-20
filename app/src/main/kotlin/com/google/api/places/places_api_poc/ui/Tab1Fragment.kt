@@ -16,6 +16,7 @@
 
 package com.google.api.places.places_api_poc.ui
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -31,6 +32,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.api.places.places_api_poc.R
 import com.google.api.places.places_api_poc.daggger.PlaceDetailsSheetLiveData
 import com.google.api.places.places_api_poc.daggger.PlacesLiveData
+import com.google.api.places.places_api_poc.misc.PermissionDependentTask
 import com.google.api.places.places_api_poc.misc.getMyApplication
 import com.google.api.places.places_api_poc.misc.log
 import com.google.api.places.places_api_poc.misc.snack
@@ -73,20 +75,19 @@ class Tab1Fragment : BaseTabFragment() {
         // Attach a behavior to the FAB.
         fab.setOnClickListener { _ ->
             getParentActivity().executeTaskOnPermissionGranted(
-                    object : DriverActivity.PermissionDependentTask {
+                    object : PermissionDependentTask {
                         override fun getRequiredPermission() =
                                 android.Manifest.permission.ACCESS_FINE_LOCATION
 
                         override fun onPermissionGranted() {
                             serviceGetCurrentPlace.execute()
-
                             snack(fragmentContainer) {
                                 setText(R.string.message_making_api_call_getCurrentPlace)
-                                duration = Snackbar.LENGTH_SHORT
                             }
 
                         }
 
+                        @SuppressLint("WrongConstant")
                         override fun onPermissionRevoked() {
                             snack(fragmentContainer) {
                                 setText(resources.getString(

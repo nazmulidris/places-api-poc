@@ -16,7 +16,6 @@
 
 package com.google.api.places.places_api_poc.ui
 
-import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -25,10 +24,9 @@ import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.api.places.places_api_poc.R
 import com.google.api.places.places_api_poc.daggger.PlaceDetailsSheetLiveData
+import com.google.api.places.places_api_poc.misc.PermissionDependentTask
+import com.google.api.places.places_api_poc.misc.PermissionsHandler
 import com.google.api.places.places_api_poc.misc.getMyApplication
-import com.google.api.places.places_api_poc.misc.isPermissionDenied
-import com.google.api.places.places_api_poc.misc.log
-import com.google.api.places.places_api_poc.misc.requestPermission
 import com.google.api.places.places_api_poc.model.PlacesAPI
 import javax.inject.Inject
 
@@ -42,61 +40,14 @@ class DriverActivity : AppCompatActivity() {
         setupModalPlaceDetailSheetHandler()
     }
 
-    // Manage runtime permissions for ACCESS_FINE_LOCATION.
-    // Constant required when dealing with asking user for permission grant.
-    val PERMISSION_ID = 1234
-
-    // Holds one pending task that will be run if permission is granted.
-    private var pendingTask: PermissionDependentTask? = null
-
     fun executeTaskOnPermissionGranted(task: PermissionDependentTask) {
-        if (isPermissionDenied(this,
-                               task.getRequiredPermission())) {
-            // Permission is not granted ☹. Ask the user for the run time permission 🙏.
-            "🔒 ${task.getRequiredPermission()} not granted 🛑, request it 🙏️".log()
-            requestPermission(this,
-                              task.getRequiredPermission(),
-                              PERMISSION_ID)
-            if (pendingTask == null) pendingTask = task
-        } else {
-            // Permission is granted 🙌. Run the task function.
-            "🔒 ${task.getRequiredPermission()} permission granted 🙌, Execute pendingTask ".log()
-            task.onPermissionGranted()
-        }
-    }
-
-    // Simple interface to perform a task that requires a permission.
-    interface PermissionDependentTask {
-        fun getRequiredPermission(): String
-        fun onPermissionGranted()
-        fun onPermissionRevoked()
+        PermissionsHandler.executeTaskOnPermissionGranted(this, task)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int,
                                             permissions: Array<String>,
                                             grantResults: IntArray) {
-        when (requestCode) {
-            PERMISSION_ID -> {
-                // If request is cancelled, the result arrays are empty.
-                if ((grantResults.isNotEmpty() && grantResults[0] ==
-                                PackageManager.PERMISSION_GRANTED)) {
-                    // Permission was granted, 🎉. Run the pending task function.
-                    if (pendingTask != null) {
-                        "🔒 Permission is granted 🙌, Execute pendingTask".log()
-                        pendingTask?.onPermissionGranted()
-                        pendingTask = null
-                    }
-                } else {
-                    // Permission denied, ☹.
-                    pendingTask?.onPermissionRevoked()
-                }
-                return
-            }
-            // Add other 'when' lines to check for other permissions this app might request.
-            else -> {
-                // Ignore all other requests.
-            }
-        }
+        PermissionsHandler.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
     private lateinit var placesAPIViewModel: PlacesAPI

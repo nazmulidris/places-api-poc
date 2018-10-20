@@ -17,18 +17,102 @@
 package com.google.api.places.places_api_poc.misc
 
 import android.content.Context
-import android.content.pm.PackageManager
+import android.content.pm.PackageManager.PERMISSION_DENIED
+import android.content.pm.PackageManager.PERMISSION_GRANTED
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 
 fun isPermissionGranted(context: Context, permission: String) =
-        ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED
+        ContextCompat.checkSelfPermission(context, permission) == PERMISSION_GRANTED
 
 fun isPermissionDenied(context: Context, permission: String) =
-        ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_DENIED
+        ContextCompat.checkSelfPermission(context, permission) == PERMISSION_DENIED
 
 fun requestPermission(activity: AppCompatActivity, permission: String, responseId: Int) {
     ActivityCompat.requestPermissions(activity, arrayOf(permission), responseId)
+}
+
+// Simple interface to perform a task that requires a permission.
+interface PermissionDependentTask {
+    fun getRequiredPermission(): String
+    fun onPermissionGranted()
+    fun onPermissionRevoked()
+}
+
+object PermissionsHandler {
+
+    // Manage runtime permissions for ACCESS_FINE_LOCATION.
+    // Constant required when dealing with asking user for permission grant.
+    val PERMISSION_ID = 1234
+
+    // Holds one pending task that will be run if permission is granted.
+    private var pendingTask: PermissionDependentTask? = null
+
+    fun executeTaskOnPermissionGranted(context: AppCompatActivity, task: PermissionDependentTask) {
+        if (isPermissionDenied(context,
+                               task.getRequiredPermission())) {
+            // Permission is not granted ☹. Ask the user for the run time permission 🙏.
+            "🔒 ${task.getRequiredPermission()} not granted 🛑, request it 🙏️".log()
+            requestPermission(context,
+                              task.getRequiredPermission(),
+                              PERMISSION_ID)
+            if (pendingTask == null) pendingTask = task
+        } else {
+            // Permission is granted 🙌. Run the task function.
+            "🔒 ${task.getRequiredPermission()} permission granted 🙌, Execute pendingTask ".log()
+            task.onPermissionGranted()
+        }
+    }
+
+    fun onRequestPermissionsResult(requestCode: Int,
+                                   permissions: Array<String>,
+                                   grantResults: IntArray) {
+        when (requestCode) {
+            PERMISSION_ID -> {
+                when (PermissionResult.convert(requestCode, permissions, grantResults)) {
+                    is PermissionsHandler.PermissionResult.Granted -> {
+                        if (pendingTask != null) {
+                            "🔒 Permission is granted 🙌, Execute pendingTask".log()
+                            pendingTask?.onPermissionGranted()
+                            pendingTask = null
+                        }
+                    }
+                    is PermissionsHandler.PermissionResult.Revoked -> {
+                        pendingTask?.onPermissionRevoked()
+                    }
+                    is PermissionsHandler.PermissionResult.Cancelled -> {
+
+                    }
+                }
+            }
+            // Add other 'when' lines to check for other permissions this app might request.
+            else -> {
+                // Ignore all other requests.
+            }
+        }
+    }
+
+    sealed class PermissionResult {
+        class Granted(id: Int) : PermissionResult()
+        class Revoked(id: Int) : PermissionResult()
+        class Cancelled(id: Int) : PermissionResult()
+
+        companion object {
+            fun convert(requestCode: Int,
+                        permissions: Array<String>,
+                        grantResults: IntArray): PermissionResult {
+                return when {
+                    // If request is cancelled, the result arrays are empty.
+                    grantResults.isEmpty() -> Cancelled(requestCode)
+                    // Permission was granted, 🎉. Run the pending task function.
+                    grantResults.first() == PERMISSION_GRANTED -> Granted(requestCode)
+                    // Permission denied, ☹.
+                    else -> Revoked(requestCode)
+                }
+            }
+        }
+    }
+
 
 }

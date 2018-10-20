@@ -22,7 +22,6 @@ plugins {
     id("de.mannodermaus.android-junit5")
 }
 
-
 android {
     compileSdkVersion(Versions.compile_sdk)
     defaultConfig {

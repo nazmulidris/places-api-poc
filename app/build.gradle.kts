@@ -27,12 +27,14 @@ android {
     compileSdkVersion(Versions.compile_sdk)
     defaultConfig {
         applicationId = "com.google.api.places.places_api_poc"
-        minSdkVersion(Versions.compile_sdk)
+        minSdkVersion(Versions.min_sdk)
         targetSdkVersion(Versions.target_sdk)
         versionCode = 1
         versionName = "1.0"
         vectorDrawables.useSupportLibrary = true
     }
+
+    lintOptions.isAbortOnError = false
 
     // For JUnit5 tests.
     // More info : https://stackoverflow.com/a/46440810/2085356

@@ -33,12 +33,17 @@ android {
         versionName = "1.0"
         vectorDrawables.useSupportLibrary = true
     }
+
+    // For JUnit5 tests.
     // More info : https://stackoverflow.com/a/46440810/2085356
     // More info : https://github.com/gradle/kotlin-dsl/issues/443
     sourceSets {
         getByName("main").java.srcDir("src/main/kotlin")
         getByName("test").java.srcDir("src/test/kotlin")
     }
+
+    // For Roboelectric.
+    testOptions.unitTests.setIncludeAndroidResources(true)
 }
 
 // Kotlin.
@@ -81,6 +86,12 @@ run {
     }
 }
 
+// Colorful console.
+dependencies {
+    implementation("com.importre:crayon:0.1.0")
+}
+
+
 // Testing w/ JUnit5 & AssertJ.
 run {
 
@@ -89,8 +100,19 @@ run {
         testImplementation(TestingDeps.junit5_jupiter)
         testRuntimeOnly(TestingDeps.junit5_jupiter_runtime)
         testImplementation(TestingDeps.junit5_jupiter_params)
+
+        // Add JUnit4 legacy dependencies.
+        testImplementation(TestingDeps.junit4_legacy)
+        testRuntimeOnly(TestingDeps.junit5_vintage)
+
         // Add AssertJ dependencies.
         testImplementation(TestingDeps.assertj)
+
+        // Add MockK dependencies.
+        testImplementation(TestingDeps.mockk)
+
+        // Add Roboelectric dependencies.
+        testImplementation(TestingDeps.roboelectric)
     }
 
     // Need this to use Java8 in order to use certain features of JUnit5 (such as calling static

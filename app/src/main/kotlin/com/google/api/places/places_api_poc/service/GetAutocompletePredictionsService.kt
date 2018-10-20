@@ -17,6 +17,7 @@
 package com.google.api.places.places_api_poc.service
 
 import com.google.android.gms.location.places.AutocompleteFilter
+import com.google.android.gms.location.places.AutocompletePrediction
 import com.google.android.gms.location.places.AutocompletePredictionBufferResponse
 import com.google.android.gms.location.places.GeoDataClient
 import com.google.android.gms.maps.model.LatLngBounds
@@ -26,6 +27,7 @@ import com.google.api.places.places_api_poc.misc.ExecutorWrapper
 import com.google.api.places.places_api_poc.misc.log
 import com.google.api.places.places_api_poc.misc.safelyProcess
 import com.google.api.places.places_api_poc.model.AutocompletePredictionData
+import com.google.api.places.places_api_poc.model.parse
 
 class GetAutocompletePredictionsService
 constructor(private val executorWrapper: ExecutorWrapper,
@@ -73,34 +75,12 @@ constructor(private val executorWrapper: ExecutorWrapper,
         val outputList: MutableList<AutocompletePredictionData> = mutableListOf()
 
         for (index in 0 until count) {
-            val item = buffer.get(index)
-            try {
-                val place = AutocompletePredictionData(
-                        placeId = item.placeId,
-                        placeTypes = item.placeTypes,
-                        fullText = item.getFullText(null),
-                        primaryText = item.getPrimaryText(null),
-                        secondaryText = item.getSecondaryText(null)
-                )
-                outputList.add(place)
-            } catch (e: Exception) {
-                // Some place data violates the contract that the full, primary, and secondary
-                // text fields should be non-null.
-                with(StringBuilder()) {
-                    append("exception: ${e.cause}")
-                    append("\nmessage: ${e.message}")
-                    append("\nplaceId: ${item.placeId}")
-                    append("\nfullText: ${item.placeId}")
-                    append("\nprimaryText: ${item.getPrimaryText(null)}")
-                    append("\nsecondaryText: ${item.getSecondaryText(null)}")
-                    append("\nplaceTypes: ${item.placeTypes}")
-                }.toString().log()
-
-            }
+            val item: AutocompletePrediction = buffer.get(index)
+            outputList.add(item.parse())
         }
 
         // Dump the list of AutocompletePrediction objects to logcat.
-        outputList.joinToString("\n").log()
+        outputList.joinToString(prefix="{\n📌", separator = "\n📌", postfix = "\n}").log()
 
         // Update the LiveData, so observables can react to this change.
         liveData.postValue(outputList)

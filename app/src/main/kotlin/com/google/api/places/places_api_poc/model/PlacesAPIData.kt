@@ -18,10 +18,13 @@ package com.google.api.places.places_api_poc.model
 
 import android.graphics.Bitmap
 import android.net.Uri
+import com.google.android.gms.location.places.AutocompletePrediction
 import com.google.android.gms.location.places.Place
 import com.google.android.gms.location.places.PlaceLikelihood
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
+import com.google.api.places.places_api_poc.misc.log
+import com.importre.crayon.red
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -103,10 +106,33 @@ class PlaceWrapper(place: Place, confidence: Float = 1f) {
     }
 }
 
+fun AutocompletePrediction.parse(): AutocompletePredictionData {
+    if (getFullText(null).isNullOrEmpty() || getPrimaryText(null).isNullOrEmpty() ||
+            getSecondaryText(null).isNullOrEmpty() || placeId.isNullOrEmpty() ||
+            placeTypes == null) {
+        (StringBuilder()).apply {
+            append("⚠️ AutocompletePrediction - some fields are null or empty".red())
+            append("\nfullText: '${getFullText(null)}'")
+            append("\nprimaryText: '${getPrimaryText(null)}'")
+            append("\nsecondaryText: '${getSecondaryText(null)}'")
+            append("\nplaceId: '$placeId'")
+            append("\nplaceTypes: '$placeTypes'")
+        }.toString().log()
+    }
+
+    return AutocompletePredictionData(
+            fullText = getFullText(null) ?: "",
+            primaryText = getPrimaryText(null) ?: "",
+            secondaryText = getSecondaryText(null) ?: "",
+            placeId = placeId ?: "",
+            placeTypes = placeTypes ?: listOf()
+    )
+}
+
 data class AutocompletePredictionData(val fullText: CharSequence,
                                       val primaryText: CharSequence,
                                       val secondaryText: CharSequence,
-                                      val placeId: String?,
-                                      val placeTypes: List<Int>?)
+                                      val placeId: String,
+                                      val placeTypes: List<Int>)
 
 data class BitmapWrapper(val bitmap: Bitmap? = null, val attribution: String? = null)

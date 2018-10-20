@@ -126,5 +126,4 @@ class PlaceDetailsSheetFragment : BottomSheetDialogFragment() {
             if (value == null) "n/a"
             else if (value.toString().trim().isEmpty()) "n/a"
             else value.toString()
-
 }

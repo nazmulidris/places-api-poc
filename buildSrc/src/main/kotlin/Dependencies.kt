@@ -30,7 +30,7 @@ object GradlePlugins {
 
 object Versions {
     val compile_sdk = 28
-    val target_sdk = 28
+    val target_sdk = 26
     val min_sdk = 16
 }
 
@@ -40,7 +40,8 @@ object Deps {
                         val gson: String = "2.8.5",
                         val gms: String = "16.0.0",
                         val dagger2: String = "2.17",
-                        val junit5: String = "5.2.0")
+                        val junit5: String = "5.2.0",
+                        val crayon: String = "0.1.0")
 
     val versions = Versions()
 
@@ -61,17 +62,28 @@ object Deps {
 
     val dagger2 = "com.google.dagger:dagger:${versions.dagger2}"
     val dagger2_annotation = "com.google.dagger:dagger-compiler:${versions.dagger2}"
+
+    val crayon = "com.importre:crayon:${versions.crayon}"
 }
 
 object TestingDeps {
     data class Versions(val assertj: String = "3.11.1",
-                        val junit5: String = "5.2.0")
+                        val junit5: String = "5.2.0",
+                        val mockk: String = "1.8.9",
+                        val roboelectric: String = "3.8",
+                        val junit4: String = "4.12")
 
     val versions = Versions()
 
     val junit5_jupiter = "org.junit.jupiter:junit-jupiter-api:${versions.junit5}"
     val junit5_jupiter_runtime = "org.junit.jupiter:junit-jupiter-engine:${versions.junit5}"
     val junit5_jupiter_params = "org.junit.jupiter:junit-jupiter-params:${versions.junit5}"
+    val junit4_legacy = "junit:junit:${versions.junit4}"
+    val junit5_vintage = "org.junit.vintage:junit-vintage-engine:${versions.junit5}"
 
     val assertj = "org.assertj:assertj-core:${versions.assertj}"
+
+    val mockk = "io.mockk:mockk:${versions.mockk}"
+
+    val roboelectric = "org.robolectric:robolectric:${versions.roboelectric}"
 }

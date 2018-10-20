@@ -44,7 +44,7 @@ object PermissionsHandler {
 
     // Manage runtime permissions for ACCESS_FINE_LOCATION.
     // Constant required when dealing with asking user for permission grant.
-    val PERMISSION_ID = 1234
+    private const val PERMISSION_ID = 1234
 
     // Holds one pending task that will be run if permission is granted.
     private var pendingTask: PermissionDependentTask? = null

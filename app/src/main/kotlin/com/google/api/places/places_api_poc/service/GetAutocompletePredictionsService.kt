@@ -16,16 +16,15 @@
 
 package com.google.api.places.places_api_poc.service
 
+import androidx.annotation.WorkerThread
 import com.google.android.gms.location.places.AutocompleteFilter
 import com.google.android.gms.location.places.AutocompletePrediction
 import com.google.android.gms.location.places.AutocompletePredictionBufferResponse
 import com.google.android.gms.location.places.GeoDataClient
 import com.google.android.gms.maps.model.LatLngBounds
-import com.google.android.gms.tasks.OnCompleteListener
 import com.google.api.places.places_api_poc.daggger.AutocompletePredictionsLiveData
 import com.google.api.places.places_api_poc.misc.ExecutorWrapper
 import com.google.api.places.places_api_poc.misc.log
-import com.google.api.places.places_api_poc.misc.safelyProcess
 import com.google.api.places.places_api_poc.model.AutocompletePredictionData
 import com.google.api.places.places_api_poc.model.parse
 
@@ -43,26 +42,20 @@ constructor(private val executorWrapper: ExecutorWrapper,
                 filter: AutocompleteFilter = defaultFilter) {
         "PlacesAPI ⇢ GeoDataClient.getAutocompletePredictions() ✅".log()
         geoDataClient.getAutocompletePredictions(queryString, bounds, filter)
-                .let { requestTask ->
-                    // Run this in background thread.
-                    requestTask.addOnCompleteListener(
-                            executorWrapper.executor,
-                            OnCompleteListener { responseTask ->
-                                responseTask.safelyProcess(
-                                        {
-                                            processAutocompletePrediction(this)
-                                            release()
-                                        },
-                                        {
-                                            "⚠️ Task failed with exception $exception".log()
-                                        }
-                                )
-                            }
-                    )
+                .handleResponse(executorWrapper.executor) { response ->
+                    when (response) {
+                        is ServiceResponse.Success -> {
+                            processAutocompletePrediction(response.value)
+                            response.value.release()
+                        }
+                        is ServiceResponse.Error -> {
+                            "⚠️ Task failed with exception ${response.exception}".log()
+                        }
+                    }
                 }
     }
 
-    // This runs in a background thread.
+    @WorkerThread
     private fun processAutocompletePrediction(buffer: AutocompletePredictionBufferResponse) {
         val count = buffer.count
 
@@ -79,7 +72,7 @@ constructor(private val executorWrapper: ExecutorWrapper,
         }
 
         // Dump the list of AutocompletePrediction objects to logcat.
-        outputList.joinToString(prefix="{\n📌", separator = "\n📌", postfix = "\n}").log()
+        outputList.joinToString(prefix = "{\n📌", separator = "\n📌", postfix = "\n}").log()
 
         // Update the LiveData, so observables can react to this change.
         liveData.postValue(outputList)

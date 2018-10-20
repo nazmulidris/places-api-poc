@@ -17,14 +17,13 @@
 package com.google.api.places.places_api_poc.service
 
 import android.graphics.Bitmap
+import androidx.annotation.WorkerThread
 import com.google.android.gms.location.places.GeoDataClient
 import com.google.android.gms.location.places.PlacePhotoMetadata
 import com.google.android.gms.location.places.PlacePhotoMetadataResponse
-import com.google.android.gms.tasks.OnCompleteListener
 import com.google.api.places.places_api_poc.daggger.PlaceDetailsSheetLiveData
 import com.google.api.places.places_api_poc.misc.ExecutorWrapper
 import com.google.api.places.places_api_poc.misc.log
-import com.google.api.places.places_api_poc.misc.safelyProcess
 import com.google.api.places.places_api_poc.model.BitmapWrapper
 
 class GetPhotoService
@@ -35,22 +34,20 @@ constructor(private val executorWrapper: ExecutorWrapper,
     fun execute(photoMetadata: PlacePhotoMetadata, attribution: CharSequence) {
         // Get a full-size bitmap for the photo.
         "PlacesAPI ⇢ GeoDataClient.getPhoto() ✅".log()
-        geoDataClient.getPhoto(photoMetadata).let { requestTask ->
-            requestTask.addOnCompleteListener(
-                    executorWrapper.executor,
-                    OnCompleteListener { responseTask ->
-                        responseTask.safelyProcess(
-                                {
-                                    processPhoto(bitmap, attribution)
-                                },
-                                {
-                                    "⚠️ Task failed with exception $exception".log()
-                                })
+        geoDataClient.getPhoto(photoMetadata)
+                .handleResponse(executorWrapper.executor) { response ->
+                    when (response) {
+                        is ServiceResponse.Success -> {
+                            processPhoto(response.value.bitmap, attribution)
+                        }
+                        is ServiceResponse.Error -> {
+                            "⚠️ Task failed with exception ${response.exception}".log()
+                        }
                     }
-            )
-        }
+                }
     }
 
+    @WorkerThread
     private fun processPhoto(bitmap: Bitmap, attribution: CharSequence) {
         modalPlaceDetailsSheetLiveData.bitmap.postValue(
                 BitmapWrapper(bitmap,
@@ -67,34 +64,26 @@ constructor(private val executorWrapper: ExecutorWrapper,
 
     fun execute(placeId: String) {
         "PlacesAPI ⇢ GeoDataClient.getPlacePhotos() ✅".log()
-        // Run this in background thread.
-        geoDataClient.getPlacePhotos(placeId).let { requestTask ->
-            requestTask.addOnCompleteListener(
-                    executorWrapper.executor,
-                    OnCompleteListener { responseTask ->
-                        responseTask.safelyProcess(
-                                {
-                                    processPhotosMetadata(this)
-                                },
-                                {
-                                    "⚠️ Task failed with exception $exception".log()
-                                }
-                        )
+        geoDataClient.getPlacePhotos(placeId)
+                .handleResponse(executorWrapper.executor) { response ->
+                    when (response) {
+                        is ServiceResponse.Success -> {
+                            processPhotosMetadata(response.value)
+                        }
+                        is ServiceResponse.Error -> {
+                            "⚠️ Task failed with exception ${response.exception}".log()
+                        }
                     }
-            )
-        }
-
+                }
     }
 
-    // This runs in a background thread.
+    @WorkerThread
     private fun processPhotosMetadata(photos: PlacePhotoMetadataResponse) {
 
         // Get the PlacePhotoMetadataBuffer (metadata for all of the photos).
         val photoMetadataBuffer = photos.photoMetadata
 
-        val count = photoMetadataBuffer.count
-
-        if (count > 0) {
+        if (photoMetadataBuffer.count > 0) {
             // Get the first photo in the list.
             val photoMetadata = photoMetadataBuffer.get(0)
 

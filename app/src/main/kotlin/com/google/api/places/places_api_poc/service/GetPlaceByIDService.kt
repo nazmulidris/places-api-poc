@@ -16,43 +16,36 @@
 
 package com.google.api.places.places_api_poc.service
 
+import androidx.annotation.WorkerThread
 import com.google.android.gms.location.places.GeoDataClient
 import com.google.android.gms.location.places.PlaceBufferResponse
-import com.google.android.gms.tasks.OnCompleteListener
 import com.google.api.places.places_api_poc.daggger.PlaceDetailsSheetLiveData
 import com.google.api.places.places_api_poc.misc.ExecutorWrapper
 import com.google.api.places.places_api_poc.misc.log
-import com.google.api.places.places_api_poc.misc.safelyProcess
 import com.google.api.places.places_api_poc.model.PlaceWrapper
 
 class GetPlaceByIDService
-constructor(private val wrapper: ExecutorWrapper,
+constructor(private val executorWrapper: ExecutorWrapper,
             private val client: GeoDataClient,
             private val data: PlaceDetailsSheetLiveData) {
 
     fun execute(placeId: String) {
         "PlacesAPI ⇢ GeoDataClient.getPlaceById() ✅".log()
-        client.getPlaceById(placeId).let { requestTask ->
-            // Run this in background thread.
-            requestTask.addOnCompleteListener(
-                    wrapper.executor,
-                    OnCompleteListener { responseTask ->
-                        responseTask.safelyProcess(
-                                {
-                                    processPlace(this)
-                                    release()
-                                }
-                                ,
-                                {
-                                    "⚠️ Task failed with exception $exception".log()
-                                }
-                        )
+        client.getPlaceById(placeId)
+                .handleResponse(executorWrapper.executor) { response ->
+                    when (response) {
+                        is ServiceResponse.Success -> {
+                            processPlace(response.value)
+                            response.value.release()
+                        }
+                        is ServiceResponse.Error -> {
+                            "⚠️ Task failed with exception ${response.exception}".log()
+                        }
                     }
-            )
-        }
+                }
     }
 
-    // This runs in a background thread.
+    @WorkerThread
     private fun processPlace(placeBufferResponse: PlaceBufferResponse) {
         val place = placeBufferResponse.get(0)
         data.postPlace(PlaceWrapper(place))

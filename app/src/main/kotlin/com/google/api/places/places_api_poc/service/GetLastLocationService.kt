@@ -20,13 +20,12 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Location
+import androidx.annotation.WorkerThread
 import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.tasks.OnCompleteListener
 import com.google.api.places.places_api_poc.daggger.LocationLiveData
 import com.google.api.places.places_api_poc.misc.ExecutorWrapper
 import com.google.api.places.places_api_poc.misc.isPermissionGranted
 import com.google.api.places.places_api_poc.misc.log
-import com.google.api.places.places_api_poc.misc.safelyProcess
 
 class GetLastLocationService
 constructor(private val executorWrapper: ExecutorWrapper,
@@ -42,26 +41,22 @@ constructor(private val executorWrapper: ExecutorWrapper,
         if (isPermissionGranted(context,
                                 Manifest.permission.ACCESS_FINE_LOCATION)) {
             "PlacesAPI ⇢ FusedLocationProviderClient.lastLocation() ✅".log()
-            currentLocationClient.lastLocation.let { requestTask ->
-                // Run this in background thread.
-                requestTask.addOnCompleteListener(
-                        executorWrapper.executor,
-                        OnCompleteListener { responseTask ->
-                            responseTask.safelyProcess(
-                                    {
-                                        processCurrentLocation(this)
-                                    },
-                                    {
-                                        "⚠️ Task failed with exception $exception".log()
-                                    }
-                            )
+            currentLocationClient.lastLocation
+                    .handleResponse(executorWrapper.executor) { response ->
+                        when (response) {
+                            is ServiceResponse.Success -> {
+                                processCurrentLocation(response.value)
+                            }
+                            is ServiceResponse.Error -> {
+                                "⚠️ Task failed with exception ${response.exception}".log()
+                            }
                         }
-                )
-            }
+
+                    }
         }
     }
 
-    // This runs in a background thread.
+    @WorkerThread
     private fun processCurrentLocation(value: Location) {
         liveData.postValue(value)
     }

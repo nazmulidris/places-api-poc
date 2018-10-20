@@ -16,23 +16,13 @@
 
 package com.google.api.places.places_api_poc.misc
 
-import android.app.Application
-import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
-import android.view.View
-import android.widget.Toast
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
-import com.google.android.gms.tasks.Task
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.android.material.snackbar.Snackbar
-import com.google.api.places.places_api_poc.daggger.MyApplication
-import com.google.api.places.places_api_poc.ui.BaseTabFragment
-import com.google.api.places.places_api_poc.ui.DriverActivity
 import java.io.ByteArrayOutputStream
 
 //
@@ -95,47 +85,5 @@ class LatLngRange {
 
 fun getUrl(lat: Double, lon: Double) = "https://maps.google.com/maps?q=$lat,$lon"
 
-//
-// Extension functions.
-//
-
 fun String.log() = Log.i("places-api-poc", this)
 
-inline fun snack(view: View,
-                 text: String = "",
-                 duration: Int = Snackbar.LENGTH_SHORT,
-                 functor: Snackbar.() -> Unit) {
-    with(Snackbar.make(view, text, duration)) {
-        functor()
-        show()
-    }
-}
-
-inline fun toast(context: Context,
-                 text: String = "",
-                 duration: Int = Toast.LENGTH_SHORT,
-                 functor: Toast.() -> Unit) {
-    with(Toast.makeText(context, text, duration)) {
-        functor()
-        show()
-    }
-}
-
-fun BottomSheetDialogFragment.getMyApplication(): MyApplication =
-        this.requireActivity().application as MyApplication
-
-fun DriverActivity.getMyApplication(): MyApplication = this.application as MyApplication
-
-fun Application.getMyApplication(): MyApplication = this as MyApplication
-
-fun BaseTabFragment.getMyApplication(): MyApplication =
-        this.requireActivity().application as MyApplication
-
-fun <T> Task<T>.safelyProcess(onSuccessFunctor: T.() -> Unit,
-                              onFailFunctor: Task<T>.() -> Unit) {
-    if (isSuccessful && result != null) {
-        result!!.onSuccessFunctor()
-    } else {
-        onFailFunctor()
-    }
-}

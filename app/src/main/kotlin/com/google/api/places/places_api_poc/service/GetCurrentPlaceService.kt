@@ -19,14 +19,13 @@ package com.google.api.places.places_api_poc.service
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import androidx.annotation.WorkerThread
 import com.google.android.gms.location.places.PlaceDetectionClient
 import com.google.android.gms.location.places.PlaceLikelihoodBufferResponse
-import com.google.android.gms.tasks.OnCompleteListener
 import com.google.api.places.places_api_poc.daggger.PlacesLiveData
 import com.google.api.places.places_api_poc.misc.ExecutorWrapper
 import com.google.api.places.places_api_poc.misc.isPermissionGranted
 import com.google.api.places.places_api_poc.misc.log
-import com.google.api.places.places_api_poc.misc.safelyProcess
 import com.google.api.places.places_api_poc.model.PlaceWrapper
 
 class GetCurrentPlaceService
@@ -44,35 +43,30 @@ constructor(private val executorWrapper: ExecutorWrapper,
                                 Manifest.permission.ACCESS_FINE_LOCATION)) {
             // Permission is granted 🙌.
             "PlacesAPI ⇢ PlaceDetectionClient.getCurrentPlace() ✅".log()
-            currentPlaceClient.getCurrentPlace(null).let { requestTask ->
-                // Run this in background thread.
-                requestTask.addOnCompleteListener(
-                        executorWrapper.executor,
-                        OnCompleteListener { responseTask ->
-                            responseTask.safelyProcess(
-                                    {
-                                        processPlacelikelihoodBuffer(this)
-                                        release()
-                                    },
-                                    {
-                                        "⚠️ Task failed with exception $exception".log()
-                                    }
-                            )
-                        })
-            }
+            currentPlaceClient.getCurrentPlace(null)
+                    .handleResponse(executorWrapper.executor) { response ->
+                        when (response) {
+                            is ServiceResponse.Success -> {
+                                processPlacelikelihoodBuffer(response.value)
+                                response.value.release()
+                            }
+                            is ServiceResponse.Error -> {
+                                "⚠️ Task failed with exception ${response.exception}".log()
+                            }
+                        }
+                    }
         }
     }
 
     /**
-     * This runs in the background thread.
      * [PlaceLikelihoodBufferResponse docs](http://tinyurl.com/y9y9jl3d).
      */
+    @WorkerThread
     private fun processPlacelikelihoodBuffer(likeyPlaces: PlaceLikelihoodBufferResponse) {
         val outputList = mutableListOf<PlaceWrapper>()
-        val count = likeyPlaces.count
-        for (index in 0 until count) {
-            outputList.add(PlaceWrapper(likeyPlaces.get(
-                    index)))
+
+        for (index in 0 until likeyPlaces.count) {
+            outputList.add(PlaceWrapper(likeyPlaces.get(index)))
         }
 
         // Dump the list of PlaceWrapper objects to logcat.

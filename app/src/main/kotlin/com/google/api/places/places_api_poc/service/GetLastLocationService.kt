@@ -52,7 +52,6 @@ constructor(private val executorWrapper: ExecutorWrapper,
                                 "⚠️ Task failed with exception ${response.exception}".log()
                             }
                         }
-
                     }
                     .apply {
                         executorWrapper.executor.submit {

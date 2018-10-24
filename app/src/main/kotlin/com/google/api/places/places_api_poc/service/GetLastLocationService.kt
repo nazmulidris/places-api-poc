@@ -22,6 +22,7 @@ import android.content.Context
 import android.location.Location
 import androidx.annotation.WorkerThread
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.tasks.Tasks
 import com.google.api.places.places_api_poc.daggger.LocationLiveData
 import com.google.api.places.places_api_poc.misc.ExecutorWrapper
 import com.google.api.places.places_api_poc.misc.isPermissionGranted
@@ -39,9 +40,20 @@ constructor(private val executorWrapper: ExecutorWrapper,
     @SuppressLint("MissingPermission")
     fun execute() {
         if (isPermissionGranted(context,
-                                Manifest.permission.ACCESS_FINE_LOCATION)) {
+                        Manifest.permission.ACCESS_FINE_LOCATION)) {
             "PlacesAPI ⇢ FusedLocationProviderClient.lastLocation() ✅".log()
             currentLocationClient.lastLocation
+                    .apply {
+                        executorWrapper.executor.submit {
+                            try {
+                                Tasks.await(this).apply {
+                                    "locationTask:result: $this".log()
+                                }
+                            } catch (e: Exception) {
+                                "locationTask:error: $e".log()
+                            }
+                        }
+                    }
                     .handleResponse(executorWrapper.executor) { response ->
                         when (response) {
                             is ServiceResponse.Success -> {

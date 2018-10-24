@@ -43,17 +43,6 @@ constructor(private val executorWrapper: ExecutorWrapper,
                         Manifest.permission.ACCESS_FINE_LOCATION)) {
             "PlacesAPI ⇢ FusedLocationProviderClient.lastLocation() ✅".log()
             currentLocationClient.lastLocation
-                    .apply {
-                        executorWrapper.executor.submit {
-                            try {
-                                Tasks.await(this).apply {
-                                    "locationTask:result: $this".log()
-                                }
-                            } catch (e: Exception) {
-                                "locationTask:error: $e".log()
-                            }
-                        }
-                    }
                     .handleResponse(executorWrapper.executor) { response ->
                         when (response) {
                             is ServiceResponse.Success -> {
@@ -64,6 +53,17 @@ constructor(private val executorWrapper: ExecutorWrapper,
                             }
                         }
 
+                    }
+                    .apply {
+                        executorWrapper.executor.submit {
+                            try {
+                                Tasks.await(this).apply {
+                                    "locationTask:result: $this".log()
+                                }
+                            } catch (e: Exception) {
+                                "locationTask:error: $e".log()
+                            }
+                        }
                     }
         }
     }

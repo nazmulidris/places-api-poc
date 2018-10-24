@@ -26,7 +26,7 @@ sealed class ServiceResponse<T> {
 }
 
 fun <T> Task<T>.handleResponse(executorService: ExecutorService,
-                               functor: (ServiceResponse<T>) -> Unit) {
+                               functor: (ServiceResponse<T>) -> Unit): Task<T> {
     addOnCompleteListener(
             executorService,
             OnCompleteListener<T> {
@@ -38,4 +38,5 @@ fun <T> Task<T>.handleResponse(executorService: ExecutorService,
                 }
             }
     )
+    return this
 }

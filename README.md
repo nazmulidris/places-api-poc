@@ -8,7 +8,7 @@ This project shows how to exercise the Google Places API surface.
   src="https://raw.githubusercontent.com/nazmulidris/places-api-poc/master/docs/places-api-poc-video.gif"
 />
 
-# Wiki
+# Documentation
 
 To learn more about this app, please check out these articles on developerlife.com
 - [Depedency Injection](https://developerlife.com/category/DepedencyInjection/)

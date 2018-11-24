@@ -10,4 +10,7 @@ This project shows how to exercise the Google Places API surface.
 
 # Wiki
 
-To learn more about this app, please check out the [Wiki](https://github.com/nazmulidris/places-api-poc/wiki).
+To learn more about this app, please check out these articles on developerlife.com
+- [Depedency Injection](https://developerlife.com/category/DepedencyInjection/)
+- [Test driven development in Kotlin & Android](https://developerlife.com/category/TestDrivenDevelopment/)
+- [State management](https://developerlife.com/category/State/)

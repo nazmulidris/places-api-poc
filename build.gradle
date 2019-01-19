@@ -1,0 +1,4 @@
+/*
+ * This empty file is needed in order for Android Studio to be able to import
+ * this project (even though it uses the Kotlin Gradle DSL and not Groovy).
+ */

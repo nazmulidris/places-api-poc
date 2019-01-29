@@ -55,7 +55,8 @@ object Deps {
     val vector_drawable = "androidx.vectordrawable:vectordrawable:${versions.design}"
     val recycler_view = "androidx.recyclerview:recyclerview:${versions.design}"
 
-    val gms_places = "com.google.android.gms:play-services-places:${versions.gms}"
+    //val gms_places = "com.google.android.gms:play-services-places:${versions.gms}"
+    val gms_places = "com.google.android.libraries.places:places-compat:1.0.0"
     val gms_location = "com.google.android.gms:play-services-location:${versions.gms}"
 
     val gson = "com.google.code.gson:gson:${versions.gson}"

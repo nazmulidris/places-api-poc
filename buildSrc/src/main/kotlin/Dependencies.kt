@@ -16,7 +16,7 @@
 
 object GradlePlugins {
     data class Versions(val gradle: String = "3.3.0",
-                        val kotlin: String = "1.3.0",
+                        val kotlin: String = "1.3.20",
                         val junit5: String = "1.2.0.0")
 
     val versions = Versions()
@@ -39,6 +39,7 @@ object Deps {
                         val design: String = "1.0.0",
                         val gson: String = "2.8.5",
                         val gms: String = "16.0.0",
+                        val places: String = "1.0.0",
                         val dagger2: String = "2.17",
                         val junit5: String = "5.2.0",
                         val crayon: String = "0.1.0")
@@ -55,8 +56,7 @@ object Deps {
     val vector_drawable = "androidx.vectordrawable:vectordrawable:${versions.design}"
     val recycler_view = "androidx.recyclerview:recyclerview:${versions.design}"
 
-    //val gms_places = "com.google.android.gms:play-services-places:${versions.gms}"
-    val gms_places = "com.google.android.libraries.places:places-compat:1.0.0"
+    val gms_places = "com.google.android.libraries.places:places-compat:${versions.places}"
     val gms_location = "com.google.android.gms:play-services-location:${versions.gms}"
 
     val gson = "com.google.code.gson:gson:${versions.gson}"

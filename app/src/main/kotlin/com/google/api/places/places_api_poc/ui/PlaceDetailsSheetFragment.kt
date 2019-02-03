@@ -112,18 +112,6 @@ class PlaceDetailsSheetFragment : BottomSheetDialogFragment() {
 
     private fun renderPlace(placeWrapper: PlaceWrapper) {
         textHeader.text = placeWrapper.name
-        StringBuffer().apply {
-            for (entry in placeWrapper.map) {
-                append("<br/><b>${entry.key}</b><br/>")
-                append("<code>${generateValueString(entry.value)}<code><br/>")
-            }
-        }.apply {
-            textBody.text = Html.fromHtml(this.toString())
-        }
+        textBody.text = Html.fromHtml(placeWrapper.toHtmlString())
     }
-
-    private fun generateValueString(value: Any?) =
-            if (value == null) "n/a"
-            else if (value.toString().trim().isEmpty()) "n/a"
-            else value.toString()
 }

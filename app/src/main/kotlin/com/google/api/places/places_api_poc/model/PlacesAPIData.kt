@@ -26,7 +26,6 @@ import com.google.android.gms.maps.model.LatLngBounds
 import com.google.api.places.places_api_poc.misc.log
 import com.importre.crayon.red
 import java.util.*
-import kotlin.collections.HashMap
 
 /*
     Sample data for PlaceWrapper object converted to JSON.
@@ -62,47 +61,64 @@ import kotlin.collections.HashMap
         "priceLevel": -1
     }
  */
-class PlaceWrapper(place: Place, confidence: Float = 1f) {
-    constructor(placeLikelihood: PlaceLikelihood) : this(placeLikelihood.place,
-                                                         placeLikelihood.likelihood)
+class PlaceWrapper(frozenPlace: Place, confidence: Float = 1f) {
+    constructor(placeLikelihood: PlaceLikelihood) :
+            this(placeLikelihood.place.freeze(), placeLikelihood.likelihood)
 
-    val map: HashMap<String, Any?> by lazy {
-        HashMap<String, Any?>().also { map ->
-            map["likelihood"] = confidence
-            // Make sure to get an instance from freeze() that will be available
-            // after the buffer is released.
-            place.freeze().apply {
-                map["id"] = id
-                map["placeTypes"] = placeTypes
-                map["address"] = address
-                map["locale"] = locale
-                map["name"] = name
-                map["latLng"] = latLng
-                map["viewport"] = viewport
-                map["websiteUri"] = websiteUri
-                map["phoneNumber"] = phoneNumber
-                map["rating"] = rating
-                map["priceLevel"] = priceLevel
-                map["attributions"] = attributions
-            }
-        }
-    }
-    val likelihood: Float by map
-    val id: String by map
-    val placeTypes: List<Int> by map
-    val address: String? by map
-    val locale: Locale by map
-    val name: String by map
-    val latLng: LatLng by map
-    val viewport: LatLngBounds? by map
-    val websiteUri: Uri? by map
-    val phoneNumber: String? by map
-    val rating: Float by map
-    val priceLevel: Int by map
-    val attributions: String? by map
+    val likelihood: Float = confidence
+    val id: String = frozenPlace.id
+    val placeTypes: List<Int> = frozenPlace.placeTypes
+    val address: String? = frozenPlace.address?.toString()
+    val locale: Locale = frozenPlace.locale
+    val name: String = frozenPlace.name.toString()
+    val latLng: LatLng = frozenPlace.latLng
+    val viewport: LatLngBounds? = frozenPlace.viewport
+    val websiteUri: Uri? = frozenPlace.websiteUri
+    val phoneNumber: String? = frozenPlace.phoneNumber?.toString()
+    val rating: Float = frozenPlace.rating
+    val priceLevel: Int = frozenPlace.priceLevel
+    val attributions: String? = frozenPlace.attributions?.toString()
 
     override fun toString(): String {
-        return map.toString()
+        return "PlaceWrapper(likelihood=$likelihood, id='$id', placeTypes=$placeTypes, " +
+                "address=$address, locale=$locale, name='$name', latLng=$latLng, " +
+                "viewport=$viewport, websiteUri=$websiteUri, phoneNumber=$phoneNumber, " +
+                "rating=$rating, priceLevel=$priceLevel, attributions=$attributions)"
+    }
+
+    fun toHtmlString(): String {
+        val map: MutableMap<String, String> = mutableMapOf()
+
+        map["likelihood"] = "%.2f".format(likelihood)
+        map["id"] = id
+        map["placeTypes"] = placeTypes.joinToString(",", "{", "}")
+        map["address"] = address ?: "n/a"
+        map["locale"] = locale.toString()
+        map["name"] = name
+        map["latLng"] = latLng.toString()
+        map["viewport"] = viewport.toString()
+        map["websiteUri"] = websiteUri.toString()
+        map["phoneNumber"] = phoneNumber ?: "n/a"
+        map["rating"] = "%.2f".format(rating)
+        map["priceLevel"] = priceLevel.toString()
+        map["attributions"] = attributions ?: "n/a"
+
+        fun generateValueString(value: Any?) =
+                when {
+                    value == null -> "n/a"
+                    value.toString().trim().isEmpty() -> "n/a"
+                    else -> value.toString()
+                }
+
+        return StringBuilder().apply {
+            map.forEach { prop ->
+                val name = prop.key
+                val value = prop.value
+                val valueDisplayString = generateValueString(value)
+                append("<br/><b>$name</b><br/>")
+                append("<code>$valueDisplayString<code><br/>")
+            }
+        }.toString()
     }
 }
 

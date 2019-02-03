@@ -84,7 +84,7 @@ class PlaceWrapperTest {
     fun `Convert incomplete GMS object into PlaceWrapper`() {
 
         val place = mockk<Place>().apply {
-            every { id } returns null
+            every { id } returns "id"
             every { placeTypes } returns listOf()
             every { address } returns null
             every { locale } returns Locale("en")
@@ -100,7 +100,7 @@ class PlaceWrapperTest {
         }
 
         with(PlaceWrapper(place, 1f)) {
-            assertThat(id).isNull()
+            assertThat(id).isEqualTo("id")
             assertThat(placeTypes).isEmpty()
             assertThat(address).isNull()
             assertThat(locale).isEqualTo(Locale("en"))
